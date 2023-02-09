@@ -18,7 +18,7 @@ constructor(
 
         return when (className) {
             SplashFragment::class.java.name -> {
-                SplashFragment(glide).apply {
+                SplashFragment(glide , prefUtil).apply {
                     arguments = Bundle().apply {
                         putString("key", "check new")
                     }
