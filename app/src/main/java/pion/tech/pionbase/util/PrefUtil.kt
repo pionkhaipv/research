@@ -12,6 +12,19 @@ constructor(
     private val editor: SharedPreferences.Editor
 ) {
 
+    var IS_PREMIUM: Boolean
+        get() = sharedPreferences.getBoolean("IS_PREMIUM", false)
+        set(value) {
+            editor.putBoolean("IS_PREMIUM", value).commit()
+        }
+
+    var IS_F0: Boolean
+        get() = sharedPreferences.getBoolean("IS_F0", false)
+        set(value) {
+            editor.putBoolean("IS_F0", value).commit()
+        }
+
+
     var token: String?
         get() = sharedPreferences.getString("CachedToken", null)
         set(value) {

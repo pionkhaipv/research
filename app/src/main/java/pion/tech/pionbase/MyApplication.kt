@@ -5,7 +5,6 @@ import androidx.appcompat.app.AppCompatDelegate
 import com.zxy.recovery.core.Recovery
 import dagger.hilt.android.HiltAndroidApp
 import pion.tech.pionbase.framework.MainActivity
-import timber.log.Timber
 
 @HiltAndroidApp
 class MyApplication : Application() {
@@ -25,7 +24,6 @@ class MyApplication : Application() {
                 .silent(false, Recovery.SilentMode.RECOVER_ACTIVITY_STACK)
                 .init(this)
 
-            Timber.plant(Timber.DebugTree())
         }
     }
 
