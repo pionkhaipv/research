@@ -37,6 +37,9 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            ndk {
+                abiFilters 'x86', 'x86_64', 'armeabi-v7a', 'arm64-v8a'
+            }
         }
     }
     compileOptions {
@@ -50,6 +53,8 @@ android {
         viewBinding = true
         dataBinding = true
     }
+
+
 }
 
 dependencies {
@@ -123,4 +128,5 @@ dependencies {
     def auto_dimen_version = "1.0.8"
     implementation "com.github.hantrungkien:AutoDimension:$auto_dimen_version"
 
+    implementation 'com.tencent:mmkv:1.2.16'
 }
