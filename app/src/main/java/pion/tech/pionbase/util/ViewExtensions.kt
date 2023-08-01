@@ -3,6 +3,7 @@ package pion.tech.pionbase.util
 import android.content.Context
 import android.content.res.ColorStateList
 import android.graphics.Rect
+import android.net.ConnectivityManager
 import android.os.SystemClock
 import android.util.TypedValue
 import android.view.MotionEvent
@@ -162,4 +163,29 @@ fun Context.convertDpToPx(dp: Int): Int {
     ).toInt()
 }
 
+fun Context.haveNetworkConnection(): Boolean {
+    return try {
+        var haveConnectedWifi = false
+        var haveConnectedMobile = false
+        return try {
+            val cm = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+            val netInfo = cm.allNetworkInfo
+            for (ni in netInfo) {
+                if (ni.typeName
+                        .equals("WIFI", ignoreCase = true)
+                ) if (ni.isConnected) haveConnectedWifi = true
+                if (ni.typeName
+                        .equals("MOBILE", ignoreCase = true)
+                ) if (ni.isConnected) haveConnectedMobile = true
+            }
+            haveConnectedWifi || haveConnectedMobile
+        } catch (e: java.lang.Exception) {
+            System.err.println(e.toString())
+            false
+        }
+    } catch (e: java.lang.Exception) {
+        System.err.println(e.toString())
+        false
+    }
+}
 

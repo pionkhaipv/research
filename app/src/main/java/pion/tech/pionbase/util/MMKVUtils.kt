@@ -13,6 +13,34 @@ class MMKVUtils {
             mmkv = MMKV.defaultMMKV()
         }
 
+        var isPremium: Boolean
+            get() = try {
+                mmkv.decodeBool("isPremium", false)
+            } catch (e: Exception) {
+                false
+            }
+            set(value) {
+                try {
+                    mmkv.encode("isPremium", value)
+                } catch (e: Exception) {
+
+                }
+            }
+
+        var isFO: Boolean
+            get() = try {
+                mmkv.decodeBool("isFO", true)
+            } catch (e: Exception) {
+                false
+            }
+            set(value) {
+                try {
+                    mmkv.encode("isFO", value)
+                } catch (e: Exception) {
+
+                }
+            }
+
         var sampleData: String?
             get() = try {
                 mmkv.decodeString("sampleData", "sample")

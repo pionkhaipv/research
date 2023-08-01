@@ -24,8 +24,6 @@ abstract class BaseFragment<Binding : ViewBinding>(
     private val inflate: Inflate<Binding>
 ) : Fragment() {
 
-    protected val commonViewModel: CommonViewModel by activityViewModels()
-
     lateinit var navController: NavController
 
     private var _binding: Binding? = null
@@ -65,8 +63,6 @@ abstract class BaseFragment<Binding : ViewBinding>(
     abstract fun init(view: View)
 
     abstract fun subscribeObserver(view: View)
-
-
 
     fun showDialogLoading() {
         if (dialogLoading == null) {
