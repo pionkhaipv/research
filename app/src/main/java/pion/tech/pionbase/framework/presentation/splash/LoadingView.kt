@@ -33,8 +33,8 @@ class LoadingView @JvmOverloads constructor(
         postInvalidate()
     }
 
-    override fun onDraw(canvas: Canvas?) {
-        canvas?.apply {
+    override fun onDraw(canvas: Canvas) {
+        canvas.apply {
             val viewHeight = height.toFloat()
             val viewWidth = width.toFloat()
             paint.color = colorBackground

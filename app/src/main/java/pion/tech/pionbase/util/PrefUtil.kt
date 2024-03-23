@@ -1,6 +1,7 @@
 package pion.tech.pionbase.util
 
 import android.content.SharedPreferences
+import android.util.Log
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -11,6 +12,10 @@ constructor(
     private val sharedPreferences: SharedPreferences,
     private val editor: SharedPreferences.Editor
 ) {
+
+    init {
+        Log.d("CHECKPREFUTIL", " init : ")
+    }
 
     var IS_PREMIUM: Boolean
         get() = sharedPreferences.getBoolean("IS_PREMIUM", false)

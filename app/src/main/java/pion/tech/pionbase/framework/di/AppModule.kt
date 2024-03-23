@@ -3,17 +3,19 @@ package pion.tech.pionbase.framework.di
 import android.app.Application
 import android.content.Context
 import android.content.SharedPreferences
+import android.util.Log
 import com.bumptech.glide.Glide
 import com.bumptech.glide.RequestManager
 import com.bumptech.glide.load.DecodeFormat
 import com.bumptech.glide.request.RequestOptions
+import dagger.Binds
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import pion.tech.pionbase.R
-import pion.tech.pionbase.util.Constant
+
 
 
 @InstallIn(SingletonComponent::class)
@@ -31,6 +33,7 @@ object AppModule {
 
     @Provides
     fun provideSharedPreferences(application: Application): SharedPreferences {
+        Log.d("CHECKPREFUTIL", "provideSharedPreferences: ")
         return application.getSharedPreferences(
             "CLEAN_PREFERENCES",
             Context.MODE_PRIVATE
@@ -39,6 +42,8 @@ object AppModule {
 
     @Provides
     fun provideSharedPrefsEditor(sharedPreferences: SharedPreferences): SharedPreferences.Editor {
+        Log.d("CHECKPREFUTIL", "provideSharedPrefsEditor: ")
         return sharedPreferences.edit()
     }
+
 }

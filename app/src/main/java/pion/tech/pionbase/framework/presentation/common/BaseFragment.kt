@@ -18,6 +18,7 @@ import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.customview.customView
 import pion.tech.pionbase.R
 
+
 typealias Inflate<T> = (LayoutInflater, ViewGroup?, Boolean) -> T
 
 abstract class BaseFragment<Binding : ViewBinding>(
@@ -28,6 +29,10 @@ abstract class BaseFragment<Binding : ViewBinding>(
 
     private var _binding: Binding? = null
     val binding get() = _binding!!
+
+
+
+
 
     var dialogLoading: MaterialDialog? = null
 

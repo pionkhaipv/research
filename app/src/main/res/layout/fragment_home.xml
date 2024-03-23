@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout>
+
+    <data>
+
+        <variable
+            name="viewModel"
+            type="pion.tech.pionbase.framework.presentation.home.HomeViewModel" />
+
+    </data>
+
+    <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".framework.presentation.home.HomeFragment">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:text="@string/is_premium"
+                android:textSize="@dimen/_18dp"
+                android:fontFamily="@font/font_700"
+                android:text="@{viewModel.isPremium() ? @string/is_premium : @string/not_premium}"/>
+
+
+            <Button
+                android:id="@+id/btnChange"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="@dimen/_56dp"
+                android:text="change"/>
+
+        </LinearLayout>
+
+    </FrameLayout>
+</layout>

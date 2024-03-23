@@ -229,7 +229,7 @@ fun saveBitmap(
         }
 
         //save to device
-        if (resource.compress(Bitmap.CompressFormat.PNG, 100, fos)) {
+        if (resource.compress(Bitmap.CompressFormat.PNG, 100, fos!!)) {
             listener?.onDownloadSuccess()
         } else {
             listener?.onDownloadFailed("UNKNOWN_ERROR")
