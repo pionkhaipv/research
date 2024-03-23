@@ -6,19 +6,12 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import pion.tech.pionbase.util.PrefUtil
 import javax.inject.Inject
 
+@HiltViewModel
+class HomeViewModel @Inject constructor(
+    val prefUtil: PrefUtil
+) : ViewModel() {
 
-class HomeViewModel(val prefUtil: PrefUtil , val fragment: HomeFragment) : ViewModel() {
-
-
-    val _isPremium = prefUtil.IS_PREMIUM
-    val isPremium = MutableLiveData(_isPremium)
-
-    fun observerPremium(){
-        isPremium.observe(fragment.viewLifecycleOwner){
-            fragment.binding.viewModel = this
-        }
-    }
-
+    val isPremium = MutableLiveData(prefUtil.IS_PREMIUM)
 
 
 }
