@@ -1,4 +1,4 @@
-package pion.tech.pionbase.framework.presentation.splash
+package pion.tech.pionbase.customview
 
 import android.animation.ValueAnimator
 import android.content.Context

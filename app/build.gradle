@@ -128,8 +128,6 @@ dependencies {
     def auto_dimen_version = "1.0.8"
     implementation "com.github.hantrungkien:AutoDimension:$auto_dimen_version"
 
-    implementation 'com.tencent:mmkv:1.2.16'
-
     implementation 'com.makeramen:roundedimageview:2.3.0'
 
     implementation "androidx.fragment:fragment-ktx:1.5.2"

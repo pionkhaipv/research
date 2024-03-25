@@ -1,9 +1,11 @@
 package pion.tech.pionbase.util
 
 import android.content.Context
+import android.content.Intent
 import android.content.res.ColorStateList
 import android.graphics.Rect
 import android.net.ConnectivityManager
+import android.net.Uri
 import android.os.SystemClock
 import android.util.TypedValue
 import android.view.MotionEvent
@@ -186,6 +188,19 @@ fun Context.haveNetworkConnection(): Boolean {
     } catch (e: java.lang.Exception) {
         System.err.println(e.toString())
         false
+    }
+}
+
+fun Context.openBrowser(url: String) {
+    var url = url
+    if (!url.startsWith("http://") && !url.startsWith("https://")) {
+        url = "http://$url"
+    }
+    val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+    try {
+        startActivity(browserIntent)
+    } catch (ex: java.lang.Exception) {
+        ex.printStackTrace()
     }
 }
 

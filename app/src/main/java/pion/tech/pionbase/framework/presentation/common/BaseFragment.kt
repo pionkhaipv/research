@@ -10,31 +10,33 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
 import androidx.navigation.NavDirections
 import androidx.navigation.fragment.findNavController
 import androidx.viewbinding.ViewBinding
-import com.afollestad.materialdialogs.MaterialDialog
-import com.afollestad.materialdialogs.customview.customView
-import pion.tech.pionbase.R
 
 
-typealias Inflate<T> = (LayoutInflater, ViewGroup?, Boolean) -> T
+typealias Inflate<Binding> = (LayoutInflater, ViewGroup?, Boolean) -> Binding
 
-abstract class BaseFragment<Binding : ViewBinding>(
-    private val inflate: Inflate<Binding>
+abstract class BaseFragment<Binding : ViewBinding , VM : ViewModel>(
+    private val inflate: Inflate<Binding>,
+    private val viewModelClass : Class<VM>
 ) : Fragment() {
 
     lateinit var navController: NavController
 
-    private var _binding: Binding? = null
-    val binding get() = _binding!!
+    lateinit var binding: Binding
+        private set
+
+    val commonViewModel : CommonViewModel by activityViewModels()
+
+    val viewModel: VM by lazy {
+        ViewModelProvider(this)[viewModelClass]
+    }
 
 
-
-
-
-    var dialogLoading: MaterialDialog? = null
 
     private var isInit = false
     var saveView = false
@@ -45,14 +47,14 @@ abstract class BaseFragment<Binding : ViewBinding>(
         savedInstanceState: Bundle?
     ): View? {
         if (saveView) {
-            if (_binding == null) {
+            if (binding == null) {
                 isInit = true
-                _binding = inflate.invoke(inflater, container, false)
+                binding = inflate.invoke(inflater, container, false)
             } else {
                 isInit = false
             }
         } else {
-            _binding = inflate.invoke(inflater, container, false)
+            binding = inflate.invoke(inflater, container, false)
         }
         return binding.root
     }
@@ -68,23 +70,6 @@ abstract class BaseFragment<Binding : ViewBinding>(
     abstract fun init(view: View)
 
     abstract fun subscribeObserver(view: View)
-
-    fun showDialogLoading() {
-        if (dialogLoading == null) {
-            dialogLoading = MaterialDialog(requireContext()).apply {
-                cancelable(false)
-                customView(R.layout.dialog_loading)
-            }
-        }
-        dialogLoading?.show {
-            cornerRadius(16f)
-        }
-    }
-
-    fun hideDialogLoading() {
-        dialogLoading?.dismiss()
-        dialogLoading = null
-    }
 
     fun safeNav(currentDestination: Int, action: Int) {
         if (navController.currentDestination?.id == currentDestination) {

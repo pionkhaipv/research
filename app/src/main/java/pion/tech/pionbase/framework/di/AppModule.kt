@@ -34,7 +34,6 @@ object AppModule {
 
     @Provides
     fun provideSharedPreferences(application: Application): SharedPreferences {
-        Log.d("CHECKPREFUTIL", "provideSharedPreferences: ")
         return application.getSharedPreferences(
             "CLEAN_PREFERENCES",
             Context.MODE_PRIVATE

@@ -5,7 +5,6 @@ import androidx.appcompat.app.AppCompatDelegate
 import com.zxy.recovery.core.Recovery
 import dagger.hilt.android.HiltAndroidApp
 import pion.tech.pionbase.framework.MainActivity
-import pion.tech.pionbase.util.MMKVUtils
 
 @HiltAndroidApp
 class MyApplication : Application() {
@@ -26,9 +25,6 @@ class MyApplication : Application() {
                 .init(this)
 
         }
-
-        //init MMKV
-        MMKVUtils.init(this)
     }
 
 }

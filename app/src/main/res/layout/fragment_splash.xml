@@ -46,7 +46,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
-    <pion.tech.pionbase.framework.presentation.splash.LoadingView
+    <pion.tech.pionbase.customview.LoadingView
         android:id="@+id/loadingView"
         android:layout_width="0dp"
         android:layout_height="@dimen/_4dp"
