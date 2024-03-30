@@ -47,7 +47,9 @@ object AppModule {
 
     @Provides
     fun providePrefUtil(sharedPreferences: SharedPreferences , editor: Editor): PrefUtil {
-        return PrefUtil(sharedPreferences , editor)
+        PrefUtil.sharedPreferences = sharedPreferences
+        PrefUtil.editor = editor
+        return PrefUtil()
     }
 
 }

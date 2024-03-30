@@ -8,8 +8,7 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class MainNavHostFragment : NavHostFragment() {
 
-    @Inject
-    lateinit var fragmentFactory: MainFragmentFactory
+    val fragmentFactory = MainFragmentFactory()
 
     override fun onAttach(context: Context) {
         super.onAttach(context)

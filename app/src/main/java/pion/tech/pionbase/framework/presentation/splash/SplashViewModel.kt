@@ -6,7 +6,7 @@ import pion.tech.pionbase.util.PrefUtil
 import javax.inject.Inject
 
 class SplashViewModel @Inject constructor(
-    val prefUtil: PrefUtil
+
 ): ViewModel() {
 
 
