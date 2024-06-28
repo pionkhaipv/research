@@ -5,18 +5,24 @@ import dagger.hilt.android.AndroidEntryPoint
 import pion.tech.pionbase.databinding.FragmentHomeBinding
 import pion.tech.pionbase.framework.database.entities.DummyEntity
 import pion.tech.pionbase.framework.presentation.common.BaseFragment
+import pion.tech.pionbase.util.collectFlowOnView
 
 @AndroidEntryPoint
 class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(
     FragmentHomeBinding::inflate,
     HomeViewModel::class.java
 ) {
+
     var dummyEntity: DummyEntity? = null
     override fun init(view: View) {
         initView()
+        plusEvent()
     }
 
     override fun subscribeObserver(view: View) {
+        viewModel.countValue.collectFlowOnView(viewLifecycleOwner) {
+            binding.tvCount.text = it.toString()
+        }
     }
 
 }
