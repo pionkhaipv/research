@@ -12,10 +12,10 @@ plugins {
 }
 
 android {
-
+    namespace = "pion.tech.pionbase"
     compileSdk = libs.versions.compileSdkVersion.get().toInt()
     defaultConfig {
-        namespace = "pion.tech.pionbase"
+        applicationId = "pion.tech.pionbase"
         minSdk = libs.versions.minSdkVersion.get().toInt()
         targetSdk = libs.versions.targetSdkVersion.get().toInt()
         versionCode = 1
