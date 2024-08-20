@@ -12,17 +12,24 @@ import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.NavDirections
 import androidx.navigation.fragment.findNavController
 import androidx.viewbinding.ViewBinding
+import kotlinx.coroutines.CoroutineExceptionHandler
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
+import timber.log.Timber
 
 
 typealias Inflate<Binding> = (LayoutInflater, ViewGroup?, Boolean) -> Binding
 
-abstract class BaseFragment<Binding : ViewBinding , VM : ViewModel>(
+abstract class BaseFragment<Binding : ViewBinding, VM : ViewModel>(
     private val inflate: Inflate<Binding>,
-    private val viewModelClass : Class<VM>
+    private val viewModelClass: Class<VM>
 ) : Fragment() {
 
     lateinit var navController: NavController
@@ -30,12 +37,11 @@ abstract class BaseFragment<Binding : ViewBinding , VM : ViewModel>(
     lateinit var binding: Binding
         private set
 
-    val commonViewModel : CommonViewModel by activityViewModels()
+    val commonViewModel: CommonViewModel by activityViewModels()
 
     val viewModel: VM by lazy {
         ViewModelProvider(this)[viewModelClass]
     }
-
 
 
     private var isInit = false
@@ -109,3 +115,24 @@ abstract class BaseFragment<Binding : ViewBinding , VM : ViewModel>(
         private const val TAG = "BaseFragment"
     }
 }
+
+fun Fragment.launchIO(
+    exceptionHandler: CoroutineExceptionHandler = CoroutineExceptionHandler { _, throwable ->
+        Timber.e("${this::class.java.simpleName} error: $throwable")
+    },
+    block: suspend CoroutineScope.() -> Unit
+): Job = lifecycleScope.launch(Dispatchers.IO + exceptionHandler, block = block)
+
+fun Fragment.launchDefault(
+    exceptionHandler: CoroutineExceptionHandler = CoroutineExceptionHandler { _, throwable ->
+        Timber.e("${this::class.java.simpleName} error: $throwable")
+    },
+    block: suspend CoroutineScope.() -> Unit
+): Job = lifecycleScope.launch(Dispatchers.Default + exceptionHandler, block = block)
+
+fun Fragment.launchMain(
+    exceptionHandler: CoroutineExceptionHandler = CoroutineExceptionHandler { _, throwable ->
+        Timber.e("${this::class.java.simpleName} error: $throwable")
+    },
+    block: suspend CoroutineScope.() -> Unit
+): Job = lifecycleScope.launch(Dispatchers.Main + exceptionHandler, block = block)

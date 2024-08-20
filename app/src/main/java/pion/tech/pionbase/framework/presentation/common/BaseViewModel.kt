@@ -7,6 +7,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
+import timber.log.Timber
 
 abstract class BaseViewModel : ViewModel() {
 
@@ -34,22 +35,21 @@ abstract class BaseViewModel : ViewModel() {
 
 fun ViewModel.launchIO(
     exceptionHandler: CoroutineExceptionHandler = CoroutineExceptionHandler { _, throwable ->
-        throwable.printStackTrace()
+        Timber.e("${this::class.java.simpleName} error: $throwable")
     },
     block: suspend CoroutineScope.() -> Unit
 ): Job = viewModelScope.launch(Dispatchers.IO + exceptionHandler, block = block)
 
-
 fun ViewModel.launchDefault(
     exceptionHandler: CoroutineExceptionHandler = CoroutineExceptionHandler { _, throwable ->
-        throwable.printStackTrace()
+        Timber.e("${this::class.java.simpleName} error: $throwable")
     },
     block: suspend CoroutineScope.() -> Unit
 ): Job = viewModelScope.launch(Dispatchers.Default + exceptionHandler, block = block)
 
 fun ViewModel.launchMain(
     exceptionHandler: CoroutineExceptionHandler = CoroutineExceptionHandler { _, throwable ->
-        throwable.printStackTrace()
+        Timber.e("${this::class.java.simpleName} error: $throwable")
     },
     block: suspend CoroutineScope.() -> Unit
 ): Job = viewModelScope.launch(Dispatchers.Main + exceptionHandler, block = block)

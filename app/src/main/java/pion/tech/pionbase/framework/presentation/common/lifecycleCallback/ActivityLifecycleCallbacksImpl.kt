@@ -8,30 +8,30 @@ import timber.log.Timber
 class ActivityLifecycleCallbacksImpl : Application.ActivityLifecycleCallbacks {
 
     override fun onActivityCreated(activity: Activity, bundle: Bundle?) {
-        Timber.tag(activity.componentName.shortClassName).i("onActivityCreated")
+        Timber.d("${activity::class.java.simpleName} onActivityCreated")
     }
 
     override fun onActivityStarted(activity: Activity) {
-        Timber.tag(activity.componentName.shortClassName).i("onActivityStarted")
+        Timber.d("${activity::class.java.simpleName} onActivityStarted")
     }
 
     override fun onActivityResumed(activity: Activity) {
-        Timber.tag(activity.componentName.shortClassName).i("onActivityResumed")
+        Timber.d("${activity::class.java.simpleName} onActivityResumed")
     }
 
     override fun onActivityPaused(activity: Activity) {
-        Timber.tag(activity.componentName.shortClassName).i("onActivityPaused")
+        Timber.d("${activity::class.java.simpleName} onActivityPaused")
     }
 
     override fun onActivityStopped(activity: Activity) {
-        Timber.tag(activity.componentName.shortClassName).i("onActivityStopped")
+        Timber.d("${activity::class.java.simpleName} onActivityStopped")
     }
 
     override fun onActivitySaveInstanceState(activity: Activity, outState: Bundle) {
-        Timber.tag(activity.componentName.shortClassName).i("onActivitySaveInstanceState")
+        Timber.d("${activity::class.java.simpleName} onActivitySaveInstanceState")
     }
 
     override fun onActivityDestroyed(activity: Activity) {
-        Timber.tag(activity.componentName.shortClassName).i("onActivityDestroyed")
+        Timber.d("${activity::class.java.simpleName} onActivityDestroyed")
     }
 }
