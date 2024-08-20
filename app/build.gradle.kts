@@ -147,5 +147,7 @@ dependencies {
     //Rounded Image View
     implementation (libs.roundedimageview)
 
+    // Timber
+    implementation(libs.timber)
 
 }
