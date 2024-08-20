@@ -22,6 +22,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
+import pion.tech.pionbase.framework.MainActivity
 import timber.log.Timber
 
 
@@ -108,6 +109,16 @@ abstract class BaseFragment<Binding : ViewBinding, VM : ViewModel>(
                     }
                 }
             })
+        }
+    }
+
+    fun showHideLoading(isShow: Boolean) {
+        if (activity != null && activity is MainActivity) {
+            if (isShow) {
+                (activity as MainActivity).showLoading()
+            } else {
+                (activity as MainActivity).hiddenLoading()
+            }
         }
     }
 

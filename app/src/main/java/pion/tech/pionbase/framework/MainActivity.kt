@@ -1,14 +1,12 @@
 package pion.tech.pionbase.framework
 
 import android.os.Bundle
-import android.util.Log
 import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
 import dagger.hilt.android.AndroidEntryPoint
 import pion.tech.pionbase.R
+import pion.tech.pionbase.framework.presentation.common.LoadingDialog
 import pion.tech.pionbase.framework.presentation.common.lifecycleCallback.FragmentLifecycleCallbacksImpl
-import pion.tech.pionbase.util.PrefUtil
-import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
@@ -22,5 +20,13 @@ class MainActivity : AppCompatActivity() {
             WindowManager.LayoutParams.FLAG_FULLSCREEN
         )
         setContentView(R.layout.activity_main) //TODO: change name navhost
+    }
+
+    fun showLoading() {
+        LoadingDialog.getInstance(this)?.show()
+    }
+
+    fun hiddenLoading() {
+        LoadingDialog.getInstance(this)?.hidden()
     }
 }
