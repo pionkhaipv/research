@@ -35,8 +35,12 @@ abstract class BaseFragment<Binding : ViewBinding, VM : ViewModel>(
 
     lateinit var navController: NavController
 
-    lateinit var binding: Binding
-        private set
+    private var _binding: Binding? = null
+
+    val binding: Binding
+        get() = checkNotNull(_binding) {
+            "Fragment $this binding cannot be accessed before onCreateView() or after onDestroyView()"
+        }
 
     val commonViewModel: CommonViewModel by activityViewModels()
 
@@ -54,14 +58,14 @@ abstract class BaseFragment<Binding : ViewBinding, VM : ViewModel>(
         savedInstanceState: Bundle?
     ): View? {
         if (saveView) {
-            if (binding == null) {
+            if (_binding == null) {
                 isInit = true
-                binding = inflate.invoke(inflater, container, false)
+                _binding = inflate.invoke(inflater, container, false)
             } else {
                 isInit = false
             }
         } else {
-            binding = inflate.invoke(inflater, container, false)
+            _binding = inflate.invoke(inflater, container, false)
         }
         return binding.root
     }
@@ -78,6 +82,10 @@ abstract class BaseFragment<Binding : ViewBinding, VM : ViewModel>(
 
     abstract fun subscribeObserver(view: View)
 
+    override fun onDestroyView() {
+        _binding = null
+        super.onDestroyView()
+    }
     fun safeNav(currentDestination: Int, action: Int, bundle: Bundle? = null) {
         if (navController.currentDestination?.id == currentDestination) {
             lifecycle.addObserver(object : LifecycleEventObserver {
