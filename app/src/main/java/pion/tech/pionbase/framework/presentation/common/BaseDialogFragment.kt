@@ -94,6 +94,22 @@ abstract class BaseDialogFragment<T : ViewDataBinding>(
 
     open fun initData(savedInstanceState: Bundle?) {}
 
+    fun setDialogCanCancel() {
+        val dialog = this.dialog
+        if (dialog != null) {
+            val window = dialog.window
+            if (window != null) {
+                window.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+                window.setLayout(
+                    WindowManager.LayoutParams.MATCH_PARENT,
+                    WindowManager.LayoutParams.WRAP_CONTENT
+                )
+                dialog.setCancelable(true)
+                dialog.setCanceledOnTouchOutside(true)
+            }
+        }
+    }
+
     override fun onStart() {
         Timber.d("${this::class.simpleName} onStart")
         super.onStart()
