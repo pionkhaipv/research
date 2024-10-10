@@ -111,9 +111,6 @@ dependencies {
     implementation(libs.androidx.room.ktx)
     ksp(libs.androidx.room.compiler)
 
-    // optional - Kotlin Extensions and Coroutines support for Room
-    implementation(libs.androidx.room.ktx)
-
     // Glide
     api(libs.glide)
     annotationProcessor(libs.glide.compiler)
