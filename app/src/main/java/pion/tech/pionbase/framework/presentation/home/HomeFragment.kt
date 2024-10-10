@@ -23,7 +23,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(
 
     override fun subscribeObserver(view: View) {
         viewModel.countValue.collectFlowOnView(viewLifecycleOwner) {
-            binding.tvCount.text = it.toString()
+            binding.tvCount.text = "$it"
         }
     }
 
