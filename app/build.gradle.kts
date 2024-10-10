@@ -112,7 +112,7 @@ dependencies {
     ksp(libs.androidx.room.compiler)
 
     // optional - Kotlin Extensions and Coroutines support for Room
-    implementation(libs.androidx.room.ktx.v240)
+    implementation(libs.androidx.room.ktx)
 
     // Glide
     api(libs.glide)
@@ -153,7 +153,7 @@ dependencies {
     // Timber
     implementation(libs.timber)
 
-    //Lottiet
-    implementation (libs.lottie.v652)
+    //Lottie
+    implementation (libs.lottie)
 
 }
