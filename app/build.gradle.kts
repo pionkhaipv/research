@@ -152,4 +152,8 @@ dependencies {
 
     // Timber
     implementation(libs.timber)
+
+    //Lottiet
+    implementation (libs.lottie.v652)
+
 }

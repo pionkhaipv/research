@@ -5,6 +5,7 @@ colorpickerview = "2.3.0"
 core = "3.3.0"
 kotlinStdlib = "2.0.0"
 legacySupportV4 = "1.0.0"
+lottieVersion = "6.5.2"
 recovery = "1.0.0"
 retrofit = "2.11.0"
 roomKtx = "2.4.0"
@@ -64,6 +65,7 @@ androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-co
 androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
 kotlin-stdlib = { module = "org.jetbrains.kotlin:kotlin-stdlib", version.ref = "kotlinStdlib" }
 lifecycle = { module = "com.afollestad.material-dialogs:lifecycle", version.ref = "core" }
+lottie-v652 = { module = "com.airbnb.android:lottie", version.ref = "lottieVersion" }
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 androidx-activity = { group = "androidx.activity", name = "activity", version.ref = "activity" }
 androidx-constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintlayout" }
