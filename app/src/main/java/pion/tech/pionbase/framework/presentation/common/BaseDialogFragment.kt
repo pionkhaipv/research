@@ -55,7 +55,8 @@ abstract class BaseDialogFragment<T : ViewDataBinding>(
         savedInstanceState: Bundle?
     ): View {
         Timber.d("${this::class.simpleName} onCreateView")
-        _binding = DataBindingUtil.inflate(inflater, contentLayoutId, container, false, bindingComponent)
+        _binding =
+            DataBindingUtil.inflate(inflater, contentLayoutId, container, false, bindingComponent)
         return binding.root
     }
 
@@ -69,14 +70,18 @@ abstract class BaseDialogFragment<T : ViewDataBinding>(
             val window = dialog.window
             if (window != null) {
                 window.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-                window.setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.MATCH_PARENT)
+                window.setLayout(
+                    WindowManager.LayoutParams.MATCH_PARENT,
+                    WindowManager.LayoutParams.MATCH_PARENT
+                )
                 val layoutParams = window.attributes
                 layoutParams.gravity = gravity
                 window.attributes = layoutParams
 
                 window.decorView.setOnTouchListener { v, event ->
                     if (event.action == MotionEvent.ACTION_DOWN) {
-                        val inputMethodManager = requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                        val inputMethodManager =
+                            requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
                         inputMethodManager.hideSoftInputFromWindow(v.windowToken, 0)
                     }
                     false
@@ -159,12 +164,10 @@ abstract class BaseDialogFragment<T : ViewDataBinding>(
     }
 
     override fun dismiss() {
-        if (isVisible) {
-            try {
-                super.dismiss()
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
+        try {
+            super.dismiss()
+        } catch (e: Exception) {
+            e.printStackTrace()
         }
     }
 }

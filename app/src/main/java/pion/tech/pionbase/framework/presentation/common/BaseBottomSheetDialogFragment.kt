@@ -129,12 +129,10 @@ abstract class BaseBottomSheetDialogFragment<T : ViewDataBinding>(
     }
 
     override fun dismiss() {
-        if (isVisible) {
-            try {
-                super.dismiss()
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
+        try {
+            super.dismiss()
+        } catch (e: Exception) {
+            e.printStackTrace()
         }
     }
 }
