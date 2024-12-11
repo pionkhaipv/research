@@ -23,7 +23,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import pion.tech.pionbase.framework.MainActivity
+import pion.tech.pionbase.util.PrefUtil
 import timber.log.Timber
+import javax.inject.Inject
 
 
 typealias Inflate<Binding> = (LayoutInflater, ViewGroup?, Boolean) -> Binding
@@ -32,6 +34,9 @@ abstract class BaseFragment<Binding : ViewBinding, VM : ViewModel>(
     private val inflate: Inflate<Binding>,
     private val viewModelClass: Class<VM>
 ) : Fragment() {
+
+    @Inject
+    lateinit var prefUtil: PrefUtil
 
     lateinit var navController: NavController
 

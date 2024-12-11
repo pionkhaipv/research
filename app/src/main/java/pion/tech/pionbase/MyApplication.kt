@@ -13,9 +13,6 @@ import javax.inject.Inject
 @HiltAndroidApp
 class MyApplication : Application() {
 
-    @Inject
-    lateinit var prefUtil : PrefUtil
-
     override fun onCreate() {
         super.onCreate()
         //TODO: enable/disable dark theme

@@ -15,6 +15,7 @@ fun HomeFragment.initView() {
 fun HomeFragment.plusEvent() {
     binding.btnPlus.setPreventDoubleClickScaleView {
         viewModel.plusValue()
+        prefUtil.isPremium = !prefUtil.isPremium
         val bottomSheet = DemoBottomSheet()
         bottomSheet.show(childFragmentManager)
 //        val dialog = DemoDialog.newInstance(dummyTitle = "Day la param1")
