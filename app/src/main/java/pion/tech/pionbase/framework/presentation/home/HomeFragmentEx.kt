@@ -14,7 +14,7 @@ fun HomeFragment.initView() {
 }
 
 fun HomeFragment.plusEvent() {
-    val listString = listOf("so1","so2","so3")
+    val listString = listOf("so1","so2","so3","so4","so5")
     adapter.submitList(listString)
     binding.btnPlus.setPreventDoubleClickScaleView {
         viewModel.plusValue()

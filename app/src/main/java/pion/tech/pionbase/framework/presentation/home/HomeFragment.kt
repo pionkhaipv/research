@@ -6,6 +6,7 @@ import pion.tech.pionbase.databinding.FragmentHomeBinding
 import pion.tech.pionbase.framework.database.entities.DummyEntity
 import pion.tech.pionbase.framework.presentation.common.BaseFragment
 import pion.tech.pionbase.framework.presentation.home.adapter.DemoAdapter
+import pion.tech.pionbase.framework.presentation.home.adapter.DemoMultipleAdapter
 import pion.tech.pionbase.framework.presentation.home.dialog.DemoDialog
 import pion.tech.pionbase.util.collectFlowOnView
 import pion.tech.pionbase.util.displayToast
@@ -17,7 +18,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(
 ), DemoDialog.Listener {
 
     var dummyEntity: DummyEntity? = null
-    val adapter = DemoAdapter()
+    val adapter = DemoMultipleAdapter()
     override fun init(view: View) {
         initView()
         plusEvent()
