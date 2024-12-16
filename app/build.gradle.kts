@@ -35,7 +35,11 @@ android {
     }
 
     buildTypes {
+        debug {
+            buildConfigField("String", "BASE_URL", "\"http://cms.piontech.site:9123/stores/\"")
+        }
         release {
+            buildConfigField("String", "BASE_URL", "\"http://cms.piontech.site:9123/stores/\"")
             isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
@@ -153,5 +157,9 @@ dependencies {
 
     //Lottie
     implementation (libs.lottie)
+
+    //Chucker
+    debugImplementation (libs.chucker.library)
+    releaseImplementation (libs.chucker.library.no.op)
 
 }
