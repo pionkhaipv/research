@@ -5,7 +5,6 @@ import dagger.hilt.android.AndroidEntryPoint
 import pion.tech.pionbase.databinding.FragmentHomeBinding
 import pion.tech.pionbase.framework.database.entities.DummyEntity
 import pion.tech.pionbase.framework.presentation.common.BaseFragment
-import pion.tech.pionbase.framework.presentation.home.adapter.DemoAdapter
 import pion.tech.pionbase.framework.presentation.home.adapter.DemoMultipleAdapter
 import pion.tech.pionbase.framework.presentation.home.dialog.DemoDialog
 import pion.tech.pionbase.util.collectFlowOnView

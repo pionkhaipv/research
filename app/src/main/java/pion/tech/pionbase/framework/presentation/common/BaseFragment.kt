@@ -91,6 +91,7 @@ abstract class BaseFragment<Binding : ViewBinding, VM : ViewModel>(
         _binding = null
         super.onDestroyView()
     }
+
     fun safeNav(currentDestination: Int, action: Int, bundle: Bundle? = null) {
         if (navController.currentDestination?.id == currentDestination) {
             lifecycle.addObserver(object : LifecycleEventObserver {
@@ -138,6 +139,17 @@ abstract class BaseFragment<Binding : ViewBinding, VM : ViewModel>(
     companion object {
         private const val TAG = "BaseFragment"
     }
+}
+
+fun Fragment.doActionWhenResume(action: () -> Unit) {
+    lifecycle.addObserver(object : LifecycleEventObserver {
+        override fun onStateChanged(source: LifecycleOwner, event: Lifecycle.Event) {
+            if (event == Lifecycle.Event.ON_RESUME) {
+                action.invoke()
+                lifecycle.removeObserver(this)
+            }
+        }
+    })
 }
 
 fun Fragment.launchIO(
