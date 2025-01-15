@@ -5,6 +5,7 @@ core = "3.3.0"
 kotlinStdlib = "2.0.21"
 legacySupportV4 = "1.0.0"
 chuckerLibrary = "4.1.0"
+lib_recovery = "1.0.1"
 recovery = "1.0.0"
 retrofit = "2.11.0"
 roundedimageview = "2.3.0"
@@ -61,6 +62,7 @@ androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version
 kotlin-stdlib = { module = "org.jetbrains.kotlin:kotlin-stdlib", version.ref = "kotlinStdlib" }
 chucker-library = { module = "com.github.chuckerteam.chucker:library", version.ref = "chuckerLibrary" }
 chucker-library-no-op = { module = "com.github.chuckerteam.chucker:library-no-op", version.ref = "chuckerLibrary" }
+lib_recovery = { module = "com.github.khaisao:lib_recovery", version.ref = "lib_recovery" }
 lifecycle = { module = "com.afollestad.material-dialogs:lifecycle", version.ref = "core" }
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 androidx-activity = { group = "androidx.activity", name = "activity", version.ref = "activity" }

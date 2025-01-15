@@ -89,7 +89,7 @@ dependencies {
     implementation(project(":commonRes"))
 
     // Crash recovery
-    implementation(libs.recovery)
+    implementation(libs.lib.recovery)
 
     // Card View
     implementation(libs.androidx.cardview)
