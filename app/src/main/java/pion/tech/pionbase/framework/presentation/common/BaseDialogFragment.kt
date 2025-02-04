@@ -5,7 +5,6 @@ import android.content.Context
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
-import android.os.Parcelable
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.MotionEvent
@@ -19,12 +18,16 @@ import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentManager
+import pion.tech.pionbase.util.PrefUtil
 import timber.log.Timber
+import javax.inject.Inject
 
 abstract class BaseDialogFragment<T : ViewDataBinding>(
     @LayoutRes private val contentLayoutId: Int,
-    private val gravity: Int = Gravity.CENTER
 ) : DialogFragment() {
+
+    @Inject
+    lateinit var prefUtil: PrefUtil
 
     private var bindingComponent: DataBindingComponent? = DataBindingUtil.getDefaultComponent()
 
@@ -75,7 +78,7 @@ abstract class BaseDialogFragment<T : ViewDataBinding>(
                     WindowManager.LayoutParams.MATCH_PARENT
                 )
                 val layoutParams = window.attributes
-                layoutParams.gravity = gravity
+                layoutParams.gravity = Gravity.CENTER
                 window.attributes = layoutParams
 
                 window.decorView.setOnTouchListener { v, event ->
