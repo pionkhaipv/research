@@ -86,8 +86,6 @@ dependencies {
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
 
-    implementation(project(":commonRes"))
-
     // Crash recovery
     implementation(libs.lib.recovery)
 

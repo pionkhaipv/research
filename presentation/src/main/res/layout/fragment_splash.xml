@@ -25,7 +25,7 @@
         android:layout_height="wrap_content"
         android:text="@string/app_name"
         android:textColor="#218380"
-        android:textSize="@dimen/text_size_32"
+        android:textSize="@dimen/_32sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/iconApp"
@@ -41,7 +41,7 @@
         android:fontFamily="@font/font_700"
         android:text="@string/loading"
         android:textColor="#218380"
-        android:textSize="@dimen/text_size_16"
+        android:textSize="@dimen/_16sp"
         app:layout_constraintBottom_toTopOf="@+id/loadingView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
