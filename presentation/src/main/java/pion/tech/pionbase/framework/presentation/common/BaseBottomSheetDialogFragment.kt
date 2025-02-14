@@ -14,16 +14,11 @@ import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
 import androidx.fragment.app.FragmentManager
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-import pion.tech.pionbase.util.PrefUtil
 import timber.log.Timber
-import javax.inject.Inject
 
 abstract class BaseBottomSheetDialogFragment<T : ViewDataBinding>(
     @LayoutRes private val contentLayoutId: Int
 ) : BottomSheetDialogFragment() {
-
-    @Inject
-    lateinit var prefUtil: PrefUtil
 
     private var bindingComponent: DataBindingComponent? = DataBindingUtil.getDefaultComponent()
 

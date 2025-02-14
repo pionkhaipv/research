@@ -24,3 +24,5 @@ dependencyResolutionManagement {
 
 include(":presentation")
 rootProject.name = "PionBase"
+include(":domain")
+include(":data")
