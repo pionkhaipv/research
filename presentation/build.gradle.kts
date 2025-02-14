@@ -88,6 +88,8 @@ dependencies {
 
     implementation(project(":domain"))
     implementation(project(":data"))
+    implementation(project(":LibIAP"))
+    implementation(project(":LibAds"))
 
     // Crash recovery
     implementation(libs.lib.recovery)
@@ -162,8 +164,5 @@ dependencies {
     //Chucker
     debugImplementation (libs.chucker.library)
     releaseImplementation (libs.chucker.library.no.op)
-
-    implementation("io.coil-kt:coil:2.7.0")
-
 
 }

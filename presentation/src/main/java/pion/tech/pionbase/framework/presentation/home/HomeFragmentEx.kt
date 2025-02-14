@@ -1,7 +1,12 @@
 package pion.tech.pionbase.framework.presentation.home
 
+import androidx.activity.addCallback
+import pion.tech.pionbase.R
 import pion.tech.pionbase.framework.presentation.home.bottomSheet.DemoBottomSheet
 import pion.tech.pionbase.framework.presentation.home.dialog.DemoDialog
+import pion.tech.pionbase.framework.presentation.splash.SplashFragment
+import pion.tech.pionbase.framework.presentation.splash.backEvent
+import pion.tech.pionbase.framework.presentation.splash.onBackPressed
 import pion.tech.pionbase.util.BundleKey
 import pion.tech.pionbase.util.displayToast
 import pion.tech.pionbase.util.parcelable
@@ -22,5 +27,20 @@ fun HomeFragment.plusEvent() {
 //        val dialog = DemoDialog.newInstance(dummyTitle = "Day la param1")
 //        dialog.setListener(this)
 //        dialog.show(childFragmentManager)
+    }
+}
+
+fun HomeFragment.onBackEvent() {
+    activity?.onBackPressedDispatcher?.addCallback(this, true) {
+        backEvent()
+    }
+}
+
+fun HomeFragment.backEvent() {
+}
+
+fun HomeFragment.settingEvent() {
+    binding.btnSetting.setPreventDoubleClickScaleView {
+        safeNav(R.id.homeFragment, R.id.action_homeFragment_to_settingFragment)
     }
 }

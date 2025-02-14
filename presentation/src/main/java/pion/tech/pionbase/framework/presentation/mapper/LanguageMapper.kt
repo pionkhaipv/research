@@ -1,9 +1,9 @@
 package pion.tech.pionbase.framework.presentation.mapper
 
-import com.piontech.domain.model.Language
-import pion.tech.pionbase.framework.presentation.model.LanguageUIModel
+import com.piontech.domain.model.LanguageData
+import pion.tech.pionbase.framework.presentation.model.LanguageModel
 
-fun Language.toPresentation() = LanguageUIModel(
+fun LanguageData.toPresentation() = LanguageModel(
     thumbnail = this.thumbnail,
     nameCountry = this.nameCountry,
     localeCode = this.localeCode,

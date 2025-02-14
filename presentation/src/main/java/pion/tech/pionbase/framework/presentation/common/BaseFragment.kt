@@ -15,12 +15,14 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.navOptions
 import androidx.viewbinding.ViewBinding
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
+import pion.tech.pionbase.R
 import pion.tech.pionbase.framework.MainActivity
 import timber.log.Timber
 
@@ -87,11 +89,20 @@ abstract class BaseFragment<Binding : ViewBinding, VM : ViewModel>(
         super.onDestroyView()
     }
 
+    val navOptionAnim = navOptions {
+        anim {
+            enter = R.anim.slide_in_left
+            exit = R.anim.slide_out_right
+            popEnter = R.anim.slide_in_right
+            popExit = R.anim.slide_out_left
+        }
+    }
+
     fun safeNav(currentDestination: Int, action: Int, bundle: Bundle? = null) {
         if (navController.currentDestination?.id == currentDestination) {
             doActionWhenResume {
                 try {
-                    navController.navigate(action, bundle)
+                    navController.navigate(action, bundle, navOptionAnim)
                 } catch (e: IllegalArgumentException) {
                     Timber.tag(TAG).e("safeNav: ${e.message}")
                 }
@@ -109,7 +120,7 @@ abstract class BaseFragment<Binding : ViewBinding, VM : ViewModel>(
                             lifecycle.removeObserver(this)
                             runCatching {
                                 if (navController.currentDestination?.id == currentDestination) {
-                                    navController.navigate(action, bundle)
+                                    navController.navigate(action, bundle, navOptionAnim)
                                 }
                             }
                         }
@@ -130,7 +141,7 @@ abstract class BaseFragment<Binding : ViewBinding, VM : ViewModel>(
                     }
                 })
                 if (navController.currentDestination?.id == currentDestination) {
-                    navController.navigate(action, bundle)
+                    navController.navigate(action, bundle, navOptionAnim)
                 }
             }
         }

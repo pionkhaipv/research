@@ -1,0 +1,19 @@
+package pion.tech.pionbase.framework.presentation.onboard.viewpager
+
+import pion.tech.pionbase.databinding.PagerOnboard1Binding
+import pion.tech.pionbase.framework.presentation.onboard.OnboardFragment
+import pion.tech.pionbase.framework.presentation.onboard.adapter.OnboardAdapter
+
+class OnboardViewHolder1(
+    val binding: PagerOnboard1Binding,
+    val onboardAdapter: OnboardAdapter,
+    val fragment: OnboardFragment?
+) :
+    OnboardAdapter.OnboardViewHolder(binding.root) {
+
+    override fun bind() {
+
+    }
+
+
+}

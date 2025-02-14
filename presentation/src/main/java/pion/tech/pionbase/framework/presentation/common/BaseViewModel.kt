@@ -13,43 +13,38 @@ abstract class BaseViewModel : ViewModel() {
 
 }
 
-/**
- *
- * **sample:**
- * ```
- * class SampleViewModel : ViewModel() {
- *
- *     fun sample() {
- *         launchIO {
- *             // Logic
- *         }
- *         launchIO(exceptionHandler = CoroutineExceptionHandler { coroutineContext, throwable ->
- *             // exception handling
- *         }) {
- *             // Logic
- *         }
- *     }
- * }
- * @return Job
- */
+
 
 fun ViewModel.launchIO(
-    exceptionHandler: CoroutineExceptionHandler = CoroutineExceptionHandler { _, throwable ->
-        Timber.e("${this::class.java.simpleName} error: $throwable")
-    },
+    onError: (Throwable) -> Unit = { },
     block: suspend CoroutineScope.() -> Unit
-): Job = viewModelScope.launch(Dispatchers.IO + exceptionHandler, block = block)
+): Job {
+    val exceptionHandler = CoroutineExceptionHandler { _, throwable ->
+        Timber.e("${this::class.java.simpleName} error: $throwable")
+        onError(throwable)
+    }
+    return viewModelScope.launch(Dispatchers.IO + exceptionHandler, block = block)
+}
 
 fun ViewModel.launchDefault(
-    exceptionHandler: CoroutineExceptionHandler = CoroutineExceptionHandler { _, throwable ->
-        Timber.e("${this::class.java.simpleName} error: $throwable")
-    },
+    onError: (Throwable) -> Unit = { },
     block: suspend CoroutineScope.() -> Unit
-): Job = viewModelScope.launch(Dispatchers.Default + exceptionHandler, block = block)
+): Job {
+    val exceptionHandler = CoroutineExceptionHandler { _, throwable ->
+        Timber.e("${this::class.java.simpleName} error: $throwable")
+        onError(throwable)
+    }
+    return viewModelScope.launch(Dispatchers.Default + exceptionHandler, block = block)
+}
 
 fun ViewModel.launchMain(
-    exceptionHandler: CoroutineExceptionHandler = CoroutineExceptionHandler { _, throwable ->
-        Timber.e("${this::class.java.simpleName} error: $throwable")
-    },
+    onError: (Throwable) -> Unit = { },
     block: suspend CoroutineScope.() -> Unit
-): Job = viewModelScope.launch(Dispatchers.Main + exceptionHandler, block = block)
+): Job {
+    val exceptionHandler = CoroutineExceptionHandler { _, throwable ->
+        Timber.e("${this::class.java.simpleName} error: $throwable")
+        onError(throwable)
+    }
+    return viewModelScope.launch(Dispatchers.Main + exceptionHandler, block = block)
+}
+

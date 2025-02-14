@@ -21,6 +21,8 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(
     override fun init(view: View) {
         initView()
         plusEvent()
+        settingEvent()
+        onBackEvent()
     }
 
     override fun subscribeObserver(view: View) {

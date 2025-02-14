@@ -47,4 +47,8 @@ dependencies {
     implementation(libs.retrofit)
     implementation(libs.converter.gson)
 
+    //Firebase
+    implementation(libs.google.firebase.config.ktx)
+
+
 }
