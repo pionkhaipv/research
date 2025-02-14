@@ -10,7 +10,6 @@ import pion.tech.pionbase.util.setPreventDoubleClickScaleView
 fun HomeFragment.initView() {
     dummyEntity = arguments?.parcelable(BundleKey.KEY_DUMMY_ENTITY)
     binding.rvMain.adapter = adapter
-    binding.tvHome.text = "Is premium " + viewModel.getIsPremiumValue().toString()
 }
 
 fun HomeFragment.plusEvent() {

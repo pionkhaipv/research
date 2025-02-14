@@ -163,4 +163,7 @@ dependencies {
     debugImplementation (libs.chucker.library)
     releaseImplementation (libs.chucker.library.no.op)
 
+    implementation("io.coil-kt:coil:2.7.0")
+
+
 }

@@ -5,6 +5,7 @@ import com.piontech.data.local.PreferencesDataSource
 import com.piontech.data.local.SharedPreferencesDataSource
 import com.piontech.data.repository.PreferencesRepositoryImpl
 import com.piontech.domain.repository.PreferencesRepository
+import com.piontech.domain.usecase.LanguageUseCase
 import com.piontech.domain.usecase.PreferencesUseCase
 import dagger.Module
 import dagger.Provides
@@ -35,6 +36,11 @@ class DataModule {
     @Provides
     fun providePreferencesUseCase(preferencesRepository: PreferencesRepository): PreferencesUseCase {
         return PreferencesUseCase(preferencesRepository)
+    }
+
+    @Provides
+    fun provideLanguageUseCase(): LanguageUseCase {
+        return LanguageUseCase()
     }
 
 }
