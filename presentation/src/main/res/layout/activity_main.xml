@@ -7,7 +7,7 @@
 
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/fragmentContainerMain"
-        android:name="pion.tech.pionbase.framework.presentation.common.MainNavHostFragment"
+        android:name="pion.tech.pionbase.ui.common.MainNavHostFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:defaultNavHost="true"

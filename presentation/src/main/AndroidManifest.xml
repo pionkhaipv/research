@@ -19,7 +19,7 @@
         android:theme="@style/Theme.BaseClean"
         tools:replace="android:label">
         <activity
-            android:name="pion.tech.pionbase.framework.MainActivity"
+            android:name=".ui.MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

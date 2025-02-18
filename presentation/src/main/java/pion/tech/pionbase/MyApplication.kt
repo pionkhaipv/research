@@ -4,8 +4,8 @@ import android.app.Application
 import androidx.appcompat.app.AppCompatDelegate
 import com.khaipv.recovery.core.Recovery
 import dagger.hilt.android.HiltAndroidApp
-import pion.tech.pionbase.framework.MainActivity
-import pion.tech.pionbase.framework.presentation.common.lifecycleCallback.ActivityLifecycleCallbacksImpl
+import pion.tech.pionbase.ui.MainActivity
+import pion.tech.pionbase.ui.common.lifecycleCallback.ActivityLifecycleCallbacksImpl
 import timber.log.Timber
 
 @HiltAndroidApp

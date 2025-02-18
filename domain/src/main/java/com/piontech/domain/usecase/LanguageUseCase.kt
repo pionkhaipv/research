@@ -1,9 +1,11 @@
 package com.piontech.domain.usecase
 
 import com.piontech.domain.model.LanguageData
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 
 class LanguageUseCase {
-    operator fun invoke(): List<LanguageData> {
+    operator fun invoke(): Flow<List<LanguageData>> {
         val listLanguageData = listOf(
             LanguageData("https://flagcdn.com/w320/us.png", "English", "en"),
             LanguageData("https://flagcdn.com/w320/es.png", "Español", "es"),
@@ -30,6 +32,8 @@ class LanguageUseCase {
             LanguageData("https://flagcdn.com/w320/bg.png", "Български Език", "bg"),
             LanguageData("https://flagcdn.com/w320/gr.png", "Ελληνικά", "el")
         )
-        return listLanguageData
+        return flow {
+            emit(listLanguageData)
+        }
     }
 }

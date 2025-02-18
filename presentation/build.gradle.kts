@@ -36,10 +36,10 @@ android {
 
     buildTypes {
         debug {
-            buildConfigField("String", "BASE_URL", "\"http://cms.piontech.site:9123/stores/\"")
+            buildConfigField("String", "BASE_URL", "\"https://api.piontech.site/stores/\"")
         }
         release {
-            buildConfigField("String", "BASE_URL", "\"http://cms.piontech.site:9123/stores/\"")
+            buildConfigField("String", "BASE_URL", "\"https://api.piontech.site/stores/\"")
             isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
