@@ -1,6 +1,6 @@
 package com.piontech.data.repository
 
-import com.piontech.data.local.PreferencesDataSource
+import com.piontech.data.local.sharePreference.PreferencesDataSource
 import com.piontech.domain.repository.PreferencesRepository
 
 class PreferencesRepositoryImpl(

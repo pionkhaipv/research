@@ -114,10 +114,6 @@ dependencies {
     implementation(libs.kotlinx.coroutines.core)
     implementation(libs.kotlinx.coroutines.android)
 
-    // Room
-    implementation(libs.androidx.room.ktx)
-    ksp(libs.androidx.room.compiler)
-
     // Glide
     api(libs.glide)
     annotationProcessor(libs.glide.compiler)
@@ -164,5 +160,9 @@ dependencies {
     //Chucker
     debugImplementation (libs.chucker.library)
     releaseImplementation (libs.chucker.library.no.op)
+
+    // Room
+    implementation(libs.androidx.room.ktx)
+    ksp(libs.androidx.room.compiler)
 
 }

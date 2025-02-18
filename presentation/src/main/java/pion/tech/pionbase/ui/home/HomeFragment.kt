@@ -1,10 +1,8 @@
 package pion.tech.pionbase.ui.home
 
-import android.util.Log
 import android.view.View
 import dagger.hilt.android.AndroidEntryPoint
 import pion.tech.pionbase.databinding.FragmentHomeBinding
-import pion.tech.pionbase.framework.database.entities.DummyEntity
 import pion.tech.pionbase.ui.common.BaseFragment
 import pion.tech.pionbase.ui.common.GetAppCategoryUiState
 import pion.tech.pionbase.ui.common.GetTemplateUiState
@@ -19,7 +17,6 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(
     HomeViewModel::class.java
 ), DemoDialog.Listener {
 
-    var dummyEntity: DummyEntity? = null
     val adapter = DemoMultipleAdapter()
     override fun init(view: View) {
         initView()

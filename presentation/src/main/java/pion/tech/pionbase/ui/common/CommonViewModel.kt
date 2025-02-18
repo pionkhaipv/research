@@ -1,6 +1,5 @@
 package pion.tech.pionbase.ui.common
 
-import android.util.Log
 import com.piontech.domain.usecase.AppCategoryUseCase
 import com.piontech.domain.usecase.FetchRemoteConfigUseCase
 import com.piontech.domain.usecase.TemplateUseCase
@@ -56,7 +55,6 @@ class CommonViewModel @Inject constructor(
 
             _getCategoryUiState.value = GetAppCategoryUiState.Standby
             appCategoryUseCase.invoke().catch {
-                Log.d("asgawggwaagwawg", "getAppId: $it")
                 _getCategoryUiState.value = GetAppCategoryUiState.Error
             }.collect {
                 _getCategoryUiState.value =

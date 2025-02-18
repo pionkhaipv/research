@@ -1,10 +1,7 @@
 package pion.tech.pionbase.ui.splash
 
-import android.os.Bundle
 import androidx.activity.addCallback
 import pion.tech.pionbase.R
-import pion.tech.pionbase.framework.database.entities.DummyEntity
-import pion.tech.pionbase.util.BundleKey
 
 fun SplashFragment.backEvent() {
     activity?.onBackPressedDispatcher?.addCallback(this, true) {
@@ -20,15 +17,9 @@ fun SplashFragment.onBackPressed() {
 }
 
 fun SplashFragment.startAnimation() {
-    binding.loadingView.startAnim(2000L) {
-        val dummyEntity = DummyEntity(id = 0, value = "Hello Home")
-
-        val bundle = Bundle()
-        bundle.putParcelable(BundleKey.KEY_DUMMY_ENTITY, dummyEntity)
-
-    }
+    binding.loadingView.startAnim(2000L)
 }
 
-fun SplashFragment.goToLanguageScreen(){
+fun SplashFragment.goToLanguageScreen() {
     safeNav(R.id.splashFragment, R.id.action_splashFragment_to_languageFragment)
 }

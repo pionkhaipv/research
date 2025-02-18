@@ -3,8 +3,8 @@ package pion.tech.pionbase.di
 import android.content.SharedPreferences
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.piontech.data.api.ApiInterface
-import com.piontech.data.local.PreferencesDataSource
-import com.piontech.data.local.SharedPreferencesDataSource
+import com.piontech.data.local.sharePreference.PreferencesDataSource
+import com.piontech.data.local.sharePreference.SharedPreferencesDataSource
 import com.piontech.data.repository.ApiRepositoryImpl
 import com.piontech.data.repository.PreferencesRepositoryImpl
 import com.piontech.data.repository.RemoteConfigRepositoryImpl

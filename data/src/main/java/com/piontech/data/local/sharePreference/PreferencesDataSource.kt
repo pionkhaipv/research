@@ -1,4 +1,4 @@
-package com.piontech.data.local
+package com.piontech.data.local.sharePreference
 
 interface PreferencesDataSource {
     var isPremium: Boolean

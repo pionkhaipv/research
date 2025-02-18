@@ -1,11 +1,11 @@
-package pion.tech.pionbase.framework.database.daointerface
+package com.piontech.data.local.db.dao
 
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Update
-import pion.tech.pionbase.framework.database.entities.DummyEntity
+import com.piontech.data.model.DummyEntity
 
 @Dao
 interface DummyDAO {

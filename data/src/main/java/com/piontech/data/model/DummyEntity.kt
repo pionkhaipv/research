@@ -1,14 +1,11 @@
-package pion.tech.pionbase.framework.database.entities
+package com.piontech.data.model
 
-import android.os.Parcelable
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import kotlinx.parcelize.Parcelize
-import pion.tech.pionbase.framework.database.entities.DummyEntity.Companion.TABLE_NAME
+import com.piontech.domain.model.DummyData
 
-@Entity(tableName = TABLE_NAME)
-@Parcelize
+@Entity(tableName = DummyEntity.TABLE_NAME)
 data class DummyEntity(
     @PrimaryKey
     @ColumnInfo(name = ID)
@@ -16,7 +13,7 @@ data class DummyEntity(
 
     @ColumnInfo(name = VALUE)
     val value: String
-) : Parcelable {
+) {
 
     companion object {
         const val TABLE_NAME = "DummyEntity"
@@ -24,3 +21,5 @@ data class DummyEntity(
         const val VALUE = "VALUE"
     }
 }
+
+fun DummyEntity.toDomain(): DummyData = DummyData(id = this.id, value = this.value)
