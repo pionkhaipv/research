@@ -1,4 +1,4 @@
-package com.piontech.data.local.sharePreference
+package com.piontech.data.local.dataStore
 
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences

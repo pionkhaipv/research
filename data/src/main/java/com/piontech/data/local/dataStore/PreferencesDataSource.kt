@@ -1,4 +1,4 @@
-package com.piontech.data.local.sharePreference
+package com.piontech.data.local.dataStore
 
 import kotlinx.coroutines.flow.Flow
 

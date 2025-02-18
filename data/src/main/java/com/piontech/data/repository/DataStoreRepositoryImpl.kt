@@ -1,6 +1,6 @@
 package com.piontech.data.repository
 
-import com.piontech.data.local.sharePreference.PreferencesDataSource
+import com.piontech.data.local.dataStore.PreferencesDataSource
 import com.piontech.domain.repository.DataStoreRepository
 import kotlinx.coroutines.flow.Flow
 
@@ -8,6 +8,7 @@ class DataStoreRepositoryImpl(
     private val preferencesDataSource: PreferencesDataSource
 ) : DataStoreRepository {
     override suspend fun getIsPremium(): Flow<Boolean> {
+        throw Exception("")
         return preferencesDataSource.getIsPremium()
     }
 

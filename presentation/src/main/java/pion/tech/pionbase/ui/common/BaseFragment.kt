@@ -174,22 +174,34 @@ fun Fragment.doActionWhenResume(action: () -> Unit) {
 }
 
 fun Fragment.launchIO(
-    exceptionHandler: CoroutineExceptionHandler = CoroutineExceptionHandler { _, throwable ->
-        Timber.e("${this::class.java.simpleName} error: $throwable")
-    },
+    onError: (Throwable) -> Unit = { },
     block: suspend CoroutineScope.() -> Unit
-): Job = lifecycleScope.launch(Dispatchers.IO + exceptionHandler, block = block)
+): Job {
+    val exceptionHandler = CoroutineExceptionHandler { _, throwable ->
+        Timber.e("${this::class.java.simpleName} error: $throwable")
+        onError(throwable)
+    }
+    return lifecycleScope.launch(Dispatchers.IO + exceptionHandler, block = block)
+}
 
 fun Fragment.launchDefault(
-    exceptionHandler: CoroutineExceptionHandler = CoroutineExceptionHandler { _, throwable ->
-        Timber.e("${this::class.java.simpleName} error: $throwable")
-    },
+    onError: (Throwable) -> Unit = { },
     block: suspend CoroutineScope.() -> Unit
-): Job = lifecycleScope.launch(Dispatchers.Default + exceptionHandler, block = block)
+): Job {
+    val exceptionHandler = CoroutineExceptionHandler { _, throwable ->
+        Timber.e("${this::class.java.simpleName} error: $throwable")
+        onError(throwable)
+    }
+    return lifecycleScope.launch(Dispatchers.Default + exceptionHandler, block = block)
+}
 
 fun Fragment.launchMain(
-    exceptionHandler: CoroutineExceptionHandler = CoroutineExceptionHandler { _, throwable ->
-        Timber.e("${this::class.java.simpleName} error: $throwable")
-    },
+    onError: (Throwable) -> Unit = { },
     block: suspend CoroutineScope.() -> Unit
-): Job = lifecycleScope.launch(Dispatchers.Main + exceptionHandler, block = block)
+): Job {
+    val exceptionHandler = CoroutineExceptionHandler { _, throwable ->
+        Timber.e("${this::class.java.simpleName} error: $throwable")
+        onError(throwable)
+    }
+    return lifecycleScope.launch(Dispatchers.Main + exceptionHandler, block = block)
+}

@@ -1,8 +1,8 @@
-package com.piontech.data.local.db
+package com.piontech.data.local.roomDb
 
 import androidx.room.Database
 import androidx.room.RoomDatabase
-import com.piontech.data.local.db.dao.DummyDAO
+import com.piontech.data.local.roomDb.dao.DummyDAO
 import com.piontech.data.model.DummyEntity
 
 @Database(entities = [DummyEntity::class], version = 1)

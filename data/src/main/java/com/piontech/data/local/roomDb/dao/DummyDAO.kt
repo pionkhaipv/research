@@ -1,4 +1,4 @@
-package com.piontech.data.local.db.dao
+package com.piontech.data.local.roomDb.dao
 
 import androidx.room.Dao
 import androidx.room.Delete

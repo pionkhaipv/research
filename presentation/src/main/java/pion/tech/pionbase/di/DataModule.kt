@@ -4,8 +4,8 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.piontech.data.api.ApiInterface
-import com.piontech.data.local.sharePreference.PreferencesDataSource
-import com.piontech.data.local.sharePreference.DataStoreSource
+import com.piontech.data.local.dataStore.PreferencesDataSource
+import com.piontech.data.local.dataStore.DataStoreSource
 import com.piontech.data.repository.ApiRepositoryImpl
 import com.piontech.data.repository.DataStoreRepositoryImpl
 import com.piontech.data.repository.RemoteConfigRepositoryImpl
