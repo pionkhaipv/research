@@ -10,7 +10,7 @@ fun safeDelay(delayMillis: Long = 0, action: () -> Unit) {
         try {
             action()
         } catch (e: Exception) {
-            Log.e("AppDebug", "safeDelay: $e")
+            e.printStackTrace()
         }
     }, delayMillis)
 }
