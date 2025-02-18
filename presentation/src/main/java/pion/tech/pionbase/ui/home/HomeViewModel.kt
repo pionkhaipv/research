@@ -1,7 +1,8 @@
 package pion.tech.pionbase.ui.home
 
-import com.piontech.domain.usecase.PreferencesUseCase
+import com.piontech.domain.usecase.DataStoreUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import pion.tech.pionbase.ui.common.BaseViewModel
@@ -9,7 +10,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-    private val preferencesUseCase: PreferencesUseCase,
+    private val dataStoreUseCase: DataStoreUseCase,
 ) : BaseViewModel() {
 
     private val _countValue = MutableStateFlow(0)
@@ -19,5 +20,9 @@ class HomeViewModel @Inject constructor(
         _countValue.value += 1
     }
 
-    fun getIsPremiumValue()= preferencesUseCase.getPremiumStatus()
+    suspend fun getIsPremiumValue(): Flow<Boolean> {
+        return dataStoreUseCase.getIsPremium()
+    }
+
+
 }

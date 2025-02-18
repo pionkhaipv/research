@@ -55,5 +55,8 @@ dependencies {
     implementation(libs.androidx.room.ktx)
     ksp(libs.androidx.room.compiler)
 
+    //Data store
+    implementation(libs.androidx.datastore.preferences)
+
 
 }

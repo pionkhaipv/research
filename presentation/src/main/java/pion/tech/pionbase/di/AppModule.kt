@@ -3,6 +3,9 @@ package pion.tech.pionbase.di
 import android.app.Application
 import android.content.Context
 import android.content.SharedPreferences
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.preferencesDataStore
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.google.firebase.remoteconfig.ktx.remoteConfig
@@ -15,6 +18,7 @@ import pion.tech.pionbase.BuildConfig
 import pion.tech.pionbase.R
 import javax.inject.Singleton
 
+val Context.dataStore by preferencesDataStore(name = BuildConfig.APPLICATION_ID)
 
 @InstallIn(SingletonComponent::class)
 @Module
@@ -43,6 +47,12 @@ object AppModule {
             )
             setDefaultsAsync(R.xml.remote_config_defaults)
         }
+    }
+
+    @Provides
+    @Singleton
+    fun provideDataStore(application: Application): DataStore<Preferences> {
+        return application.dataStore
     }
 
 

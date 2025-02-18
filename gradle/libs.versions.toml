@@ -2,6 +2,7 @@
 autodimension = "1.0.8"
 cardview = "1.0.0"
 core = "3.3.0"
+datastorePreferences = "1.1.2"
 kotlinStdlib = "2.0.21"
 legacySupportV4 = "1.0.0"
 chuckerLibrary = "4.1.0"
@@ -50,6 +51,7 @@ firebaseConfigKtx = "22.1.0"
 androidx-appcompat-resources = { module = "androidx.appcompat:appcompat-resources", version.ref = "appcompat" }
 androidx-cardview = { module = "androidx.cardview:cardview", version.ref = "cardview" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
+androidx-datastore-preferences = { module = "androidx.datastore:datastore-preferences", version.ref = "datastorePreferences" }
 androidx-legacy-support-v4 = { module = "androidx.legacy:legacy-support-v4", version.ref = "legacySupportV4" }
 androidx-lifecycle-livedata-ktx = { module = "androidx.lifecycle:lifecycle-livedata-ktx", version.ref = "lifecycle" }
 androidx-viewpager2 = { module = "androidx.viewpager2:viewpager2", version.ref = "viewpager2" }

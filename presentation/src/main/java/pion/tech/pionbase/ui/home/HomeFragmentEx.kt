@@ -3,8 +3,6 @@ package pion.tech.pionbase.ui.home
 import androidx.activity.addCallback
 import pion.tech.pionbase.R
 import pion.tech.pionbase.ui.home.bottomSheet.DemoBottomSheet
-import pion.tech.pionbase.util.BundleKey
-import pion.tech.pionbase.util.parcelable
 import pion.tech.pionbase.util.setPreventDoubleClickScaleView
 
 fun HomeFragment.initView() {

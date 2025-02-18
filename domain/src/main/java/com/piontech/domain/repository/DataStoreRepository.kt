@@ -1,8 +1,8 @@
-package com.piontech.data.local.sharePreference
+package com.piontech.domain.repository
 
 import kotlinx.coroutines.flow.Flow
 
-interface PreferencesDataSource {
+interface DataStoreRepository {
     suspend fun getIsPremium(): Flow<Boolean>
     suspend fun setIsPremium(isPremium: Boolean)
 

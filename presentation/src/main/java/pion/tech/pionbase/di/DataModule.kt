@@ -1,20 +1,21 @@
 package pion.tech.pionbase.di
 
-import android.content.SharedPreferences
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.piontech.data.api.ApiInterface
 import com.piontech.data.local.sharePreference.PreferencesDataSource
-import com.piontech.data.local.sharePreference.SharedPreferencesDataSource
+import com.piontech.data.local.sharePreference.DataStoreSource
 import com.piontech.data.repository.ApiRepositoryImpl
-import com.piontech.data.repository.PreferencesRepositoryImpl
+import com.piontech.data.repository.DataStoreRepositoryImpl
 import com.piontech.data.repository.RemoteConfigRepositoryImpl
 import com.piontech.domain.repository.ApiRepository
-import com.piontech.domain.repository.PreferencesRepository
+import com.piontech.domain.repository.DataStoreRepository
 import com.piontech.domain.repository.RemoteConfigRepository
 import com.piontech.domain.usecase.AppCategoryUseCase
 import com.piontech.domain.usecase.FetchRemoteConfigUseCase
 import com.piontech.domain.usecase.LanguageUseCase
-import com.piontech.domain.usecase.PreferencesUseCase
+import com.piontech.domain.usecase.DataStoreUseCase
 import com.piontech.domain.usecase.TemplateUseCase
 import dagger.Module
 import dagger.Provides
@@ -27,18 +28,17 @@ import javax.inject.Singleton
 class DataModule {
 
     @Provides
-    fun providePreferencesDataSource(
-        sharedPreferences: SharedPreferences
-    ): PreferencesDataSource {
-        return SharedPreferencesDataSource(sharedPreferences)
+    @Singleton
+    fun providePreferencesDataSource(dataStore: DataStore<Preferences>): PreferencesDataSource {
+        return DataStoreSource(dataStore)
     }
 
     @Provides
     @Singleton
     fun providePreferencesRepository(
         preferencesDataSource: PreferencesDataSource
-    ): PreferencesRepository {
-        return PreferencesRepositoryImpl(preferencesDataSource)
+    ): DataStoreRepository {
+        return DataStoreRepositoryImpl(preferencesDataSource)
     }
 
     @Provides
@@ -59,8 +59,8 @@ class DataModule {
 
 
     @Provides
-    fun providePreferencesUseCase(preferencesRepository: PreferencesRepository): PreferencesUseCase {
-        return PreferencesUseCase(preferencesRepository)
+    fun providePreferencesUseCase(dataStoreRepository: DataStoreRepository): DataStoreUseCase {
+        return DataStoreUseCase(dataStoreRepository)
     }
 
     @Provides
