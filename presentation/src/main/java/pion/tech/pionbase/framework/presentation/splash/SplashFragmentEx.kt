@@ -1,11 +1,15 @@
 package pion.tech.pionbase.framework.presentation.splash
 
 import android.os.Bundle
+import android.widget.TextView
 import androidx.activity.addCallback
+import pion.datlt.libads.AdsController
 import pion.datlt.libads.utils.adsuntils.showSplashInter
 import pion.tech.pionbase.R
 import pion.tech.pionbase.framework.database.entities.DummyEntity
 import pion.tech.pionbase.util.BundleKey
+import pion.tech.pionbase.util.gone
+import pion.tech.pionbase.util.show
 
 fun SplashFragment.backEvent() {
     activity?.onBackPressedDispatcher?.addCallback(this, true) {

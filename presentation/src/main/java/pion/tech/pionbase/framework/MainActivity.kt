@@ -3,8 +3,11 @@ package pion.tech.pionbase.framework
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import android.view.WindowManager
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.isVisible
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import com.google.firebase.ktx.Firebase
@@ -17,6 +20,7 @@ import pion.tech.pionbase.BuildConfig
 import pion.tech.pionbase.R
 import pion.tech.pionbase.framework.presentation.common.LoadingDialog
 import pion.tech.pionbase.framework.presentation.common.lifecycleCallback.FragmentLifecycleCallbacksImpl
+import pion.tech.pionbase.framework.presentation.splash.SplashFragment
 import pion.tech.pionbase.util.Constant
 
 @AndroidEntryPoint
@@ -25,7 +29,10 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        supportFragmentManager.registerFragmentLifecycleCallbacks(FragmentLifecycleCallbacksImpl(), true)
+        supportFragmentManager.registerFragmentLifecycleCallbacks(
+            FragmentLifecycleCallbacksImpl(),
+            true
+        )
         window.setFlags(
             WindowManager.LayoutParams.FLAG_FULLSCREEN,
             WindowManager.LayoutParams.FLAG_FULLSCREEN
@@ -54,6 +61,23 @@ class MainActivity : AppCompatActivity() {
         )
     }
 
+    fun initAppResumeAds() {
+        AdsController.getInstance().initResumeAds(
+            lifecycle = lifecycle,
+            listSpaceName = listOf("appresume_openad1", "appresume_openad2", "appresume_openad3"),
+            onShowOpenApp = {
+                findViewById<TextView>(R.id.viewShowOpenApp).isVisible = true
+            },
+            onStartToShowOpenAds = {
+                findViewById<TextView>(R.id.viewShowOpenApp).isVisible = true
+            },
+            onCloseOpenApp = {
+                findViewById<TextView>(R.id.viewShowOpenApp).isVisible = false
+            },
+            onPaidEvent = {
+                //do nothing
+            })
+    }
 
 
     private fun getNavHost(): NavController {

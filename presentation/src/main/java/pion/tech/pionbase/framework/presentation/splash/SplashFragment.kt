@@ -4,11 +4,13 @@ import android.util.Log
 import android.view.View
 import dagger.hilt.android.AndroidEntryPoint
 import pion.datlt.libads.AdsController
+import pion.datlt.libads.utils.CommonUtils
 import pion.datlt.libads.utils.loadAndShowConsentFormIfRequire
 import pion.datlt.libads.utils.requestConsentInfoUpdate
 import pion.tech.pionbase.databinding.FragmentSplashBinding
+import pion.tech.pionbase.framework.MainActivity
 import pion.tech.pionbase.framework.presentation.common.BaseFragment
-import pion.tech.pionbase.framework.presentation.common.RemoteConfigDataStatus
+import pion.tech.pionbase.util.Constant
 import pion.tech.pionbase.util.collectFlowOnView
 
 
@@ -25,43 +27,34 @@ class SplashFragment : BaseFragment<FragmentSplashBinding, SplashViewModel>(
 
     override fun subscribeObserver(view: View) {
         commonViewModel.remoteConfigDataStateFlow.collectFlowOnView(viewLifecycleOwner) {
-            when (it) {
-                RemoteConfigDataStatus.Error -> {
-
-                }
-
-                RemoteConfigDataStatus.None -> {
-
-                }
-
-                RemoteConfigDataStatus.Standby -> {
-                }
-
-                is RemoteConfigDataStatus.Success -> {
-                    Log.d("asgawgawgwgawga", "subscribeObserver: ${it.remoteConfigDataModel.isRealData}")
-                    AdsController.getInstance().requestConsentInfoUpdate(
-                        onFailed = { error ->
-                            //vao nhu luong binh thuong
+            Log.d("asgawgawgwgawga", "subscribeObserver: ${it?.isRealData}")
+            if (it != null) {
+                Constant.isRemoteConfigSuccess = it.isRealData
+                AdsController.setConfigAds(it.configShowAds)
+                AdsController.getInstance().setListAdsData(listJsonData = arrayListOf(it.admobId))
+                (activity as? MainActivity)?.initAppResumeAds()
+                AdsController.getInstance().requestConsentInfoUpdate(
+                    onFailed = { error ->
+                        goToLanguageScreen()
+                    },
+                    onSuccess = { isRequire, isConsentAvailable ->
+                        if (isRequire) {
+                            AdsController.getInstance()
+                                .loadAndShowConsentFormIfRequire(
+                                    onConsentError = { errorConsent ->
+                                        goToLanguageScreen()
+                                    },
+                                    onConsentDone = {
+                                        goToLanguageScreen()
+                                    }
+                                )
+                        } else {
                             goToLanguageScreen()
-                        },
-                        onSuccess = { isRequire, isConsentAvailable ->
-                            if (isRequire) {
-                                AdsController.getInstance()
-                                    .loadAndShowConsentFormIfRequire(
-                                        onConsentError = { errorConsent ->
-                                            goToLanguageScreen()
-                                        },
-                                        onConsentDone = {
-                                            goToLanguageScreen()
-                                        }
-                                    )
-                            } else {
-                                goToLanguageScreen()
-                            }
                         }
-                    )
-                }
+                    }
+                )
             }
+
         }
     }
 
