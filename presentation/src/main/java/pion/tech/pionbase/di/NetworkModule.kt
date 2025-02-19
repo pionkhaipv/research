@@ -1,6 +1,7 @@
 package pion.tech.pionbase.di
 
 import android.content.Context
+import com.chuckerteam.chucker.api.ChuckerInterceptor
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.piontech.data.api.ApiInterface
@@ -47,6 +48,7 @@ class NetworkModule {
     @Singleton
     fun provideHttpClient(
         cache: Cache?,
+        @ApplicationContext application: Context
     ): OkHttpClient {
         val loggingInterceptor = HttpLoggingInterceptor()
         loggingInterceptor.level = HttpLoggingInterceptor.Level.NONE
@@ -67,6 +69,7 @@ class NetworkModule {
                 }
             )
             .addInterceptor(loggingInterceptor)
+            .addInterceptor(ChuckerInterceptor(application))
             .connectTimeout(DEFAULT_TIMEOUT.toLong(), TimeUnit.SECONDS)
             .readTimeout(DEFAULT_TIMEOUT.toLong(), TimeUnit.SECONDS)
             .writeTimeout(DEFAULT_TIMEOUT.toLong(), TimeUnit.SECONDS)
