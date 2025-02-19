@@ -37,7 +37,6 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(
                 }
 
                 GetAppCategoryUiState.None -> {
-                    showHideLoading(false)
 
                 }
 
@@ -55,13 +54,13 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(
         }
 
         commonViewModel.getTemplateUiState.collectFlowOnView(viewLifecycleOwner) {
+
             when (it) {
                 GetTemplateUiState.Error -> {
                     showHideLoading(false)
                 }
 
                 GetTemplateUiState.None -> {
-                    showHideLoading(false)
                 }
 
                 GetTemplateUiState.Standby -> {

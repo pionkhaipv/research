@@ -1,5 +1,6 @@
 package pion.tech.pionbase.ui.language
 
+import android.util.Log
 import com.piontech.domain.usecase.LanguageUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -18,7 +19,7 @@ class LanguageViewModel @Inject constructor(
 ) : BaseViewModel() {
 
     private val _languageData = MutableStateFlow<List<LanguageUIModel>>(emptyList())
-    val languageData: StateFlow<List<LanguageUIModel>> get() = _languageData.asStateFlow()
+    val languageData = _languageData.asStateFlow()
 
     init {
         loadLanguages()

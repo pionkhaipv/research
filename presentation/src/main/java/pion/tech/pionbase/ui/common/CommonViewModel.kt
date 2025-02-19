@@ -3,6 +3,9 @@ package pion.tech.pionbase.ui.common
 import com.piontech.domain.usecase.AppCategoryUseCase
 import com.piontech.domain.usecase.FetchRemoteConfigUseCase
 import com.piontech.domain.usecase.TemplateUseCase
+import com.piontech.domain.util.Result
+import com.piontech.domain.util.onError
+import com.piontech.domain.util.onSuccess
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -54,11 +57,13 @@ class CommonViewModel @Inject constructor(
             if (_getCategoryUiState.value is GetAppCategoryUiState.Standby || _getCategoryUiState.value is GetAppCategoryUiState.Success) return@launchIO
 
             _getCategoryUiState.value = GetAppCategoryUiState.Standby
-            appCategoryUseCase.invoke().catch {
-                _getCategoryUiState.value = GetAppCategoryUiState.Error
-            }.collect {
-                _getCategoryUiState.value =
-                    GetAppCategoryUiState.Success(it.map { item -> item.toPresentation() })
+            appCategoryUseCase.invoke().collect {
+                it.onSuccess { data ->
+                    _getCategoryUiState.value =
+                        GetAppCategoryUiState.Success(data.map { item -> item.toPresentation() })
+                }.onError {
+                    _getCategoryUiState.value = GetAppCategoryUiState.Error
+                }
             }
         }
     }
@@ -68,12 +73,16 @@ class CommonViewModel @Inject constructor(
             if (_getTemplateUiState.value is GetTemplateUiState.Standby || _getTemplateUiState.value is GetTemplateUiState.Success) return@launchIO
 
             _getTemplateUiState.value = GetTemplateUiState.Standby
-            templateUseCase.invoke(categoryId).catch {
-                _getTemplateUiState.value = GetTemplateUiState.Error
-            }.collect {
-                _getTemplateUiState.value =
-                    GetTemplateUiState.Success(it.map { item -> item.toPresentation() })
-            }
+            templateUseCase.invoke(categoryId)
+                .collect {
+                    it.onSuccess { data ->
+                        _getTemplateUiState.value =
+                            GetTemplateUiState.Success(data.map { item -> item.toPresentation() })
+                    }.onError {
+                        _getTemplateUiState.value =
+                            GetTemplateUiState.Error
+                    }
+                }
         }
     }
 

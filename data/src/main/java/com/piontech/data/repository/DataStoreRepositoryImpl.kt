@@ -8,7 +8,6 @@ class DataStoreRepositoryImpl(
     private val preferencesDataSource: PreferencesDataSource
 ) : DataStoreRepository {
     override suspend fun getIsPremium(): Flow<Boolean> {
-        throw Exception("")
         return preferencesDataSource.getIsPremium()
     }
 
