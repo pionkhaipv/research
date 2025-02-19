@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.doOnPreDraw
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
@@ -67,6 +68,7 @@ abstract class BaseFragment<Binding : ViewBinding, VM : ViewModel>(
         } else {
             _binding = inflate.invoke(inflater, container, false)
         }
+        postponeEnterTransition()
         return binding.root
     }
 
@@ -78,6 +80,9 @@ abstract class BaseFragment<Binding : ViewBinding, VM : ViewModel>(
         }
         init(view)
         subscribeObserver(view)
+        view.doOnPreDraw {
+            startPostponedEnterTransition()
+        }
     }
 
     abstract fun init(view: View)

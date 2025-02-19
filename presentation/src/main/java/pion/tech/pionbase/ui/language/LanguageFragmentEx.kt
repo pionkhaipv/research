@@ -13,6 +13,7 @@ import pion.tech.pionbase.util.setPreventDoubleClickScaleView
 fun LanguageFragment.initView() {
     adapter.setListener(this)
     binding.rvMain.adapter = adapter
+    binding.rvMain.setHasFixedSize(true)
     binding.ivBack.isVisible = isCameFromSetting()
 }
 
