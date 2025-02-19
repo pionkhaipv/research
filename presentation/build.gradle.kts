@@ -78,7 +78,7 @@ dependencies {
     implementation(libs.kotlin.stdlib)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
-    implementation(libs.androidx.appcompat.resources)
+    implementation(libs.androidx.activity)
     implementation(libs.material)
     implementation(libs.androidx.constraintlayout)
     implementation(libs.androidx.legacy.support.v4)
@@ -94,25 +94,12 @@ dependencies {
     // Crash recovery
     implementation(libs.lib.recovery)
 
-    // Card View
-    implementation(libs.androidx.cardview)
-
-    // Recyclerview
-    implementation(libs.androidx.recyclerview)
-
-    // ViewModel & LiveData
+    // ViewModel
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
-    implementation(libs.androidx.lifecycle.livedata.ktx)
 
     // Hilt
     implementation(libs.hilt.android)
     ksp(libs.hilt.compiler)
-
-    implementation(libs.androidx.navigation.fragment.ktx)
-
-    // Coroutines
-    implementation(libs.kotlinx.coroutines.core)
-    implementation(libs.kotlinx.coroutines.android)
 
     // Glide
     api(libs.glide)
@@ -123,9 +110,6 @@ dependencies {
     implementation(libs.firebase.crashlytics.ktx)
     implementation(libs.firebase.analytics.ktx)
     implementation(libs.firebase.config.ktx)
-
-    // Viewpager2
-    implementation(libs.androidx.viewpager2)
 
     // Nav component
     implementation(libs.androidx.navigation.fragment.ktx)
