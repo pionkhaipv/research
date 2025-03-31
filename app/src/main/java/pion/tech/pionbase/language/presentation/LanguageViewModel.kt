@@ -4,7 +4,6 @@ import pion.tech.pionbase.language.domain.usecase.GetLanguageUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.catch
 import pion.tech.pionbase.core.presentation.common.BaseViewModel
 import pion.tech.pionbase.core.presentation.common.launchIO
 import pion.tech.pionbase.language.presentation.mapper.toPresentation
@@ -25,9 +24,7 @@ class LanguageViewModel @Inject constructor(
 
     private fun loadLanguages() {
         launchIO {
-            getLanguageUseCase.invoke().catch {
-                it.printStackTrace()
-            }.collect {
+            getLanguageUseCase.invoke().collect {
                 _languageData.value = it.map { item -> item.toPresentation() }
             }
         }
