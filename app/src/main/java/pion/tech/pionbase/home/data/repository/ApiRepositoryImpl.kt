@@ -1,0 +1,30 @@
+package pion.tech.pionbase.home.data.repository
+
+import pion.tech.pionbase.home.domain.model.AppCategoryData
+import pion.tech.pionbase.home.domain.model.TemplateData
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
+import pion.tech.pionbase.home.data.api.ApiInterface
+import pion.tech.pionbase.home.domain.repository.ApiRepository
+import pion.tech.pionbase.core.presentation.util.Result
+import pion.tech.pionbase.home.data.model.template.toDomain
+import pion.tech.pionbase.home.data.model.toDomain
+
+class ApiRepositoryImpl(private val apiInterface: ApiInterface) : ApiRepository {
+    override suspend fun getAppCategory(): Flow<Result<List<AppCategoryData>>> {
+        return flow {
+            try {
+                emit(Result.Success(apiInterface.getAppCategory().dataResponse.map { it.toDomain() }))
+            } catch (e: Exception) {
+                emit(Result.Error(e))
+            }
+        }
+    }
+
+    override suspend fun getTemplateData(categoryId: String): Flow<Result<List<TemplateData>>> {
+        return flow<Result<List<TemplateData>>> {
+            emit(Result.Success(apiInterface.getAllTemplate(categoryId).dataResponse.map { it.customField.toDomain() }))
+        }
+    }
+
+}

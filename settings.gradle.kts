@@ -25,9 +25,7 @@ dependencyResolutionManagement {
 }
 
 
-include(":presentation")
+include(":app")
 rootProject.name = "PionBase"
-include(":domain")
-include(":data")
 include(":LibIAP")
 include(":LibAds")
