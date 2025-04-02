@@ -34,7 +34,6 @@ class MainActivity : AppCompatActivity() {
             insets
         }
         initAds()
-        Log.d("asgagwawggawwga", "onCreate: creat")
     }
 
     fun showLoading() {

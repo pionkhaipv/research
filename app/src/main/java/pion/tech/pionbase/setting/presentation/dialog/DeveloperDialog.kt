@@ -3,7 +3,7 @@ package pion.tech.pionbase.setting.presentation.dialog
 import android.os.Bundle
 import pion.tech.pionbase.R
 import pion.tech.pionbase.databinding.DialogDeveloperBinding
-import pion.tech.pionbase.core.presentation.common.BaseDialogFragment
+import pion.tech.pionbase.core.presentation.common.base.BaseDialogFragment
 import pion.tech.pionbase.core.presentation.util.setPreventDoubleClickScaleView
 
 class DeveloperDialog : BaseDialogFragment<DialogDeveloperBinding>(R.layout.dialog_developer) {

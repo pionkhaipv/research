@@ -1,4 +1,4 @@
-package pion.tech.pionbase.app.presentation
+package pion.tech.pionbase.home.presetation
 
 import pion.tech.pionbase.home.domain.usecase.AppCategoryUseCase
 import pion.tech.pionbase.app.domain.usecase.FetchRemoteConfigUseCase
@@ -6,17 +6,15 @@ import pion.tech.pionbase.home.domain.usecase.TemplateUseCase
 import pion.tech.pionbase.core.presentation.util.onError
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.catch
-import pion.tech.pionbase.app.presentation.mapper.toPresentation
-import pion.tech.pionbase.core.presentation.common.BaseViewModel
-import pion.tech.pionbase.core.presentation.common.launchIO
+import pion.tech.pionbase.core.presentation.common.base.BaseViewModel
+import pion.tech.pionbase.core.presentation.common.base.launchIO
 import pion.tech.pionbase.core.presentation.util.onSuccess
-import pion.tech.pionbase.home.presetation.mapper.toPresentation
-import pion.tech.pionbase.model.AppCategoryUIModel
-import pion.tech.pionbase.model.RemoteConfigDataModel
-import pion.tech.pionbase.model.TemplateUIModel
+import pion.tech.pionbase.home.presetation.model.AppCategoryUIModel
+import pion.tech.pionbase.app.presentation.model.RemoteConfigUIModel
+import pion.tech.pionbase.app.presentation.model.toPresentation
+import pion.tech.pionbase.home.presetation.model.TemplateUIModel
+import pion.tech.pionbase.home.presetation.model.toPresentation
 import javax.inject.Inject
 
 @HiltViewModel
@@ -26,9 +24,8 @@ class CommonViewModel @Inject constructor(
     private val templateUseCase: TemplateUseCase
 ) : BaseViewModel() {
 
-    private val _remoteConfigDataStateFlow = MutableStateFlow<RemoteConfigDataModel?>(null)
-    val remoteConfigDataStateFlow: StateFlow<RemoteConfigDataModel?> =
-        _remoteConfigDataStateFlow.asStateFlow()
+    private val _remoteConfigDataStateFlow = MutableStateFlow<RemoteConfigUIModel?>(null)
+    val remoteConfigDataStateFlow = _remoteConfigDataStateFlow.asStateFlow()
 
     init {
         fetchRemoteConfigData()
@@ -36,21 +33,17 @@ class CommonViewModel @Inject constructor(
 
     private val _getCategoryUiState =
         MutableStateFlow<GetAppCategoryUiState>(GetAppCategoryUiState.None)
-    val getCategoryUiState: StateFlow<GetAppCategoryUiState> get() = _getCategoryUiState.asStateFlow()
+    val getCategoryUiState = _getCategoryUiState.asStateFlow()
 
     private val _getTemplateUiState =
         MutableStateFlow<GetTemplateUiState>(GetTemplateUiState.None)
-    val getTemplateUiState: StateFlow<GetTemplateUiState> get() = _getTemplateUiState.asStateFlow()
+    val getTemplateUiState = _getTemplateUiState.asStateFlow()
 
     private fun fetchRemoteConfigData() {
         launchIO {
-            fetchRemoteConfigUseCase.invoke()
-                .catch {
-                    it.printStackTrace()
-                }
-                .collect {
-                    _remoteConfigDataStateFlow.value = it.toPresentation()
-                }
+            fetchRemoteConfigUseCase.invoke().collect {
+                _remoteConfigDataStateFlow.value = it.toPresentation()
+            }
         }
     }
 

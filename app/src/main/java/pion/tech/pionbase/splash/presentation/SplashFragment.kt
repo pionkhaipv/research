@@ -8,7 +8,7 @@ import pion.datlt.libads.utils.loadAndShowConsentFormIfRequire
 import pion.datlt.libads.utils.requestConsentInfoUpdate
 import pion.tech.pionbase.databinding.FragmentSplashBinding
 import pion.tech.pionbase.app.presentation.MainActivity
-import pion.tech.pionbase.core.presentation.common.BaseFragment
+import pion.tech.pionbase.core.presentation.common.base.BaseFragment
 import pion.tech.pionbase.core.presentation.util.Constant
 import pion.tech.pionbase.core.presentation.util.collectFlowOnView
 

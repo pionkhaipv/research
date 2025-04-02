@@ -1,4 +1,4 @@
-package pion.tech.pionbase.core.presentation.common
+package pion.tech.pionbase.core.presentation.common.base
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

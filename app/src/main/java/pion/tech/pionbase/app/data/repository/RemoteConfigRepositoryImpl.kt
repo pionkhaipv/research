@@ -1,10 +1,13 @@
 package pion.tech.pionbase.app.data.repository
 
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
+import kotlinx.coroutines.Dispatchers
 import pion.tech.pionbase.app.domain.model.RemoteConfigData
 import pion.tech.pionbase.app.domain.repository.RemoteConfigRepository
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.withTimeoutOrNull
 import pion.tech.pionbase.app.data.model.RemoteConfigDataEntity
@@ -15,10 +18,12 @@ class RemoteConfigRepositoryImpl(private val remoteConfig: FirebaseRemoteConfig)
     RemoteConfigRepository {
 
     override suspend fun fetchRemoteConfig(): Flow<RemoteConfigData> {
-        return flow {
+        return flow<RemoteConfigData> {
             val data = withTimeoutOrNull(7000) { fetchRemoteConfigData() } ?: getDefaultRemoteConfigData()
             emit(data)
-        }
+        }.catch {
+            emit(getDefaultRemoteConfigData())
+        }.flowOn(Dispatchers.IO)
     }
 
     private suspend fun fetchRemoteConfigData(): RemoteConfigData {

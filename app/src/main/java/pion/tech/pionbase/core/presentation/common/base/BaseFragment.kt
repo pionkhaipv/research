@@ -1,10 +1,9 @@
-package pion.tech.pionbase.core.presentation.common
+package pion.tech.pionbase.core.presentation.common.base
 
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.view.doOnPreDraw
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
@@ -23,8 +22,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
-import pion.tech.pionbase.R
-import pion.tech.pionbase.app.presentation.CommonViewModel
+import pion.tech.pionbase.home.presetation.CommonViewModel
 import pion.tech.pionbase.app.presentation.MainActivity
 import timber.log.Timber
 

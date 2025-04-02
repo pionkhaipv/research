@@ -4,7 +4,7 @@ import android.os.Bundle
 import dagger.hilt.android.AndroidEntryPoint
 import pion.tech.pionbase.R
 import pion.tech.pionbase.databinding.BottomSheetDemoBinding
-import pion.tech.pionbase.core.presentation.common.BaseBottomSheetDialogFragment
+import pion.tech.pionbase.core.presentation.common.base.BaseBottomSheetDialogFragment
 
 @AndroidEntryPoint
 class DemoBottomSheet :

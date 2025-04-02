@@ -4,7 +4,7 @@ import android.os.Bundle
 import dagger.hilt.android.AndroidEntryPoint
 import pion.tech.pionbase.R
 import pion.tech.pionbase.databinding.DialogDemoBinding
-import pion.tech.pionbase.core.presentation.common.BaseDialogFragment
+import pion.tech.pionbase.core.presentation.common.base.BaseDialogFragment
 import pion.tech.pionbase.core.presentation.util.BundleKey
 
 @AndroidEntryPoint

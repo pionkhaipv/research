@@ -34,31 +34,6 @@ class DataModule {
     }
 
     @Provides
-    @Singleton
-    fun providePreferencesRepository(
-        preferencesDataSource: PreferencesDataSource
-    ): DataStoreRepository {
-        return DataStoreRepositoryImpl(preferencesDataSource)
-    }
-
-    @Provides
-    @Singleton
-    fun provideRemoteConfigRepository(
-        remoteConfig: FirebaseRemoteConfig
-    ): RemoteConfigRepository {
-        return RemoteConfigRepositoryImpl(remoteConfig)
-    }
-
-    @Provides
-    @Singleton
-    fun provideApiRepository(
-        apiInterface: ApiInterface
-    ): ApiRepository {
-        return ApiRepositoryImpl(apiInterface)
-    }
-
-
-    @Provides
     fun providePreferencesUseCase(dataStoreRepository: DataStoreRepository): DataStoreUseCase {
         return DataStoreUseCase(dataStoreRepository)
     }

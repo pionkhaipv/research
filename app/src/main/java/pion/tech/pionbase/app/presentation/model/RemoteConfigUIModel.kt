@@ -1,10 +1,15 @@
-package pion.tech.pionbase.app.presentation.mapper
+package pion.tech.pionbase.app.presentation.model
 
 import pion.tech.pionbase.app.domain.model.RemoteConfigData
-import pion.tech.pionbase.model.RemoteConfigDataModel
+
+data class RemoteConfigUIModel(
+    val configShowAds: String,
+    val admobId: String,
+    val isRealData:Boolean
+)
 
 fun RemoteConfigData.toPresentation() =
-    RemoteConfigDataModel(
+    RemoteConfigUIModel(
         configShowAds = this.configShowAds,
         isRealData = this.isRealData,
         admobId = this.admobId,

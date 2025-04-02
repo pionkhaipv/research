@@ -1,4 +1,4 @@
-package pion.tech.pionbase.core.presentation.common
+package pion.tech.pionbase.core.presentation.common.base
 
 import android.view.LayoutInflater
 import android.view.ViewGroup

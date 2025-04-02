@@ -1,7 +1,7 @@
 package pion.tech.pionbase.app.presentation.dialog
 
 import pion.tech.pionbase.R
-import pion.tech.pionbase.core.presentation.common.BaseDialogFragment
+import pion.tech.pionbase.core.presentation.common.base.BaseDialogFragment
 import pion.tech.pionbase.databinding.DialogLoadingBinding
 
 class LoadingDialog : BaseDialogFragment<DialogLoadingBinding>(R.layout.dialog_loading) {

@@ -19,6 +19,7 @@ import pion.tech.pionbase.core.presentation.util.Constant
 import pion.tech.pionbase.core.presentation.util.gone
 import pion.tech.pionbase.core.presentation.util.setPreventDoubleClickScaleView
 import pion.tech.pionbase.core.presentation.util.show
+import androidx.core.net.toUri
 
 fun SettingFragment.backEvent() {
     activity?.onBackPressedDispatcher?.addCallback(this, true) {
@@ -76,7 +77,7 @@ fun SettingFragment.policyEvent() {
         runCatching {
             val browserIntent = Intent(
                 Intent.ACTION_VIEW,
-                Uri.parse("https://sites.google.com/piontech.co/voicelockscreen")
+                "https://sites.google.com/piontech.co/voicelockscreen".toUri()
             )
             startActivity(browserIntent)
         }
@@ -96,7 +97,7 @@ fun SettingFragment.resetIapEvent() {
 
 fun SettingFragment.gdprEvent() {
     binding.btnGdpr.setPreventDoubleClickScaleView {
-        try {
+        runCatching {
             AdsController.getInstance().showPolicyForm(
                 onShow = {
                     //do nothing
@@ -105,8 +106,6 @@ fun SettingFragment.gdprEvent() {
                     //do nothing
                 }
             )
-        } catch (e: Throwable) {
-
         }
     }
 
@@ -122,10 +121,8 @@ fun SettingFragment.gdprEvent() {
 fun SettingFragment.resetGDPR() {
     if (BuildConfig.DEBUG) {
         binding.btnResetGdpr.setPreventDoubleClickScaleView {
-            try {
+            runCatching {
                 AdsController.getInstance().resetConsent()
-            } catch (e: Throwable) {
-
             }
         }
     } else {

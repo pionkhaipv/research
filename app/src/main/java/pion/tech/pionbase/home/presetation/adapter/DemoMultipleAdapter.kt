@@ -4,8 +4,8 @@ import androidx.databinding.ViewDataBinding
 import pion.tech.pionbase.R
 import pion.tech.pionbase.databinding.ItemDummy2Binding
 import pion.tech.pionbase.databinding.ItemDummyBinding
-import pion.tech.pionbase.core.presentation.common.BaseListAdapter
-import pion.tech.pionbase.core.presentation.common.createDiffCallback
+import pion.tech.pionbase.core.presentation.common.base.BaseListAdapter
+import pion.tech.pionbase.core.presentation.common.base.createDiffCallback
 
 class DemoMultipleAdapter : BaseListAdapter<String, ViewDataBinding>(
     createDiffCallback(

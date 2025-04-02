@@ -1,7 +1,19 @@
-package pion.tech.pionbase.home.presetation.mapper
+package pion.tech.pionbase.home.presetation.model
 
 import pion.tech.pionbase.home.domain.model.TemplateData
-import pion.tech.pionbase.model.TemplateUIModel
+
+data class TemplateUIModel(
+    val name: String? = null,
+    val duration: String? = null,
+    val videoPreview: String? = null,
+    val aspectRatio: String? = null,
+    val music: String? = null,
+    val thumbnail: String? = null,
+    val templateType: String? = null,
+    val imageModel: String? = null,
+    val categoryId: String? = null,
+    val countryId: String? = null
+)
 
 fun TemplateData.toPresentation() = TemplateUIModel(
     name = this.name,

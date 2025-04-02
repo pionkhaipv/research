@@ -5,7 +5,7 @@ import androidx.core.view.isVisible
 import dagger.hilt.android.AndroidEntryPoint
 import pion.tech.pionbase.databinding.FragmentLanguageBinding
 import pion.tech.pionbase.language.presentation.model.LanguageUIModel
-import pion.tech.pionbase.core.presentation.common.BaseFragment
+import pion.tech.pionbase.core.presentation.common.base.BaseFragment
 import pion.tech.pionbase.language.presentation.adapter.LanguageAdapter
 import pion.tech.pionbase.core.presentation.util.collectFlowOnView
 

@@ -2,8 +2,8 @@ package pion.tech.pionbase.language.presentation.adapter
 
 import pion.tech.pionbase.R
 import pion.tech.pionbase.databinding.ItemLanguageBinding
-import pion.tech.pionbase.core.presentation.common.BaseListAdapter
-import pion.tech.pionbase.core.presentation.common.createDiffCallback
+import pion.tech.pionbase.core.presentation.common.base.BaseListAdapter
+import pion.tech.pionbase.core.presentation.common.base.createDiffCallback
 import pion.tech.pionbase.language.presentation.model.LanguageUIModel
 import pion.tech.pionbase.core.presentation.util.loadImage
 import pion.tech.pionbase.core.presentation.util.setPreventDoubleClick
