@@ -11,7 +11,7 @@ fun OnboardFragment.initView(){
 }
 
 fun OnboardFragment.onBackEvent() {
-    activity?.onBackPressedDispatcher?.addCallback(this, true) {
+    onSystemBack {
         backEvent()
     }
 }

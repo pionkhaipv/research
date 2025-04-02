@@ -31,7 +31,7 @@ class LanguageFragment : BaseFragment<FragmentLanguageBinding, LanguageViewModel
 
     override fun onClickLanguage(item: LanguageUIModel, position: Int) {
         binding.ivDone.isVisible = true
-        viewModel.selectLanguage(position)
+        viewModel.selectLanguage(item)
     }
 
 }

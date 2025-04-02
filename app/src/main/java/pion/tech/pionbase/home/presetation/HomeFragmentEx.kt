@@ -24,7 +24,7 @@ fun HomeFragment.plusEvent() {
 }
 
 fun HomeFragment.onBackEvent() {
-    activity?.onBackPressedDispatcher?.addCallback(this, true) {
+    onSystemBack {
         backEvent()
     }
 }

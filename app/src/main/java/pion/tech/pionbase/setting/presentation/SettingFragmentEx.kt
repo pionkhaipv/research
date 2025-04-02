@@ -22,7 +22,7 @@ import pion.tech.pionbase.core.presentation.util.show
 import androidx.core.net.toUri
 
 fun SettingFragment.backEvent() {
-    activity?.onBackPressedDispatcher?.addCallback(this, true) {
+    onSystemBack {
         onBackPressed()
     }
     binding.ivBack.setPreventDoubleClickScaleView {

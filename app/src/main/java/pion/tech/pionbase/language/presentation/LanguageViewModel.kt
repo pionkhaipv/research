@@ -30,9 +30,9 @@ class LanguageViewModel @Inject constructor(
         }
     }
 
-    fun selectLanguage(selectedIndex: Int) {
-        _languageData.value = _languageData.value.mapIndexed { index, language ->
-            language.copy(isSelected = index == selectedIndex)
+    fun selectLanguage(item: LanguageUIModel) {
+        _languageData.value = _languageData.value.map { language ->
+            language.copy(isSelected = language.localeCode == item.localeCode)
         }
     }
 

@@ -4,7 +4,7 @@ import androidx.activity.addCallback
 import pion.tech.pionbase.R
 
 fun SplashFragment.backEvent() {
-    activity?.onBackPressedDispatcher?.addCallback(this, true) {
+    onSystemBack {
         onBackPressed()
     }
 //    binding.btnBack.setPreventDoubleClickScaleView {

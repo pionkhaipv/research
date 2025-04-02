@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.addCallback
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
@@ -24,6 +25,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import pion.tech.pionbase.home.presetation.CommonViewModel
 import pion.tech.pionbase.app.presentation.MainActivity
+import pion.tech.pionbase.language.presentation.backEvent
 import timber.log.Timber
 
 typealias Inflate<Binding> = (LayoutInflater, ViewGroup?, Boolean) -> Binding
@@ -154,6 +156,12 @@ abstract class BaseFragment<Binding : ViewBinding, VM : ViewModel>(
             } else {
                 (activity as MainActivity).hiddenLoading()
             }
+        }
+    }
+
+    fun onSystemBack(action: () -> Unit) {
+        activity?.onBackPressedDispatcher?.addCallback(this, true) {
+            action.invoke()
         }
     }
 

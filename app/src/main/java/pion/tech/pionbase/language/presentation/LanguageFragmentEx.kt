@@ -34,7 +34,7 @@ fun LanguageFragment.applyEvent() {
 }
 
 fun LanguageFragment.onBackEvent() {
-    activity?.onBackPressedDispatcher?.addCallback(this, true) {
+    onSystemBack {
         backEvent()
     }
     binding.ivBack.setPreventDoubleClickScaleView {
