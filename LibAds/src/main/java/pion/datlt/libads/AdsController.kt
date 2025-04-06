@@ -13,7 +13,6 @@ import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.MutableLiveData
 import androidx.navigation.NavController
-import androidx.navigation.NavDestination
 import com.appsflyer.AppsFlyerLib
 import com.appsflyer.attribution.AppsFlyerRequestListener
 import com.google.android.gms.ads.AdInspectorError
@@ -30,7 +29,13 @@ import pion.datlt.libads.utils.AdDef
 import pion.datlt.libads.utils.AdsConstant
 import pion.datlt.libads.utils.CommonUtils
 import pion.datlt.libads.utils.ConnectUtils
+import pion.datlt.libads.utils.DialogNative
+import pion.datlt.libads.utils.NativeInterListener
 import pion.datlt.libads.utils.StateLoadAd
+import pion.datlt.libads.utils.adsuntils.checkAdsByType
+import pion.datlt.libads.utils.adsuntils.safePreloadAds
+import pion.datlt.libads.utils.adsuntils.setLastTimeShowInter
+import java.io.DataInput
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -51,6 +56,7 @@ class AdsController private constructor(
 
     private val gson = Gson()
 
+    @SuppressLint("RestrictedApi")
     private val destinationChangeListener =
         NavController.OnDestinationChangedListener { controller, destination, arguments ->
             currentDestinationId = destination.id
@@ -337,7 +343,8 @@ class AdsController private constructor(
         positionCollapsibleBanner: String? = null,
         isOneTimeCollapsible: Boolean? = null,
         adCallback: AdCallback? = null,
-        widthBannerAdaptiveAds : Int? = null
+        widthBannerAdaptiveAds: Int? = null,
+        timeShowNativeCollapsibleAfterClose: Int? = null
     ) {
         if (AdsConstant.isPremium) {
             layoutToAttachAds?.visibility = View.GONE
@@ -346,6 +353,10 @@ class AdsController private constructor(
         }
         if (!AdsConstant.isInternetConnected) {
             adCallback?.onAdFailToLoad(AdsConstant.ERROR_NO_INTERNET)
+            return
+        }
+        if (!checkAdsByType(spaceName)) {
+            adCallback?.onAdFailToLoad(AdsConstant.ERROR_OFF_BY_TYPE)
             return
         }
 
@@ -369,8 +380,8 @@ class AdsController private constructor(
                     adChoice = adChoice,
                     positionCollapsibleBanner = positionCollapsibleBanner,
                     isOneTimeCollapsible = isOneTimeCollapsible,
-                    widthBannerAdaptiveAds = widthBannerAdaptiveAds
-
+                    widthBannerAdaptiveAds = widthBannerAdaptiveAds,
+                    timeShowNativeCollapsibleAfterClose = timeShowNativeCollapsibleAfterClose
                 )
             } else {
                 CommonUtils.showToastDebug(contextUse, "no data check priority file json")
@@ -390,7 +401,8 @@ class AdsController private constructor(
         adChoice: Int?,
         positionCollapsibleBanner: String?,
         isOneTimeCollapsible: Boolean?,
-        widthBannerAdaptiveAds: Int?
+        widthBannerAdaptiveAds: Int?,
+        timeShowNativeCollapsibleAfterClose: Int?
     ) {
         when (adsChild.network.lowercase(Locale.getDefault())) {
             AdDef.NETWORK.GOOGLE -> {
@@ -406,8 +418,8 @@ class AdsController private constructor(
                     adChoice = adChoice,
                     positionCollapsibleBanner = positionCollapsibleBanner,
                     isOneTimeCollapsible = isOneTimeCollapsible,
-                    widthBannerAdaptiveAds = widthBannerAdaptiveAds
-
+                    widthBannerAdaptiveAds = widthBannerAdaptiveAds,
+                    timeShowNativeCollapsibleAfterClose = timeShowNativeCollapsibleAfterClose
                 )
             }
 
@@ -438,7 +450,8 @@ class AdsController private constructor(
         positionCollapsibleBanner: String? = null,
         isOneTimeCollapsible: Boolean? = null,
         adCallback: AdCallback? = null,
-        widthBannerAdaptiveAds: Int? = null
+        widthBannerAdaptiveAds: Int? = null,
+        timeShowNativeCollapsibleAfterClose: Int? = null
     ) {
         if (AdsConstant.isPremium) {
             layoutToAttachAds?.visibility = View.GONE
@@ -447,6 +460,10 @@ class AdsController private constructor(
         }
         if (!AdsConstant.isInternetConnected) {
             adCallback?.onAdFailToLoad(AdsConstant.ERROR_NO_INTERNET)
+            return
+        }
+        if (!checkAdsByType(spaceName)) {
+            adCallback?.onAdFailToLoad(AdsConstant.ERROR_OFF_BY_TYPE)
             return
         }
 
@@ -469,7 +486,8 @@ class AdsController private constructor(
                     timeout = timeout,
                     adCallback = adCallback,
                     isOneTimeCollapsible = isOneTimeCollapsible,
-                    widthBannerAdaptiveAds = widthBannerAdaptiveAds
+                    widthBannerAdaptiveAds = widthBannerAdaptiveAds,
+                    timeShowNativeCollapsibleAfterClose = timeShowNativeCollapsibleAfterClose
                 )
             } else {
                 CommonUtils.showToastDebug(activity, "no data check spaceName or file json")
@@ -490,7 +508,8 @@ class AdsController private constructor(
         adChoice: Int?,
         positionCollapsibleBanner: String?,
         isOneTimeCollapsible: Boolean?,
-        widthBannerAdaptiveAds: Int?
+        widthBannerAdaptiveAds: Int?,
+        timeShowNativeCollapsibleAfterClose: Int?
     ) {
         when (adsChild.network.lowercase()) {
             AdDef.NETWORK.GOOGLE -> {
@@ -507,7 +526,8 @@ class AdsController private constructor(
                     adChoice = adChoice,
                     positionCollapsibleBanner = positionCollapsibleBanner,
                     isOneTimeCollapsible = isOneTimeCollapsible,
-                    widthBannerAdaptiveAds = widthBannerAdaptiveAds
+                    widthBannerAdaptiveAds = widthBannerAdaptiveAds,
+                    timeShowNativeCollapsibleAfterClose = timeShowNativeCollapsibleAfterClose
                 )
             }
 
@@ -540,6 +560,10 @@ class AdsController private constructor(
         }
         if (!AdsConstant.isInternetConnected) {
             preloadCallback?.onLoadFail(AdsConstant.ERROR_NO_INTERNET)
+            return
+        }
+        if (!checkAdsByType(spaceName)) {
+            preloadCallback?.onLoadFail(AdsConstant.ERROR_OFF_BY_TYPE)
             return
         }
 
@@ -729,10 +753,11 @@ class AdsController private constructor(
                             "initResumeAds: ${checkAdsState(currentResumeAppSpaceName)} ${!isBlockOpenAds} ${!isInterIsShowing} ${!isOtherOpenAdsIsShowing}"
                         )
                         if (checkAdsState(currentResumeAppSpaceName) == StateLoadAd.SUCCESS) {
-                            if (!isBlockOpenAds && !isInterIsShowing && !isOtherOpenAdsIsShowing) {
+                            if (!isBlockOpenAds && !isInterIsShowing && !isOtherOpenAdsIsShowing && !DialogNative.isShowing()) {
                                 isOtherOpenAdsIsShowing = true
                                 isAnyAdShowed = true
                                 //show
+                                DialogNative.dismiss()
                                 onStartToShowOpenAds.invoke()
                                 showLoadedAds(
                                     spaceName = currentResumeAppSpaceName,
@@ -843,6 +868,67 @@ class AdsController private constructor(
                 }
             }
         })
+    }
+
+
+    var showNativeTrigger: (() -> Unit)? = null
+
+    fun initNativeInter(
+        activity: Activity,
+        configName: String,
+        listSpaceName: List<String>
+    ) {
+        fun preloadAds() {
+            if (AdsConstant.listConfigAds[configName]?.isOn == true) {
+                listSpaceName.forEach { spaceNameAds ->
+                    activity.safePreloadAds(
+                        spaceNameConfig = configName,
+                        spaceNameAds = spaceNameAds,
+                        includeHasBeenOpened = false,
+                        adChoice = AdsConstant.BOTTOM_LEFT,
+                        preloadCallback = object : PreloadCallback {
+                            override fun onLoadDone() {
+                                //do nothing
+                            }
+
+                            override fun onLoadFail(error: String) {
+                                super.onLoadFail(error)
+                                //do nothing
+                            }
+                        },
+                    )
+                }
+            }
+        }
+
+        preloadAds()
+
+        showNativeTrigger = {
+            for (spaceName in listSpaceName) {
+                if (checkAdsState(spaceName) == StateLoadAd.SUCCESS) {
+                    //show qc dau tien thanh cong
+                    if (AdsConstant.listConfigAds[configName]?.isOn == true) {
+                        DialogNative.show(
+                            activity,
+                            configName,
+                            spaceName,
+                            object : NativeInterListener {
+                                override fun onShowNative() {
+
+                                }
+
+                                override fun onCloseNative() {
+                                    preloadAds()
+                                }
+                            })
+                    }
+                    break
+                } else {
+                    //load lai
+                    preloadAds()
+                }
+            }
+        }
     }
 
 }

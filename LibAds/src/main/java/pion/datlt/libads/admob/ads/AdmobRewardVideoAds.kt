@@ -35,7 +35,7 @@ import java.util.*
 class AdmobRewardVideoAds : AdmobAds() {
 
     private var stateLoadAd: StateLoadAd = StateLoadAd.NONE
-    private var rewardedAd : RewardedAd? = null
+    private var rewardedAd: RewardedAd? = null
     private var isTimeOut: Boolean = false
 
     private var eventLifecycle: Lifecycle.Event = Lifecycle.Event.ON_RESUME
@@ -44,10 +44,10 @@ class AdmobRewardVideoAds : AdmobAds() {
     private var mActivity: Activity? = null
     private var mAdsChild: AdsChild? = null
 
-    private var mDestinationToShowAds : Int? = null
+    private var mDestinationToShowAds: Int? = null
 
-    private var mPreloadCallback : PreloadCallback? = null
-    private var mAdCallback : AdCallback? = null
+    private var mPreloadCallback: PreloadCallback? = null
+    private var mAdCallback: AdCallback? = null
 
     //bundle
     private var adSourceId = ""
@@ -56,9 +56,9 @@ class AdmobRewardVideoAds : AdmobAds() {
 
     private val handler = Handler(Looper.getMainLooper())
 
-    private var mLifecycle : Lifecycle? = null
+    private var mLifecycle: Lifecycle? = null
 
-    private val countDownShowAds = object : CountDownTimer(4000L , 4000L) {
+    private val countDownShowAds = object : CountDownTimer(4000L, 4000L) {
         override fun onTick(p0: Long) {
 
         }
@@ -70,7 +70,10 @@ class AdmobRewardVideoAds : AdmobAds() {
             if (eventLifecycle == Lifecycle.Event.ON_RESUME) {
                 mAdCallback?.onAdFailToLoad(error)
                 mLifecycle?.removeObserver(lifecycleObserver)
-                Log.d("TESTERADSEVENT", "show failed reward video : ads name ${mAdsChild?.spaceName} id ${mAdsChild?.adsId} error : timeout show ads")
+                Log.d(
+                    "TESTERADSEVENT",
+                    "show failed reward video : ads name ${mAdsChild?.spaceName} id ${mAdsChild?.adsId} error : timeout show ads"
+                )
 
             }
         }
@@ -82,13 +85,16 @@ class AdmobRewardVideoAds : AdmobAds() {
             stateLoadAd != StateLoadAd.SUCCESS
             && stateLoadAd != StateLoadAd.LOAD_FAILED
             && stateLoadAd != StateLoadAd.SHOW_FAILED
-        ){
+        ) {
             //none hoac loading
             isTimeOut = true
-            if (eventLifecycle == Lifecycle.Event.ON_RESUME){
+            if (eventLifecycle == Lifecycle.Event.ON_RESUME) {
                 mAdCallback?.onAdFailToLoad("TimeOut")
                 mLifecycle?.removeObserver(lifecycleObserver)
-                Log.d("TESTERADSEVENT", "show failed reward video : ads name ${mAdsChild?.spaceName} id ${mAdsChild?.adsId} error : TimeOut")
+                Log.d(
+                    "TESTERADSEVENT",
+                    "show failed reward video : ads name ${mAdsChild?.spaceName} id ${mAdsChild?.adsId} error : TimeOut"
+                )
             }
         }
     }
@@ -96,15 +102,15 @@ class AdmobRewardVideoAds : AdmobAds() {
     private val lifecycleObserver = object : LifecycleEventObserver {
         override fun onStateChanged(source: LifecycleOwner, event: Lifecycle.Event) {
             eventLifecycle = event
-            if (event == Lifecycle.Event.ON_RESUME){
+            if (event == Lifecycle.Event.ON_RESUME) {
 //                if (isTimeOut){
 //                    mLifecycle?.removeObserver(this)
 //                    mAdCallback?.onAdFailToLoad("TimeOut")
 //                    Log.d("TESTERADSEVENT", "show failed reward video : ads name ${mAdsChild?.spaceName} id ${mAdsChild?.adsId} error : TimeOut")
 //
 //                }else
-                    if (stateLoadAd == StateLoadAd.SUCCESS){
-                    if(mActivity != null && mAdsChild != null){
+                if (stateLoadAd == StateLoadAd.SUCCESS) {
+                    if (mActivity != null && mAdsChild != null) {
                         show(
                             activity = mActivity!!,
                             adsChild = mAdsChild!!,
@@ -112,17 +118,25 @@ class AdmobRewardVideoAds : AdmobAds() {
                             adCallback = mAdCallback,
                             lifecycle = mLifecycle,
                             layoutToAttachAds = null,
-                            viewAdsInflateFromXml = null)
-                    }else{
+                            viewAdsInflateFromXml = null,
+                            timeShowNativeCollapsibleAfterClose = 0
+                        )
+                    } else {
                         mLifecycle?.removeObserver(this)
                         mAdCallback?.onAdFailToLoad("activity or adsChild must not null")
-                        Log.d("TESTERADSEVENT", "show failed reward video : ads name ${mAdsChild?.spaceName} id ${mAdsChild?.adsId} error : activity or adsChild must not null")
+                        Log.d(
+                            "TESTERADSEVENT",
+                            "show failed reward video : ads name ${mAdsChild?.spaceName} id ${mAdsChild?.adsId} error : activity or adsChild must not null"
+                        )
 
                     }
-                }else {
+                } else {
                     mLifecycle?.removeObserver(this)
                     mAdCallback?.onAdFailToLoad(error)
-                    Log.d("TESTERADSEVENT", "show failed reward video : ads name ${mAdsChild?.spaceName} id ${mAdsChild?.adsId} error : $error")
+                    Log.d(
+                        "TESTERADSEVENT",
+                        "show failed reward video : ads name ${mAdsChild?.spaceName} id ${mAdsChild?.adsId} error : $error"
+                    )
 
                 }
             }
@@ -141,7 +155,8 @@ class AdmobRewardVideoAds : AdmobAds() {
         adChoice: Int?,
         positionCollapsibleBanner: String?,
         isOneTimeCollapsible: Boolean?,
-        widthBannerAdaptiveAds: Int?
+        widthBannerAdaptiveAds: Int?,
+        timeShowNativeCollapsibleAfterClose: Int?
     ) {
         mActivity = activity
         mAdsChild = adsChild
@@ -149,10 +164,10 @@ class AdmobRewardVideoAds : AdmobAds() {
         mAdCallback = adCallback
         mLifecycle = lifecycle
 
-        if (stateLoadAd == StateLoadAd.LOADING){
+        if (stateLoadAd == StateLoadAd.LOADING) {
             //không load cái mới nữa
             //chờ load xong rồi show
-        }else if (stateLoadAd == StateLoadAd.SUCCESS){
+        } else if (stateLoadAd == StateLoadAd.SUCCESS) {
             //show luôn
             show(
                 activity = activity,
@@ -161,20 +176,22 @@ class AdmobRewardVideoAds : AdmobAds() {
                 adCallback = adCallback,
                 lifecycle = lifecycle,
                 layoutToAttachAds = layoutToAttachAds,
-                viewAdsInflateFromXml = viewAdsInflateFromXml)
-        }else{
+                viewAdsInflateFromXml = viewAdsInflateFromXml,
+                timeShowNativeCollapsibleAfterClose = timeShowNativeCollapsibleAfterClose
+            )
+        } else {
             //load quảng cáo mới
             load(
                 activity = activity,
                 adsChild = adsChild,
                 isPreload = false,
-                loadCallback = object : PreloadCallback{
+                loadCallback = object : PreloadCallback {
                     override fun onLoadDone() {
                         if (isTimeOut) {
                             //khong show nua
                             //reset timeout
                             isTimeOut = false //reset khi load qua thoi gian
-                        }else{
+                        } else {
                             //show luon
                             show(
                                 activity = activity,
@@ -183,7 +200,9 @@ class AdmobRewardVideoAds : AdmobAds() {
                                 adCallback = adCallback,
                                 lifecycle = lifecycle,
                                 layoutToAttachAds = layoutToAttachAds,
-                                viewAdsInflateFromXml = viewAdsInflateFromXml)
+                                viewAdsInflateFromXml = viewAdsInflateFromXml,
+                                timeShowNativeCollapsibleAfterClose = timeShowNativeCollapsibleAfterClose
+                            )
                         }
                     }
 
@@ -211,12 +230,12 @@ class AdmobRewardVideoAds : AdmobAds() {
     }
 
     private fun load(
-        activity : Activity,
+        activity: Activity,
         adsChild: AdsChild,
         isPreload: Boolean,
         timeout: Long = AdsConstant.TIME_OUT_DEFAULT,
         loadCallback: PreloadCallback? = null
-    ){
+    ) {
 
         Log.d(
             "TESTERADSEVENT",
@@ -230,32 +249,35 @@ class AdmobRewardVideoAds : AdmobAds() {
             stateLoadAd = StateLoadAd.LOADING
             val id = if (AdsConstant.isDebug) AdsConstant.ID_ADMOB_REWARD_TEST else adsChild.adsId
 
-            if (!isPreload){
+            if (!isPreload) {
                 handler.removeCallbacks(timeoutCallback)
-                handler.postDelayed(timeoutCallback , timeout)
+                handler.postDelayed(timeoutCallback, timeout)
             }
 
             val rewardAdCallback = object : RewardedAdLoadCallback() {
                 override fun onAdLoaded(ads: RewardedAd) {
                     super.onAdLoaded(ads)
-                    Log.d("TESTERADSEVENT", "load success reward video : ads name ${adsChild.spaceName} id ${adsChild.adsId}")
+                    Log.d(
+                        "TESTERADSEVENT",
+                        "load success reward video : ads name ${adsChild.spaceName} id ${adsChild.adsId}"
+                    )
 
                     rewardedAd = ads
                     timeLoader = Date().time
                     stateLoadAd = StateLoadAd.SUCCESS
                     loadCallback?.onLoadDone()
                     handler.removeCallbacks(timeoutCallback)
-                    if (isPreload){
+                    if (isPreload) {
                         mPreloadCallback?.onLoadDone()
                     }
 
 
-                    rewardedAd?.let{
-                        it.responseInfo.adapterResponses.forEach {responseInfo ->
-                            if (responseInfo.adSourceId.isNotEmpty()){
+                    rewardedAd?.let {
+                        it.responseInfo.adapterResponses.forEach { responseInfo ->
+                            if (responseInfo.adSourceId.isNotEmpty()) {
                                 adSourceId = responseInfo.adSourceId
                             }
-                            if (responseInfo.adSourceName.isNotEmpty()){
+                            if (responseInfo.adSourceName.isNotEmpty()) {
                                 adSourceName = responseInfo.adSourceName
                             }
                         }
@@ -265,7 +287,10 @@ class AdmobRewardVideoAds : AdmobAds() {
 
                 override fun onAdFailedToLoad(loadError: LoadAdError) {
                     super.onAdFailedToLoad(loadError)
-                    Log.d("TESTERADSEVENT", "load failed reward video : ads name ${adsChild.spaceName} id ${adsChild.adsId} error : ${loadError.message}")
+                    Log.d(
+                        "TESTERADSEVENT",
+                        "load failed reward video : ads name ${adsChild.spaceName} id ${adsChild.adsId} error : ${loadError.message}"
+                    )
 
                     error = loadError.message
                     stateLoadAd = StateLoadAd.LOAD_FAILED
@@ -278,7 +303,7 @@ class AdmobRewardVideoAds : AdmobAds() {
             }
             val request = AdRequest.Builder().build()
 
-            withContext(Dispatchers.Main){
+            withContext(Dispatchers.Main) {
                 RewardedAd.load(
                     activity, id, request, rewardAdCallback
                 )
@@ -295,7 +320,8 @@ class AdmobRewardVideoAds : AdmobAds() {
         adCallback: AdCallback?,
         lifecycle: Lifecycle?,
         layoutToAttachAds: ViewGroup?,
-        viewAdsInflateFromXml: View?
+        viewAdsInflateFromXml: View?,
+        timeShowNativeCollapsibleAfterClose: Int?
     ) {
         mActivity = activity
         mAdsChild = adsChild
@@ -303,11 +329,14 @@ class AdmobRewardVideoAds : AdmobAds() {
         mAdCallback = adCallback
         mLifecycle = lifecycle
 
-        rewardedAd?.fullScreenContentCallback = object : FullScreenContentCallback(){
+        rewardedAd?.fullScreenContentCallback = object : FullScreenContentCallback() {
 
             override fun onAdDismissedFullScreenContent() {
                 super.onAdDismissedFullScreenContent()
-                Log.d("TESTERADSEVENT", "close reward video : ads name ${adsChild.spaceName} id ${adsChild.adsId}")
+                Log.d(
+                    "TESTERADSEVENT",
+                    "close reward video : ads name ${adsChild.spaceName} id ${adsChild.adsId}"
+                )
 
                 countDownShowAds.cancel()
                 rewardedAd = null
@@ -317,7 +346,10 @@ class AdmobRewardVideoAds : AdmobAds() {
 
             override fun onAdShowedFullScreenContent() {
                 super.onAdShowedFullScreenContent()
-                Log.d("TESTERADSEVENT", "show success reward video : ads name ${adsChild.spaceName} id ${adsChild.adsId}")
+                Log.d(
+                    "TESTERADSEVENT",
+                    "show success reward video : ads name ${adsChild.spaceName} id ${adsChild.adsId}"
+                )
 
                 //goi khi quang cao duoc show len
                 countDownShowAds.cancel()
@@ -330,7 +362,10 @@ class AdmobRewardVideoAds : AdmobAds() {
 
             override fun onAdFailedToShowFullScreenContent(adError: AdError) {
                 super.onAdFailedToShowFullScreenContent(adError)
-                Log.d("TESTERADSEVENT", "show failed reward video : ads name ${adsChild.spaceName} id ${adsChild.adsId} error : $error")
+                Log.d(
+                    "TESTERADSEVENT",
+                    "show failed reward video : ads name ${adsChild.spaceName} id ${adsChild.adsId} error : $error"
+                )
 
                 countDownShowAds.cancel()
                 rewardedAd = null
@@ -356,13 +391,13 @@ class AdmobRewardVideoAds : AdmobAds() {
 
         rewardedAd?.onPaidEventListener = OnPaidEventListener { adValue ->
             val bundle = Bundle().apply {
-                putString("ad_unit_id" , adUnitId)
-                putInt("precision_type" , adValue.precisionType)
-                putLong("revenue_micros" , adValue.valueMicros)
-                putString("ad_source_id" , adSourceId)
-                putString("ad_source_name" , adSourceName)
-                putString("ad_type" , AdDef.ADS_TYPE_ADMOB.REWARD_VIDEO)
-                putString("currency_code" , adValue.currencyCode)
+                putString("ad_unit_id", adUnitId)
+                putInt("precision_type", adValue.precisionType)
+                putLong("revenue_micros", adValue.valueMicros)
+                putString("ad_source_id", adSourceId)
+                putString("ad_source_name", adSourceName)
+                putString("ad_type", AdDef.ADS_TYPE_ADMOB.REWARD_VIDEO)
+                putString("currency_code", adValue.currencyCode)
             }
             adCallback?.onPaidEvent(bundle)
         }
@@ -377,16 +412,26 @@ class AdmobRewardVideoAds : AdmobAds() {
         if (eventLifecycle == Lifecycle.Event.ON_RESUME && !isTimeOut) {
             if (mDestinationToShowAds != null && mDestinationToShowAds != AdsController.currentDestinationId) {
                 adCallback?.onAdFailToLoad("show in wrong destination")
-                Log.d("TESTERADSEVENT", "show failed reward video : ads name ${adsChild.spaceName} id ${adsChild.adsId} error : show in wrong destination")
+                Log.d(
+                    "TESTERADSEVENT",
+                    "show failed reward video : ads name ${adsChild.spaceName} id ${adsChild.adsId} error : show in wrong destination"
+                )
 
-            } else if (!wasLoadTimeLessThanNHoursAgo()){
+            } else if (!wasLoadTimeLessThanNHoursAgo()) {
+                stateLoadAd = StateLoadAd.SHOW_FAILED
                 adCallback?.onAdFailToLoad("ads expired")
-                Log.d("TESTERADSEVENT", "show failed reward video : ads name ${adsChild.spaceName} id ${adsChild.adsId} error : ads expired")
+                Log.d(
+                    "TESTERADSEVENT",
+                    "show failed reward video : ads name ${adsChild.spaceName} id ${adsChild.adsId} error : ads expired"
+                )
 
             } else {
                 rewardedAd?.show(activity) {
                     adCallback?.onGotReward()
-                    Log.d("TESTERADSEVENT", "got reward video : ads name ${adsChild.spaceName} id ${adsChild.adsId}")
+                    Log.d(
+                        "TESTERADSEVENT",
+                        "got reward video : ads name ${adsChild.spaceName} id ${adsChild.adsId}"
+                    )
 
                 }
                 //bat dau dem nguoc

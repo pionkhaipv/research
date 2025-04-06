@@ -47,7 +47,8 @@ class AdmobHolder {
         adChoice: Int?,
         positionCollapsibleBanner: String?,
         isOneTimeCollapsible: Boolean?,
-        widthBannerAdaptiveAds: Int?
+        widthBannerAdaptiveAds: Int?,
+        timeShowNativeCollapsibleAfterClose: Int?
     ) {
         var ads: AdmobAds? = null
         val key = adsChild.spaceName.lowercase(Locale.getDefault())
@@ -74,7 +75,8 @@ class AdmobHolder {
                 adChoice = adChoice,
                 positionCollapsibleBanner = positionCollapsibleBanner,
                 isOneTimeCollapsible = isOneTimeCollapsible,
-                widthBannerAdaptiveAds = widthBannerAdaptiveAds
+                widthBannerAdaptiveAds = widthBannerAdaptiveAds,
+                timeShowNativeCollapsibleAfterClose = timeShowNativeCollapsibleAfterClose
             )
         }
     }
@@ -92,7 +94,8 @@ class AdmobHolder {
         adChoice: Int?,
         positionCollapsibleBanner: String?,
         isOneTimeCollapsible: Boolean?,
-        widthBannerAdaptiveAds: Int?
+        widthBannerAdaptiveAds: Int?,
+        timeShowNativeCollapsibleAfterClose: Int?
     ) {
         val key = adsChild.spaceName.lowercase(Locale.getDefault())
         val ads = hashMap[key]
@@ -112,7 +115,8 @@ class AdmobHolder {
                 adChoice = adChoice,
                 positionCollapsibleBanner = positionCollapsibleBanner,
                 isOneTimeCollapsible = isOneTimeCollapsible,
-                widthBannerAdaptiveAds = widthBannerAdaptiveAds
+                widthBannerAdaptiveAds = widthBannerAdaptiveAds,
+                timeShowNativeCollapsibleAfterClose = timeShowNativeCollapsibleAfterClose
             )
         } else {
             hashMap[key] = ads
@@ -129,7 +133,8 @@ class AdmobHolder {
                     adCallback = adCallback,
                     lifecycle = lifecycle,
                     layoutToAttachAds = layoutToAttachAds,
-                    viewAdsInflateFromXml = viewAdsInflateFromXml
+                    viewAdsInflateFromXml = viewAdsInflateFromXml,
+                    timeShowNativeCollapsibleAfterClose = timeShowNativeCollapsibleAfterClose
                 )
             } else if (ads.getStateLoadAd() == StateLoadAd.LOADING) {
 
@@ -159,7 +164,8 @@ class AdmobHolder {
                                 adCallback = adCallback,
                                 lifecycle = lifecycle,
                                 layoutToAttachAds = layoutToAttachAds,
-                                viewAdsInflateFromXml = viewAdsInflateFromXml
+                                viewAdsInflateFromXml = viewAdsInflateFromXml,
+                                timeShowNativeCollapsibleAfterClose = timeShowNativeCollapsibleAfterClose
                             )
                         }
 
@@ -186,7 +192,8 @@ class AdmobHolder {
                     adChoice = adChoice,
                     positionCollapsibleBanner = positionCollapsibleBanner,
                     isOneTimeCollapsible = isOneTimeCollapsible,
-                    widthBannerAdaptiveAds = widthBannerAdaptiveAds
+                    widthBannerAdaptiveAds = widthBannerAdaptiveAds,
+                    timeShowNativeCollapsibleAfterClose = timeShowNativeCollapsibleAfterClose
                 )
             }
 

@@ -12,10 +12,10 @@
     <color name="gray_f2">#F2F2F2</color>
 
 
-    <color name="ads_background">#D7D7D7</color>
+    <color name="ads_background">#E8E6E6</color>
     <color name="bg_split_view">#575757</color>
     <color name="bg_out_ads">#FFFFFF</color>
-    <color name="cta_color">#CC1C83E2</color>
+    <color name="cta_color">#3ADB41</color>
     <color name="cta_text_color">#FFFFFF</color>
     <color name="content_text_color">#000000</color>
     <color name="bg_ads">#CFCFCF</color>

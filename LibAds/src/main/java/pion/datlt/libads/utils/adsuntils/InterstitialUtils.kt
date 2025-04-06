@@ -6,16 +6,15 @@ import android.os.Bundle
 import android.os.CountDownTimer
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.LifecycleOwner
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import pion.datlt.libads.AdsController
 import pion.datlt.libads.callback.AdCallback
 import pion.datlt.libads.callback.PreloadCallback
+import pion.datlt.libads.utils.AdsConstant
 import pion.datlt.libads.utils.DialogLoadAdsUtils
 import pion.datlt.libads.utils.StateLoadAd
 
@@ -77,6 +76,15 @@ fun Fragment.loadAndShowInterstitial(
             timeout = timeOut,
             adCallback = object : AdCallback {
                 override fun onAdShow() {
+                    Log.d("CHECKNATIVEAFTERINTER", "showLoadedInter onAdShow $spaceNameConfig $spaceName : ${AdsConstant.listConfigAds[spaceNameConfig]?.isShowNativeAfterInter == true}")
+
+                    if (AdsConstant.listConfigAds[spaceNameConfig]?.isShowNativeAfterInter == true){
+                        Log.d("CHECKNATIVEAFTERINTER", "showNativeTrigger == null ${AdsController.getInstance().showNativeTrigger == null}")
+                        AdsController.getInstance().showNativeTrigger?.invoke()
+                    }
+
+
+
                     DialogLoadAdsUtils.getInstance().hideDialogLoadingAds()
                     AdsController.isInterIsShowing = true
                     setLastTimeShowInter(spaceNameConfig)
@@ -185,6 +193,14 @@ fun Fragment.showLoadedInter(
                     adCallback = object : AdCallback {
 
                         override fun onAdShow() {
+                            Log.d("CHECKNATIVEAFTERINTER", "showLoadedInter onAdShow $spaceNameConfig $spaceName : ${AdsConstant.listConfigAds[spaceNameConfig]?.isShowNativeAfterInter == true}")
+
+                            if (AdsConstant.listConfigAds[spaceNameConfig]?.isShowNativeAfterInter == true){
+                                Log.d("CHECKNATIVEAFTERINTER", "showNativeTrigger == null ${AdsController.getInstance().showNativeTrigger == null}")
+                                AdsController.getInstance().showNativeTrigger?.invoke()
+                            }
+
+
                             DialogLoadAdsUtils.getInstance().hideDialogLoadingAds()
                             AdsController.isInterIsShowing = true
                             setLastTimeShowInter(spaceNameConfig)
@@ -426,7 +442,7 @@ fun Fragment.show3LoadedInter(
                 var isTimeOut = false
                 val timeOutRunnable = Runnable {
                     isTimeOut = true
-                    if (stateInter1 == StateLoadAd.SUCCESS) {
+                    if (stateInter1 == StateLoadAd.SUCCESS){
                         //show 1
                         showLoadedInter(
                             spaceNameConfig = spaceNameConfig,
@@ -435,9 +451,8 @@ fun Fragment.show3LoadedInter(
                             isPreloadAfterShow = isPreloadAfterShow,
                             destinationToShowAds = destinationToShowAds,
                             navOrBack = navOrBack,
-                            onCloseAds = onCloseAds
-                        )
-                    } else if (stateInter2 == StateLoadAd.SUCCESS) {
+                            onCloseAds = onCloseAds)
+                    }else if (stateInter2 == StateLoadAd.SUCCESS){
                         //show 2
                         showLoadedInter(
                             spaceNameConfig = spaceNameConfig,
@@ -446,9 +461,8 @@ fun Fragment.show3LoadedInter(
                             isPreloadAfterShow = isPreloadAfterShow,
                             destinationToShowAds = destinationToShowAds,
                             navOrBack = navOrBack,
-                            onCloseAds = onCloseAds
-                        )
-                    } else if (stateInter3 == StateLoadAd.SUCCESS) {
+                            onCloseAds = onCloseAds)
+                    }else if (stateInter3 == StateLoadAd.SUCCESS){
                         //show 3
                         showLoadedInter(
                             spaceNameConfig = spaceNameConfig,
@@ -457,9 +471,8 @@ fun Fragment.show3LoadedInter(
                             isPreloadAfterShow = isPreloadAfterShow,
                             destinationToShowAds = destinationToShowAds,
                             navOrBack = navOrBack,
-                            onCloseAds = onCloseAds
-                        )
-                    } else {
+                            onCloseAds = onCloseAds)
+                    }else{
                         //ket thuc luong
                         DialogLoadAdsUtils.getInstance().hideDialogLoadingAds(0)
                         AdsController.isInterIsShowing = false
@@ -469,11 +482,11 @@ fun Fragment.show3LoadedInter(
                 }
 
                 val handler = Handler(Looper.getMainLooper())
-                handler.postDelayed(timeOutRunnable, timeOut)
+                handler.postDelayed(timeOutRunnable , timeOut)
 
-                fun checkShowInter() {
-                    if (!isTimeOut) {
-                        if (stateInter1 == StateLoadAd.SUCCESS) {
+                fun checkShowInter(){
+                    if (!isTimeOut){
+                        if (stateInter1 == StateLoadAd.SUCCESS){
                             //show 1
                             handler.removeCallbacks(timeOutRunnable)
                             stateInter1 = StateLoadAd.HAS_BEEN_OPENED
@@ -484,9 +497,8 @@ fun Fragment.show3LoadedInter(
                                 isPreloadAfterShow = isPreloadAfterShow,
                                 destinationToShowAds = destinationToShowAds,
                                 navOrBack = navOrBack,
-                                onCloseAds = onCloseAds
-                            )
-                        } else if (stateInter1 == StateLoadAd.LOAD_FAILED && stateInter2 == StateLoadAd.SUCCESS) {
+                                onCloseAds = onCloseAds)
+                        }else if (stateInter1 == StateLoadAd.LOAD_FAILED && stateInter2 == StateLoadAd.SUCCESS){
                             //show 2
                             handler.removeCallbacks(timeOutRunnable)
                             stateInter2 = StateLoadAd.HAS_BEEN_OPENED
@@ -497,9 +509,8 @@ fun Fragment.show3LoadedInter(
                                 isPreloadAfterShow = isPreloadAfterShow,
                                 destinationToShowAds = destinationToShowAds,
                                 navOrBack = navOrBack,
-                                onCloseAds = onCloseAds
-                            )
-                        } else if (stateInter1 == StateLoadAd.LOAD_FAILED && stateInter2 == StateLoadAd.LOAD_FAILED && stateInter3 == StateLoadAd.SUCCESS) {
+                                onCloseAds = onCloseAds)
+                        }else if (stateInter1 == StateLoadAd.LOAD_FAILED && stateInter2 == StateLoadAd.LOAD_FAILED && stateInter3 == StateLoadAd.SUCCESS){
                             //show 3
                             handler.removeCallbacks(timeOutRunnable)
                             stateInter3 = StateLoadAd.HAS_BEEN_OPENED
@@ -510,9 +521,8 @@ fun Fragment.show3LoadedInter(
                                 isPreloadAfterShow = isPreloadAfterShow,
                                 destinationToShowAds = destinationToShowAds,
                                 navOrBack = navOrBack,
-                                onCloseAds = onCloseAds
-                            )
-                        } else if (stateInter1 == StateLoadAd.LOAD_FAILED && stateInter2 == StateLoadAd.LOAD_FAILED && stateInter3 == StateLoadAd.LOAD_FAILED) {
+                                onCloseAds = onCloseAds)
+                        }else if (stateInter1 == StateLoadAd.LOAD_FAILED && stateInter2 == StateLoadAd.LOAD_FAILED && stateInter3 == StateLoadAd.LOAD_FAILED){
                             //ket thuc luong
                             DialogLoadAdsUtils.getInstance().hideDialogLoadingAds(0)
                             handler.removeCallbacks(timeOutRunnable)
@@ -522,52 +532,41 @@ fun Fragment.show3LoadedInter(
                         }
                     }
                 }
-                safePreloadAds(
-                    spaceNameConfig = spaceNameConfig,
-                    spaceNameAds = spaceName1,
-                    preloadCallback = object : PreloadCallback {
-                        override fun onLoadDone() {
-                            stateInter1 = StateLoadAd.SUCCESS
-                            checkShowInter()
-                        }
 
-                        override fun onLoadFail(error: String) {
-                            stateInter1 = StateLoadAd.LOAD_FAILED
-                            checkShowInter()
-                        }
+                safePreloadAds(spaceNameConfig = spaceNameConfig, spaceNameAds = spaceName1, preloadCallback = object : PreloadCallback{
+                    override fun onLoadDone() {
+                        stateInter1 = StateLoadAd.SUCCESS
+                        checkShowInter()
+                    }
 
-                    })
-                safePreloadAds(
-                    spaceNameConfig = spaceNameConfig,
-                    spaceNameAds = spaceName2,
-                    preloadCallback = object : PreloadCallback {
-                        override fun onLoadDone() {
-                            stateInter2 = StateLoadAd.SUCCESS
-                            checkShowInter()
-                        }
+                    override fun onLoadFail(error: String) {
+                        stateInter1 = StateLoadAd.LOAD_FAILED
+                        checkShowInter()
+                    }
 
-                        override fun onLoadFail(error: String) {
-                            stateInter2 = StateLoadAd.LOAD_FAILED
-                            checkShowInter()
-                        }
-                    })
+                })
+                safePreloadAds(spaceNameConfig = spaceNameConfig, spaceNameAds = spaceName2, preloadCallback = object : PreloadCallback{
+                    override fun onLoadDone() {
+                        stateInter2 = StateLoadAd.SUCCESS
+                        checkShowInter()
+                    }
 
-                safePreloadAds(
-                    spaceNameConfig = spaceNameConfig,
-                    spaceNameAds = spaceName3,
-                    preloadCallback = object : PreloadCallback {
-                        override fun onLoadDone() {
-                            stateInter3 = StateLoadAd.SUCCESS
-                            checkShowInter()
-                        }
+                    override fun onLoadFail(error: String) {
+                        stateInter2 = StateLoadAd.LOAD_FAILED
+                        checkShowInter()
+                    }
+                })
+                safePreloadAds(spaceNameConfig = spaceNameConfig, spaceNameAds = spaceName3, preloadCallback = object : PreloadCallback{
+                    override fun onLoadDone() {
+                        stateInter3 = StateLoadAd.SUCCESS
+                        checkShowInter()
+                    }
 
-                        override fun onLoadFail(error: String) {
-                            stateInter3 = StateLoadAd.LOAD_FAILED
-                            checkShowInter()
-                        }
-                    })
-
-
+                    override fun onLoadFail(error: String) {
+                        stateInter3 = StateLoadAd.LOAD_FAILED
+                        checkShowInter()
+                    }
+                })
             }
         }
 
@@ -577,7 +576,7 @@ fun Fragment.show3LoadedInter(
         } else {
             countDownTimer.onFinish()
         }
-    } else {
+    }else{
         navOrBack.invoke()
         onCloseAds?.invoke()
     }
@@ -609,7 +608,7 @@ fun Fragment.loadAndShow3Inter(
         var isTimeOut = false
         val timeOutRunnable = Runnable {
             isTimeOut = true
-            if (stateInter1 == StateLoadAd.SUCCESS) {
+            if (stateInter1 == StateLoadAd.SUCCESS){
                 //show 1
                 showLoadedInter(
                     spaceNameConfig = spaceNameConfig,
@@ -617,9 +616,8 @@ fun Fragment.loadAndShow3Inter(
                     timeOut = timeOut,
                     destinationToShowAds = destinationToShowAds,
                     navOrBack = navOrBack,
-                    onCloseAds = onCloseAds
-                )
-            } else if (stateInter2 == StateLoadAd.SUCCESS) {
+                    onCloseAds = onCloseAds)
+            }else if (stateInter2 == StateLoadAd.SUCCESS){
                 //show 2
                 showLoadedInter(
                     spaceNameConfig = spaceNameConfig,
@@ -627,9 +625,8 @@ fun Fragment.loadAndShow3Inter(
                     timeOut = timeOut,
                     destinationToShowAds = destinationToShowAds,
                     navOrBack = navOrBack,
-                    onCloseAds = onCloseAds
-                )
-            } else if (stateInter3 == StateLoadAd.SUCCESS) {
+                    onCloseAds = onCloseAds)
+            }else if (stateInter3 == StateLoadAd.SUCCESS){
                 //show 3
                 showLoadedInter(
                     spaceNameConfig = spaceNameConfig,
@@ -637,9 +634,8 @@ fun Fragment.loadAndShow3Inter(
                     timeOut = timeOut,
                     destinationToShowAds = destinationToShowAds,
                     navOrBack = navOrBack,
-                    onCloseAds = onCloseAds
-                )
-            } else {
+                    onCloseAds = onCloseAds)
+            }else{
                 //ket thuc luong
                 DialogLoadAdsUtils.getInstance().hideDialogLoadingAds(0)
                 AdsController.isInterIsShowing = false
@@ -649,11 +645,11 @@ fun Fragment.loadAndShow3Inter(
         }
 
         val handler = Handler(Looper.getMainLooper())
-        handler.postDelayed(timeOutRunnable, timeOut)
+        handler.postDelayed(timeOutRunnable , timeOut)
 
-        fun checkShowInter() {
-            if (!isTimeOut) {
-                if (stateInter1 == StateLoadAd.SUCCESS) {
+        fun checkShowInter(){
+            if (!isTimeOut){
+                if (stateInter1 == StateLoadAd.SUCCESS){
                     //show 1
                     handler.removeCallbacks(timeOutRunnable)
                     stateInter1 = StateLoadAd.HAS_BEEN_OPENED
@@ -663,9 +659,8 @@ fun Fragment.loadAndShow3Inter(
                         timeOut = timeOut,
                         destinationToShowAds = destinationToShowAds,
                         navOrBack = navOrBack,
-                        onCloseAds = onCloseAds
-                    )
-                } else if (stateInter1 == StateLoadAd.LOAD_FAILED && stateInter2 == StateLoadAd.SUCCESS) {
+                        onCloseAds = onCloseAds)
+                }else if (stateInter1 == StateLoadAd.LOAD_FAILED && stateInter2 == StateLoadAd.SUCCESS){
                     //show 2
                     handler.removeCallbacks(timeOutRunnable)
                     stateInter2 = StateLoadAd.HAS_BEEN_OPENED
@@ -675,9 +670,8 @@ fun Fragment.loadAndShow3Inter(
                         timeOut = timeOut,
                         destinationToShowAds = destinationToShowAds,
                         navOrBack = navOrBack,
-                        onCloseAds = onCloseAds
-                    )
-                } else if (stateInter1 == StateLoadAd.LOAD_FAILED && stateInter2 == StateLoadAd.LOAD_FAILED && stateInter3 == StateLoadAd.SUCCESS) {
+                        onCloseAds = onCloseAds)
+                }else if (stateInter1 == StateLoadAd.LOAD_FAILED && stateInter2 == StateLoadAd.LOAD_FAILED && stateInter3 == StateLoadAd.SUCCESS){
                     //show 3
                     handler.removeCallbacks(timeOutRunnable)
                     stateInter3 = StateLoadAd.HAS_BEEN_OPENED
@@ -687,9 +681,8 @@ fun Fragment.loadAndShow3Inter(
                         timeOut = timeOut,
                         destinationToShowAds = destinationToShowAds,
                         navOrBack = navOrBack,
-                        onCloseAds = onCloseAds
-                    )
-                } else if (stateInter1 == StateLoadAd.LOAD_FAILED && stateInter2 == StateLoadAd.LOAD_FAILED && stateInter3 == StateLoadAd.LOAD_FAILED) {
+                        onCloseAds = onCloseAds)
+                }else if (stateInter1 == StateLoadAd.LOAD_FAILED && stateInter2 == StateLoadAd.LOAD_FAILED && stateInter3 == StateLoadAd.LOAD_FAILED){
                     //ket thuc luong
                     DialogLoadAdsUtils.getInstance().hideDialogLoadingAds(0)
                     handler.removeCallbacks(timeOutRunnable)
@@ -700,52 +693,43 @@ fun Fragment.loadAndShow3Inter(
             }
         }
 
-        safePreloadAds(
-            spaceNameConfig = spaceNameConfig,
-            spaceNameAds = spaceName1,
-            preloadCallback = object : PreloadCallback {
-                override fun onLoadDone() {
-                    stateInter1 = StateLoadAd.SUCCESS
-                    checkShowInter()
-                }
+        safePreloadAds(spaceNameConfig = spaceNameConfig, spaceNameAds = spaceName1, preloadCallback = object : PreloadCallback{
+            override fun onLoadDone() {
+                stateInter1 = StateLoadAd.SUCCESS
+                checkShowInter()
+            }
 
-                override fun onLoadFail(error: String) {
-                    stateInter1 = StateLoadAd.LOAD_FAILED
-                    checkShowInter()
-                }
+            override fun onLoadFail(error: String) {
+                stateInter1 = StateLoadAd.LOAD_FAILED
+                checkShowInter()
+            }
 
-            })
-        safePreloadAds(
-            spaceNameConfig = spaceNameConfig,
-            spaceNameAds = spaceName2,
-            preloadCallback = object : PreloadCallback {
-                override fun onLoadDone() {
-                    stateInter2 = StateLoadAd.SUCCESS
-                    checkShowInter()
-                }
+        })
+        safePreloadAds(spaceNameConfig = spaceNameConfig, spaceNameAds = spaceName2, preloadCallback = object : PreloadCallback{
+            override fun onLoadDone() {
+                stateInter2 = StateLoadAd.SUCCESS
+                checkShowInter()
+            }
 
-                override fun onLoadFail(error: String) {
-                    stateInter2 = StateLoadAd.LOAD_FAILED
-                    checkShowInter()
-                }
-            })
-        safePreloadAds(
-            spaceNameConfig = spaceNameConfig,
-            spaceNameAds = spaceName3,
-            preloadCallback = object : PreloadCallback {
-                override fun onLoadDone() {
-                    stateInter3 = StateLoadAd.SUCCESS
-                    checkShowInter()
-                }
+            override fun onLoadFail(error: String) {
+                stateInter2 = StateLoadAd.LOAD_FAILED
+                checkShowInter()
+            }
+        })
+        safePreloadAds(spaceNameConfig = spaceNameConfig, spaceNameAds = spaceName3, preloadCallback = object : PreloadCallback{
+            override fun onLoadDone() {
+                stateInter3 = StateLoadAd.SUCCESS
+                checkShowInter()
+            }
 
-                override fun onLoadFail(error: String) {
-                    stateInter3 = StateLoadAd.LOAD_FAILED
-                    checkShowInter()
-                }
-            })
+            override fun onLoadFail(error: String) {
+                stateInter3 = StateLoadAd.LOAD_FAILED
+                checkShowInter()
+            }
+        })
 
 
-    } else {
+    }else{
         navOrBack.invoke()
         onCloseAds?.invoke()
     }

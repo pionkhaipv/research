@@ -37,7 +37,8 @@ private fun isOverTimeDelay(spaceNameConfig: String): Boolean {
     config ?: return false
     val timeDelay = config.timeDelayShowInter
     timeDelay ?: return true
-    val isTimeOut = System.currentTimeMillis() - AdsController.lastTimeShowAdsInter > timeDelay * 1000
+    val isTimeOut =
+        System.currentTimeMillis() - AdsController.lastTimeShowAdsInter > timeDelay * 1000
     Log.d("CHECKTIMEDELAYINTER", "isOverTimeDelay:$spaceNameConfig $isTimeOut")
     return isTimeOut
 }
@@ -45,7 +46,10 @@ private fun isOverTimeDelay(spaceNameConfig: String): Boolean {
 fun setLastTimeShowInter(spaceNameConfig: String) {
 
     AdsController.lastTimeShowAdsInter = System.currentTimeMillis()
-    Log.d("CHECKTIMEDELAYINTER", "setLastTimeShowInter:$spaceNameConfig ${AdsController.lastTimeShowAdsInter}")
+    Log.d(
+        "CHECKTIMEDELAYINTER",
+        "setLastTimeShowInter:$spaceNameConfig ${AdsController.lastTimeShowAdsInter}"
+    )
 }
 
 fun Fragment.safePreloadAds(
@@ -67,7 +71,7 @@ fun Fragment.safePreloadAds(
         preloadCallback?.onLoadDone()
     } else if (AdsController.getInstance().checkAdsState(spaceNameAds) == StateLoadAd.LOADING) {
         //set new call back
-        AdsController.getInstance().setPreloadCallback(spaceNameAds, object : PreloadCallback{
+        AdsController.getInstance().setPreloadCallback(spaceNameAds, object : PreloadCallback {
             override fun onLoadDone() {
                 preloadCallback?.onLoadDone()
             }
@@ -91,7 +95,6 @@ fun Fragment.safePreloadAds(
                 ?: (config?.getConfigNative(
                     context = context,
                     default = ConfigNative(
-                        ratio = "360:94",
                         adChoice = AdsConstant.TOP_LEFT
                     )
                 )?.adChoice)
@@ -105,7 +108,7 @@ fun Fragment.safePreloadAds(
                     positionCollapsibleBanner = positionCollapsibleBanner,
                     adChoice = newAdChoice,
                     isOneTimeCollapsible = isOneTimeCollapsible,
-                    preloadCallback = object : PreloadCallback{
+                    preloadCallback = object : PreloadCallback {
                         override fun onLoadDone() {
                             preloadCallback?.onLoadDone()
                         }
@@ -119,14 +122,132 @@ fun Fragment.safePreloadAds(
                     widthBannerAdaptiveAds = widthBannerAdaptiveAds
                 )
         } else {
-            Log.d("TESTERADSEVENT", "load failed ads : ads name $spaceNameAds \n config name $spaceNameConfig \\n id ${AdsController.getInstance().getAdsDetail(spaceNameAds)?.adsId ?: "null"}\n error : off by config")
+            Log.d(
+                "TESTERADSEVENT",
+                "load failed ads : ads name $spaceNameAds \n config name $spaceNameConfig \\n id ${
+                    AdsController.getInstance().getAdsDetail(spaceNameAds)?.adsId ?: "null"
+                }\n error : off by config"
+            )
             preloadCallback?.onLoadFail("remote off")
         }
     }
 
 }
 
+fun Context.safePreloadAds(
+    spaceNameConfig: String,
+    spaceNameAds: String,
+    includeHasBeenOpened: Boolean? = null,
+    positionCollapsibleBanner: String? = null,
+    adChoice: Int? = null,
+    isOneTimeCollapsible: Boolean? = null,
+    preloadCallback: PreloadCallback? = null,
+    widthBannerAdaptiveAds: Int? = null
+) {
+    val context = this
+    val config = AdsConstant.listConfigAds[spaceNameConfig]
+    val isOn = config?.isOn ?: false
+
+    val isTypeEnable = checkAdsByType(spaceNameAds)
+
+    if (AdsController.getInstance().checkAdsState(spaceNameAds) == StateLoadAd.SUCCESS) {
+        preloadCallback?.onLoadDone()
+    } else if (AdsController.getInstance().checkAdsState(spaceNameAds) == StateLoadAd.LOADING) {
+        //set new call back
+        AdsController.getInstance().setPreloadCallback(spaceNameAds, object : PreloadCallback {
+            override fun onLoadDone() {
+                preloadCallback?.onLoadDone()
+            }
+
+            override fun onLoadFail(error: String) {
+                super.onLoadFail(error)
+                preloadCallback?.onLoadFail(error)
+            }
+
+        })
+    } else if (includeHasBeenOpened == true && AdsController.getInstance()
+            .checkAdsState(spaceNameAds) == StateLoadAd.HAS_BEEN_OPENED
+    ) {
+        preloadCallback?.onLoadDone()
+    } else if (!isTypeEnable) {
+        preloadCallback?.onLoadFail("remote type off")
+    } else {
+        if (isOn) {
+            //tinh toan ad choice
+            val newAdChoice: Int? = adChoice
+                ?: (config?.getConfigNative(
+                    context = context,
+                    default = ConfigNative(
+                        adChoice = AdsConstant.TOP_LEFT
+                    )
+                )?.adChoice)
+
+
+
+            AdsController.getInstance()
+                .preload(
+                    spaceName = spaceNameAds,
+                    includeHasBeenOpened = includeHasBeenOpened,
+                    positionCollapsibleBanner = positionCollapsibleBanner,
+                    adChoice = newAdChoice,
+                    isOneTimeCollapsible = isOneTimeCollapsible,
+                    preloadCallback = object : PreloadCallback {
+                        override fun onLoadDone() {
+                            preloadCallback?.onLoadDone()
+                        }
+
+                        override fun onLoadFail(error: String) {
+                            super.onLoadFail(error)
+                            preloadCallback?.onLoadFail(error)
+                        }
+
+                    },
+                    widthBannerAdaptiveAds = widthBannerAdaptiveAds
+                )
+        } else {
+            Log.d(
+                "TESTERADSEVENT",
+                "load failed ads : ads name $spaceNameAds \n config name $spaceNameConfig \\n id ${
+                    AdsController.getInstance().getAdsDetail(spaceNameAds)?.adsId ?: "null"
+                }\n error : off by config"
+            )
+            preloadCallback?.onLoadFail("remote off")
+        }
+    }
+
+}
+
+fun Fragment.safePreloadAds(
+    listSpaceNameConfig: List<String>,
+    spaceNameAds: String,
+    includeHasBeenOpened: Boolean? = null,
+    positionCollapsibleBanner: String? = null,
+    adChoice: Int? = null,
+    isOneTimeCollapsible: Boolean? = null,
+    preloadCallback: PreloadCallback? = null,
+    widthBannerAdaptiveAds: Int? = null
+) {
+    for (configName in listSpaceNameConfig) {
+        if (AdsConstant.listConfigAds[configName]?.isOn == true) {
+            safePreloadAds(
+                spaceNameConfig = configName,
+                spaceNameAds = spaceNameAds,
+                includeHasBeenOpened = includeHasBeenOpened,
+                positionCollapsibleBanner = positionCollapsibleBanner,
+                adChoice = adChoice,
+                isOneTimeCollapsible = isOneTimeCollapsible,
+                preloadCallback = preloadCallback,
+                widthBannerAdaptiveAds = widthBannerAdaptiveAds
+            )
+            break
+        }
+    }
+}
+
 fun checkAdsByType(spaceNameAds: String): Boolean {
+    if (AdsConstant.disableAllConfig) {
+        return false
+    }
     val adsDetail = AdsController.getInstance().getAdsDetail(spaceNameAds)
     return when (adsDetail?.adsType) {
         //admob
@@ -178,4 +299,8 @@ fun checkAdsByType(spaceNameAds: String): Boolean {
             false
         }
     }
+}
+
+fun checkIsPreloadAfterShow(spaceNameConfig: String): Boolean {
+    return AdsConstant.listConfigAds[spaceNameConfig]?.isPreloadAfterShow ?: false
 }

@@ -109,7 +109,9 @@ class AdmobOpenAppAds : AdmobAds() {
                             adCallback = mAdCallback,
                             lifecycle = mLifecycle,
                             layoutToAttachAds = null,
-                            viewAdsInflateFromXml = null)
+                            viewAdsInflateFromXml = null,
+                            timeShowNativeCollapsibleAfterClose = 0
+                        )
                     }else{
                         mLifecycle?.removeObserver(this)
                         mAdCallback?.onAdFailToLoad("activity or adsChild must not null")
@@ -138,7 +140,8 @@ class AdmobOpenAppAds : AdmobAds() {
         adChoice: Int?,
         positionCollapsibleBanner: String?,
         isOneTimeCollapsible: Boolean?,
-        widthBannerAdaptiveAds: Int?
+        widthBannerAdaptiveAds: Int?,
+        timeShowNativeCollapsibleAfterClose: Int?
     ) {
 
         mActivity = activity
@@ -159,7 +162,9 @@ class AdmobOpenAppAds : AdmobAds() {
                 adCallback = adCallback,
                 lifecycle = lifecycle,
                 layoutToAttachAds = layoutToAttachAds,
-                viewAdsInflateFromXml = viewAdsInflateFromXml)
+                viewAdsInflateFromXml = viewAdsInflateFromXml,
+                timeShowNativeCollapsibleAfterClose = 0
+            )
         }else{
             //load quảng cáo mới
             load(
@@ -181,7 +186,9 @@ class AdmobOpenAppAds : AdmobAds() {
                                 adCallback = adCallback,
                                 lifecycle = lifecycle,
                                 layoutToAttachAds = layoutToAttachAds,
-                                viewAdsInflateFromXml = viewAdsInflateFromXml)
+                                viewAdsInflateFromXml = viewAdsInflateFromXml,
+                                timeShowNativeCollapsibleAfterClose = 0
+                            )
                         }
                     }
 
@@ -293,7 +300,8 @@ class AdmobOpenAppAds : AdmobAds() {
         adCallback: AdCallback?,
         lifecycle: Lifecycle?,
         layoutToAttachAds: ViewGroup?,
-        viewAdsInflateFromXml: View?
+        viewAdsInflateFromXml: View?,
+        timeShowNativeCollapsibleAfterClose: Int?
     ) {
         mActivity = activity
         mAdsChild = adsChild
@@ -382,6 +390,7 @@ class AdmobOpenAppAds : AdmobAds() {
                 Log.d("TESTERADSEVENT", "show failed open app : ads name ${adsChild.spaceName} id ${adsChild.adsId} error : show in wrong destination")
 
             } else if (!wasLoadTimeLessThanNHoursAgo()){
+                stateLoadAd = StateLoadAd.SHOW_FAILED
                 adCallback?.onAdFailToLoad("ads expired")
                 Log.d("TESTERADSEVENT", "show failed open app : ads name ${adsChild.spaceName} id ${adsChild.adsId} error : ads expired")
 

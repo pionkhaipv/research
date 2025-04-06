@@ -82,7 +82,9 @@ object AdsConstant {
 
     const val TIME_OUT_DEFAULT = 7000L
     const val DELAY_INTER_DEFAULT = 10
+    const val RESHOW_NATIVE_TIME = 10
     const val ERROR_NO_INTERNET = "error_no_internet"
+    const val ERROR_OFF_BY_TYPE = "error_off_by_type"
     const val ERROR_PREMIUM = "error_premium"
     const val ERROR_INIT = "ads not init"
 

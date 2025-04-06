@@ -32,7 +32,8 @@ abstract class AdmobAds {
         adChoice: Int?,
         positionCollapsibleBanner: String?,
         isOneTimeCollapsible: Boolean?,
-        widthBannerAdaptiveAds: Int?
+        widthBannerAdaptiveAds: Int?,
+        timeShowNativeCollapsibleAfterClose : Int?
     )
 
     abstract fun preload(
@@ -53,6 +54,7 @@ abstract class AdmobAds {
         //native
         layoutToAttachAds: ViewGroup?,
         viewAdsInflateFromXml: View?,
+        timeShowNativeCollapsibleAfterClose : Int?
     )
 
     abstract fun setPreloadCallback(preloadCallback: PreloadCallback?)

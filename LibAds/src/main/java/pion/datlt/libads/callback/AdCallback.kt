@@ -43,6 +43,10 @@ interface AdCallback {
         AdsController.isBlockOpenAds = true
     }
 
+    fun onClickCloseCollapsible() {
+
+    }
+
     /**
      * gọi khi đã nhận 1 lượt impression.
      * nhớ gọi hàm supper vì nó dùng để bắn appflyer revenue

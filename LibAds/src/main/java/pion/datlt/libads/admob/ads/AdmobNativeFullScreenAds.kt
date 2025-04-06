@@ -64,7 +64,8 @@ class AdmobNativeFullScreenAds : AdmobAds(){
         adChoice: Int?,
         positionCollapsibleBanner: String?,
         isOneTimeCollapsible: Boolean?,
-        widthBannerAdaptiveAds: Int?
+        widthBannerAdaptiveAds: Int?,
+        timeShowNativeCollapsibleAfterClose: Int?
     ) {
         mAdCallback = adCallback
         mDestinationToShowAds = destinationToShowAds
@@ -88,7 +89,8 @@ class AdmobNativeFullScreenAds : AdmobAds(){
                             layoutToAttachAds = layoutToAttachAds,
                             viewAdsInflateFromXml = viewAdsInflateFromXml,
                             lifecycle = lifecycle,
-                            adCallback = adCallback
+                            adCallback = adCallback,
+                            timeShowNativeCollapsibleAfterClose = timeShowNativeCollapsibleAfterClose
                         )
                     }
 
@@ -151,6 +153,7 @@ class AdmobNativeFullScreenAds : AdmobAds(){
                     nativeAds?.destroy()
                     nativeAds = null
                     nativeAds = adNative
+                    stateLoadAd = StateLoadAd.SUCCESS
                     loadCallback?.onLoadDone()
                     adNative.responseInfo?.adapterResponses?.forEach { responseInfo ->
                         if (responseInfo.adSourceId.isNotEmpty()) {
@@ -183,7 +186,7 @@ class AdmobNativeFullScreenAds : AdmobAds(){
                         Log.d("TESTERADSEVENT", "load success native full screen : ads name ${adsChild.spaceName} id ${adsChild.adsId}")
 
                         timeLoader = Date().time
-                        stateLoadAd = StateLoadAd.SUCCESS
+
                         if (isPreload) {
                             mPreloadCallback?.onLoadDone()
                         }
@@ -242,15 +245,17 @@ class AdmobNativeFullScreenAds : AdmobAds(){
         adCallback: AdCallback?,
         lifecycle: Lifecycle?,
         layoutToAttachAds: ViewGroup?,
-        viewAdsInflateFromXml: View?
+        viewAdsInflateFromXml: View?,
+        timeShowNativeCollapsibleAfterClose: Int?
     ) {
         mAdCallback = adCallback // show
         mDestinationToShowAds = destinationToShowAds
 
 
         if (layoutToAttachAds != null) {
+            layoutToAttachAds.visibility = View.VISIBLE
             if (viewAdsInflateFromXml != null) {
-
+                viewAdsInflateFromXml.visibility = View.VISIBLE
                 val nativeAdView = NativeAdView(activity)
                 nativeAdView.layoutParams = ViewGroup.LayoutParams(
                     ViewGroup.LayoutParams.MATCH_PARENT,

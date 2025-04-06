@@ -119,7 +119,8 @@ class AdmobRewardInterstitialAds : AdmobAds() {
                             adCallback = mAdCallback,
                             lifecycle = mLifecycle,
                             layoutToAttachAds = null,
-                            viewAdsInflateFromXml = null
+                            viewAdsInflateFromXml = null,
+                            timeShowNativeCollapsibleAfterClose = 0
                         )
                     } else {
                         mLifecycle?.removeObserver(this)
@@ -156,7 +157,8 @@ class AdmobRewardInterstitialAds : AdmobAds() {
         adChoice: Int?,
         positionCollapsibleBanner: String?,
         isOneTimeCollapsible: Boolean?,
-        widthBannerAdaptiveAds: Int?
+        widthBannerAdaptiveAds: Int?,
+        timeShowNativeCollapsibleAfterClose: Int?
     ) {
         mActivity = activity
         mAdsChild = adsChild
@@ -176,7 +178,8 @@ class AdmobRewardInterstitialAds : AdmobAds() {
                 adCallback = adCallback,
                 lifecycle = lifecycle,
                 layoutToAttachAds = layoutToAttachAds,
-                viewAdsInflateFromXml = viewAdsInflateFromXml
+                viewAdsInflateFromXml = viewAdsInflateFromXml,
+                timeShowNativeCollapsibleAfterClose = timeShowNativeCollapsibleAfterClose
             )
         } else {
             //load quảng cáo mới
@@ -199,7 +202,8 @@ class AdmobRewardInterstitialAds : AdmobAds() {
                                 adCallback = adCallback,
                                 lifecycle = lifecycle,
                                 layoutToAttachAds = layoutToAttachAds,
-                                viewAdsInflateFromXml = viewAdsInflateFromXml
+                                viewAdsInflateFromXml = viewAdsInflateFromXml,
+                                timeShowNativeCollapsibleAfterClose = timeShowNativeCollapsibleAfterClose
                             )
                         }
                     }
@@ -318,7 +322,8 @@ class AdmobRewardInterstitialAds : AdmobAds() {
         adCallback: AdCallback?,
         lifecycle: Lifecycle?,
         layoutToAttachAds: ViewGroup?,
-        viewAdsInflateFromXml: View?
+        viewAdsInflateFromXml: View?,
+        timeShowNativeCollapsibleAfterClose: Int?
     ) {
         mActivity = activity
         mAdsChild = adsChild
@@ -415,6 +420,7 @@ class AdmobRewardInterstitialAds : AdmobAds() {
                 )
 
             } else if (!wasLoadTimeLessThanNHoursAgo()) {
+                stateLoadAd = StateLoadAd.SHOW_FAILED
                 adCallback?.onAdFailToLoad("ads expired")
                 Log.d(
                     "TESTERADSEVENT",

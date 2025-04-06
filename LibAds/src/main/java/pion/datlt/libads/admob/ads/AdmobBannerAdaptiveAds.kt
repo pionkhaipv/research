@@ -57,7 +57,8 @@ class AdmobBannerAdaptiveAds : AdmobAds() {
         adChoice: Int?,
         positionCollapsibleBanner: String?,
         isOneTimeCollapsible: Boolean?,
-        widthBannerAdaptiveAds: Int?
+        widthBannerAdaptiveAds: Int?,
+        timeShowNativeCollapsibleAfterClose: Int?
     ) {
         mAdCallback = adCallback
         mDestinationToShowAds = destinationToShowAds
@@ -81,7 +82,8 @@ class AdmobBannerAdaptiveAds : AdmobAds() {
                             layoutToAttachAds = layoutToAttachAds,
                             viewAdsInflateFromXml = viewAdsInflateFromXml,
                             lifecycle = lifecycle,
-                            adCallback = adCallback
+                            adCallback = adCallback,
+                            timeShowNativeCollapsibleAfterClose = timeShowNativeCollapsibleAfterClose
                         )
                     }
 
@@ -170,7 +172,7 @@ class AdmobBannerAdaptiveAds : AdmobAds() {
                 override fun onAdLoaded() {
                     super.onAdLoaded()
                     Log.d("TESTERADSEVENT", "load success banner adaptive : ads name ${adsChild.spaceName} id ${adsChild.adsId}")
-
+                    timeLoader = Date().time
                     adView?.let {
                         it.responseInfo?.adapterResponses?.forEach { responseInfo ->
                             if (responseInfo.adSourceId.isNotEmpty()) {
@@ -185,7 +187,6 @@ class AdmobBannerAdaptiveAds : AdmobAds() {
 
                     stateLoadAd = StateLoadAd.SUCCESS
                     loadCallback?.onLoadDone()
-                    timeLoader = Date().time
                     if (isPreload) {
                         mPreloadCallback?.onLoadDone()
                     }
@@ -220,7 +221,8 @@ class AdmobBannerAdaptiveAds : AdmobAds() {
         adCallback: AdCallback?,
         lifecycle: Lifecycle?,
         layoutToAttachAds: ViewGroup?,
-        viewAdsInflateFromXml: View?
+        viewAdsInflateFromXml: View?,
+        timeShowNativeCollapsibleAfterClose: Int?
     ) {
         mAdCallback = adCallback
         mDestinationToShowAds = destinationToShowAds
@@ -236,6 +238,13 @@ class AdmobBannerAdaptiveAds : AdmobAds() {
             if (mDestinationToShowAds != null && mDestinationToShowAds != AdsController.currentDestinationId) {
                 adCallback?.onAdFailToLoad("show in wrong destination")
                 Log.d("TESTERADSEVENT", "show failed banner adaptive : ads name ${adsChild.spaceName} id ${adsChild.adsId} error : show in wrong destination")
+            }else if (!wasLoadTimeLessThanNHoursAgo()) {
+                stateLoadAd = StateLoadAd.SHOW_FAILED
+                adCallback?.onAdFailToLoad("ads expired")
+                Log.d(
+                    "TESTERADSEVENT",
+                    "show failed banner adaptive : ads name ${adsChild.spaceName} id ${adsChild.adsId} error : ads expired"
+                )
             } else {
                 layoutToAttachAds.removeAllViews()
                 if (adView!!.parent != null) {

@@ -1,10 +1,13 @@
 package pion.datlt.libads.utils.adsuntils
 
 import android.content.res.ColorStateList
+import android.content.res.Resources
 import android.graphics.Color
+import android.graphics.drawable.GradientDrawable
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
+import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -23,70 +26,80 @@ fun Fragment.showLoadedNativeFullScreen(
     spaceNameConfig: String,
     spaceName: String,
     includeHasBeenOpened: Boolean = false,
-    adChoice: Int? = AdsConstant.TOP_LEFT,
-    isResetConfig : Boolean = true,
+    adChoice: Int = AdsConstant.TOP_LEFT,
+    isResetConfig: Boolean = true,
     layoutToAttachAds: ViewGroup,
     layoutContainAds: ViewGroup? = null,
-    viewAdsInflateFromXml: View? = LayoutInflater.from(context).inflate(R.layout.layout_native_full_screen, null),
+    viewAdsInflateFromXml: View = LayoutInflater.from(context)
+        .inflate(R.layout.layout_native_full_screen, null),
     onAdsClick: (() -> Unit)? = null
 ) {
     if (checkConditionShowAds(context, spaceNameConfig)) {
         AdsConstant.listConfigAds[spaceNameConfig]?.let { config ->
 
-
-
-            var newAdChoice = adChoice
-            var newViewAdsInflateFromXml = viewAdsInflateFromXml
-
-            if (isResetConfig){
-                config.getConfigNative(
-                    context = context,
-                    default = ConfigNative(
-                        ratio = "360:94",
-                        adChoice = AdsConstant.TOP_LEFT
-                    )
-                ).let { configNative ->
-
-                    if (newAdChoice == null) {
-                        newAdChoice = configNative.adChoice
-                    }
-                    if (newViewAdsInflateFromXml == null){
-                        newViewAdsInflateFromXml = configNative.viewAds
-                    }
-
-                }
-
-                //set cta color
-                runCatching {
-                    if (newViewAdsInflateFromXml != null){
-                        val colorStateList = ColorStateList.valueOf(Color.parseColor(config.ctaColor))
-                        val ctaButton =
-                            newViewAdsInflateFromXml!!.findViewById<TextView>(R.id.ad_call_to_action)
-                        ctaButton.backgroundTintList = colorStateList
-                        ctaButton.setTextColor(Color.parseColor(config.textCTAColor))
-                    }
-
-                }
-
+            if (isResetConfig) {
                 //set background color
                 runCatching {
-                    if (newViewAdsInflateFromXml != null){
-                        val adViewHolder =
-                            newViewAdsInflateFromXml!!.findViewById<ConstraintLayout>(R.id.adViewHolder)
-                        adViewHolder.setBackgroundColor(Color.parseColor(config.backGroundColor))
-                    }
+                    val adViewHolder =
+                        viewAdsInflateFromXml.findViewById<ConstraintLayout>(R.id.adViewHolder)
+                    adViewHolder.setBackgroundColor(Color.parseColor(config.backGroundColor))
                 }
 
                 //set content text color
                 runCatching {
-                    if (newViewAdsInflateFromXml != null){
-                        val headLineText =
-                            newViewAdsInflateFromXml!!.findViewById<TextView>(R.id.ad_headline)
-                        val bodyText = newViewAdsInflateFromXml!!.findViewById<TextView>(R.id.ad_body)
-                        headLineText.setTextColor(Color.parseColor(config.textContentColor))
-                        bodyText.setTextColor(Color.parseColor(config.textContentColor))
+                    val headLineText =
+                        viewAdsInflateFromXml.findViewById<TextView>(R.id.ad_headline)
+                    val bodyText = viewAdsInflateFromXml.findViewById<TextView>(R.id.ad_body)
+                    headLineText.setTextColor(Color.parseColor(config.textContentColor))
+                    bodyText.setTextColor(Color.parseColor(config.textContentColor))
+                }
+
+                //set cta shape
+                //set cta color
+                //set cta radius
+                //set cta ratio
+                runCatching {
+                    val listGradientColor = mutableListOf<Int>()
+                    config.ctaGradientListColor?.forEach { colorString ->
+                        kotlin.runCatching {
+                            listGradientColor.add(Color.parseColor(colorString))
+                        }
                     }
 
+                    if (listGradientColor.isEmpty()) {
+                        if (context != null) {
+                            listGradientColor.add(context!!.getColor(R.color.cta_color))
+                            listGradientColor.add(context!!.getColor(R.color.cta_color))
+                        } else {
+                            listGradientColor.add(Color.parseColor("#3ADB41"))
+                            listGradientColor.add(Color.parseColor("#3ADB41"))
+                        }
+                    }else if (listGradientColor.size == 1){
+                        listGradientColor.add(listGradientColor[0])
+                    }
+
+                    val gradientDrawable = GradientDrawable(
+                        GradientDrawable.Orientation.LEFT_RIGHT,
+                        listGradientColor.toIntArray()
+                    ).apply {
+                        shape = GradientDrawable.RECTANGLE
+                        cornerRadius = TypedValue.applyDimension(
+                            TypedValue.COMPLEX_UNIT_DIP,
+                            config.ctaConnerRadius.toFloat(),
+                            Resources.getSystem().displayMetrics
+                        )
+                    }
+                    val ctaButton =
+                        viewAdsInflateFromXml.findViewById<TextView>(R.id.ad_call_to_action)
+                    ctaButton.backgroundTintList = null
+                    ctaButton.background = gradientDrawable
+                    ctaButton.setTextColor(Color.parseColor(config.textCTAColor))
+                    if (config.ctaRatio != null) {
+                        val ctaButtonParams =
+                            ctaButton?.layoutParams as ConstraintLayout.LayoutParams?
+                        ctaButtonParams?.dimensionRatio = config.ctaRatio
+                        ctaButton?.layoutParams = ctaButtonParams
+                    }
                 }
             }
 
@@ -94,10 +107,19 @@ fun Fragment.showLoadedNativeFullScreen(
                 spaceName = spaceName,
                 includeHasBeenOpened = includeHasBeenOpened,
                 layoutToAttachAds = layoutToAttachAds,
-                viewAdsInflateFromXml = newViewAdsInflateFromXml,
-                adChoice = newAdChoice,
+                viewAdsInflateFromXml = viewAdsInflateFromXml,
+                adChoice = adChoice,
                 adCallback = object : AdCallback {
-                    override fun onAdShow() {}
+                    override fun onAdShow() {
+                        if (checkIsPreloadAfterShow(spaceNameConfig = spaceNameConfig)) {
+                            safePreloadAds(
+                                spaceNameConfig = spaceNameConfig,
+                                spaceNameAds = spaceName,
+                                includeHasBeenOpened = includeHasBeenOpened,
+                                adChoice = adChoice
+                            )
+                        }
+                    }
 
                     override fun onAdClose() {}
 
@@ -123,78 +145,90 @@ fun Fragment.showLoadedNativeFullScreen(
 fun Fragment.loadAndShowNativeFullScreen(
     spaceNameConfig: String,
     spaceName: String,
-    adChoice: Int? = AdsConstant.TOP_LEFT,
-    isResetConfig : Boolean = true,
+    adChoice: Int = AdsConstant.TOP_LEFT,
+    isResetConfig: Boolean = true,
     layoutToAttachAds: ViewGroup,
     layoutContainAds: ViewGroup? = null,
-    viewAdsInflateFromXml: View? = LayoutInflater.from(context).inflate(R.layout.layout_native_full_screen, null),
+    viewAdsInflateFromXml: View = LayoutInflater.from(context)
+        .inflate(R.layout.layout_native_full_screen, null),
     onAdsClick: (() -> Unit)? = null
 ) {
     if (checkConditionShowAds(context, spaceNameConfig)) {
         AdsConstant.listConfigAds[spaceNameConfig]?.let { config ->
 
+            if (isResetConfig) {
 
-
-            var newAdChoice = adChoice
-            var newViewAdsInflateFromXml = viewAdsInflateFromXml
-
-            if (isResetConfig){
-                config.getConfigNative(
-                    context = context,
-                    default = ConfigNative(
-                        ratio = "360:94",
-                        adChoice = AdsConstant.TOP_LEFT
-                    )
-                ).let { configNative ->
-
-                    if (newAdChoice == null) {
-                        newAdChoice = configNative.adChoice
-                    }
-                    if (newViewAdsInflateFromXml == null){
-                        newViewAdsInflateFromXml = configNative.viewAds
-                    }
-
-                }
-
-                //set cta color
-                runCatching {
-                    if (newViewAdsInflateFromXml != null){
-                        val colorStateList = ColorStateList.valueOf(Color.parseColor(config.ctaColor))
-                        val ctaButton =
-                            newViewAdsInflateFromXml!!.findViewById<TextView>(R.id.ad_call_to_action)
-                        ctaButton.backgroundTintList = colorStateList
-                        ctaButton.setTextColor(Color.parseColor(config.textCTAColor))
-                    }
-
-                }
 
                 //set background color
                 runCatching {
-                    if (newViewAdsInflateFromXml != null){
-                        val adViewHolder =
-                            newViewAdsInflateFromXml!!.findViewById<ConstraintLayout>(R.id.adViewHolder)
-                        adViewHolder.setBackgroundColor(Color.parseColor(config.backGroundColor))
-                    }
+                    val adViewHolder =
+                        viewAdsInflateFromXml.findViewById<ConstraintLayout>(R.id.adViewHolder)
+                    adViewHolder.setBackgroundColor(Color.parseColor(config.backGroundColor))
                 }
 
                 //set content text color
                 runCatching {
-                    if (newViewAdsInflateFromXml != null){
-                        val headLineText =
-                            newViewAdsInflateFromXml!!.findViewById<TextView>(R.id.ad_headline)
-                        val bodyText = newViewAdsInflateFromXml!!.findViewById<TextView>(R.id.ad_body)
-                        headLineText.setTextColor(Color.parseColor(config.textContentColor))
-                        bodyText.setTextColor(Color.parseColor(config.textContentColor))
+                    val headLineText =
+                        viewAdsInflateFromXml.findViewById<TextView>(R.id.ad_headline)
+                    val bodyText = viewAdsInflateFromXml.findViewById<TextView>(R.id.ad_body)
+                    headLineText.setTextColor(Color.parseColor(config.textContentColor))
+                    bodyText.setTextColor(Color.parseColor(config.textContentColor))
+                }
+
+                //set cta shape
+                //set cta color
+                //set cta radius
+                //set cta ratio
+                runCatching {
+                    val listGradientColor = mutableListOf<Int>()
+                    config.ctaGradientListColor?.forEach { colorString ->
+                        kotlin.runCatching {
+                            listGradientColor.add(Color.parseColor(colorString))
+                        }
                     }
 
+                    if (listGradientColor.isEmpty()) {
+                        if (context != null) {
+                            listGradientColor.add(context!!.getColor(R.color.cta_color))
+                            listGradientColor.add(context!!.getColor(R.color.cta_color))
+                        } else {
+                            listGradientColor.add(Color.parseColor("#3ADB41"))
+                            listGradientColor.add(Color.parseColor("#3ADB41"))
+                        }
+                    }else if (listGradientColor.size == 1){
+                        listGradientColor.add(listGradientColor[0])
+                    }
+
+                    val gradientDrawable = GradientDrawable(
+                        GradientDrawable.Orientation.LEFT_RIGHT,
+                        listGradientColor.toIntArray()
+                    ).apply {
+                        shape = GradientDrawable.RECTANGLE
+                        cornerRadius = TypedValue.applyDimension(
+                            TypedValue.COMPLEX_UNIT_DIP,
+                            config.ctaConnerRadius.toFloat(),
+                            Resources.getSystem().displayMetrics
+                        )
+                    }
+                    val ctaButton =
+                        viewAdsInflateFromXml.findViewById<TextView>(R.id.ad_call_to_action)
+                    ctaButton.backgroundTintList = null
+                    ctaButton.background = gradientDrawable
+                    ctaButton.setTextColor(Color.parseColor(config.textCTAColor))
+                    if (config.ctaRatio != null) {
+                        val ctaButtonParams =
+                            ctaButton?.layoutParams as ConstraintLayout.LayoutParams?
+                        ctaButtonParams?.dimensionRatio = config.ctaRatio
+                        ctaButton?.layoutParams = ctaButtonParams
+                    }
                 }
             }
 
             AdsController.getInstance().loadAndShow(
                 spaceName = spaceName,
                 layoutToAttachAds = layoutToAttachAds,
-                viewAdsInflateFromXml = newViewAdsInflateFromXml,
-                adChoice = newAdChoice,
+                viewAdsInflateFromXml = viewAdsInflateFromXml,
+                adChoice = adChoice,
                 adCallback = object : AdCallback {
                     override fun onAdShow() {}
 
@@ -224,71 +258,84 @@ fun Fragment.show3NativeFullScreen(
     spaceName1: String,
     spaceName2: String,
     spaceName3: String,
-    adChoice: Int? = null,
+    includeHasBeenOpened: Boolean = false,
+    adChoice: Int = AdsConstant.TOP_LEFT,
     isResetConfig: Boolean = true,
     layoutToAttachAds: ViewGroup,
     layoutContainAds: ViewGroup? = null,
-    viewAdsInflateFromXml: View? = LayoutInflater.from(context).inflate(R.layout.layout_native_full_screen, null),
+    viewAdsInflateFromXml: View = LayoutInflater.from(context)
+        .inflate(R.layout.layout_native_full_screen, null),
     onAdsClick: (() -> Unit)? = null
 ) {
-    if (checkConditionShowAds(context, spaceNameConfig)){
-
-        //lay data ve view
-        var newAdChoice = adChoice
-        var newViewAdsInflateFromXml = viewAdsInflateFromXml
+    if (checkConditionShowAds(context, spaceNameConfig)) {
 
         AdsConstant.listConfigAds[spaceNameConfig]?.let { config ->
 
-            if (isResetConfig){
-                config.getConfigNative(
-                    context = context,
-                    default = ConfigNative(
-                        ratio = "360:94",
-                        adChoice = AdsConstant.TOP_LEFT,
-                        viewAds = LayoutInflater.from(context)
-                            .inflate(R.layout.layout_native_medium_logotop_ctabot, null)
-                    )
-                ).let { configNative ->
-
-                    if (newAdChoice == null) {
-                        newAdChoice = configNative.adChoice
-                    }
-
-                    if (newViewAdsInflateFromXml == null) {
-                        newViewAdsInflateFromXml = configNative.viewAds
-                    }
-                }
-
-                //set cta color
-                runCatching {
-                    if (newViewAdsInflateFromXml != null) {
-                        val colorStateList = ColorStateList.valueOf(Color.parseColor(config.ctaColor))
-                        val ctaButton =
-                            newViewAdsInflateFromXml!!.findViewById<TextView>(R.id.ad_call_to_action)
-                        ctaButton.backgroundTintList = colorStateList
-                        ctaButton.setTextColor(Color.parseColor(config.textCTAColor))
-                    }
-                }
+            if (isResetConfig) {
 
                 //set background color
                 runCatching {
-                    if (newViewAdsInflateFromXml != null) {
-                        val adViewHolder =
-                            newViewAdsInflateFromXml!!.findViewById<ConstraintLayout>(R.id.adViewHolder)
-                        adViewHolder.setBackgroundColor(Color.parseColor(config.backGroundColor))
-                    }
+                    val adViewHolder =
+                        viewAdsInflateFromXml.findViewById<ConstraintLayout>(R.id.adViewHolder)
+                    adViewHolder.setBackgroundColor(Color.parseColor(config.backGroundColor))
                 }
 
                 //set content text color
                 runCatching {
-                    if (newViewAdsInflateFromXml != null) {
-                        val headLineText =
-                            newViewAdsInflateFromXml!!.findViewById<TextView>(R.id.ad_headline)
-                        val bodyText = newViewAdsInflateFromXml!!.findViewById<TextView>(R.id.ad_body)
-                        headLineText.setTextColor(Color.parseColor(config.textContentColor))
-                        bodyText.setTextColor(Color.parseColor(config.textContentColor))
+                    val headLineText =
+                        viewAdsInflateFromXml.findViewById<TextView>(R.id.ad_headline)
+                    val bodyText = viewAdsInflateFromXml.findViewById<TextView>(R.id.ad_body)
+                    headLineText.setTextColor(Color.parseColor(config.textContentColor))
+                    bodyText.setTextColor(Color.parseColor(config.textContentColor))
+
+                }
+
+                //set cta shape
+                //set cta color
+                //set cta radius
+                //set cta ratio
+                runCatching {
+                    val listGradientColor = mutableListOf<Int>()
+                    config.ctaGradientListColor?.forEach { colorString ->
+                        kotlin.runCatching {
+                            listGradientColor.add(Color.parseColor(colorString))
+                        }
                     }
 
+                    if (listGradientColor.isEmpty()) {
+                        if (context != null) {
+                            listGradientColor.add(context!!.getColor(R.color.cta_color))
+                            listGradientColor.add(context!!.getColor(R.color.cta_color))
+                        } else {
+                            listGradientColor.add(Color.parseColor("#3ADB41"))
+                            listGradientColor.add(Color.parseColor("#3ADB41"))
+                        }
+                    }else if (listGradientColor.size == 1){
+                        listGradientColor.add(listGradientColor[0])
+                    }
+
+                    val gradientDrawable = GradientDrawable(
+                        GradientDrawable.Orientation.LEFT_RIGHT,
+                        listGradientColor.toIntArray()
+                    ).apply {
+                        shape = GradientDrawable.RECTANGLE
+                        cornerRadius = TypedValue.applyDimension(
+                            TypedValue.COMPLEX_UNIT_DIP,
+                            config.ctaConnerRadius.toFloat(),
+                            Resources.getSystem().displayMetrics
+                        )
+                    }
+                    val ctaButton =
+                        viewAdsInflateFromXml.findViewById<TextView>(R.id.ad_call_to_action)
+                    ctaButton.backgroundTintList = null
+                    ctaButton.background = gradientDrawable
+                    ctaButton.setTextColor(Color.parseColor(config.textCTAColor))
+                    if (config.ctaRatio != null) {
+                        val ctaButtonParams =
+                            ctaButton?.layoutParams as ConstraintLayout.LayoutParams?
+                        ctaButtonParams?.dimensionRatio = config.ctaRatio
+                        ctaButton?.layoutParams = ctaButtonParams
+                    }
                 }
 
             }
@@ -300,66 +347,84 @@ fun Fragment.show3NativeFullScreen(
         var stateNative3 = StateLoadAd.LOADING
         var isAnyShow = false
 
-        fun checkShowNative(){
+        fun checkShowNative() {
             if (isAnyShow) return
 
-            if (stateNative1 == StateLoadAd.SUCCESS){
+            if (stateNative1 == StateLoadAd.SUCCESS) {
                 isAnyShow = true
                 showLoadedNativeFullScreen(
                     spaceNameConfig = spaceNameConfig,
                     spaceName = spaceName1,
-                    adChoice = newAdChoice,
+                    adChoice = adChoice,
                     isResetConfig = false,
+                    includeHasBeenOpened = includeHasBeenOpened,
                     layoutToAttachAds = layoutToAttachAds,
                     layoutContainAds = layoutContainAds,
-                    viewAdsInflateFromXml = newViewAdsInflateFromXml,
-                    onAdsClick = onAdsClick)
-            }else if (stateNative2 == StateLoadAd.SUCCESS){
+                    viewAdsInflateFromXml = viewAdsInflateFromXml,
+                    onAdsClick = onAdsClick
+                )
+            } else if (stateNative2 == StateLoadAd.SUCCESS) {
                 isAnyShow = true
                 showLoadedNativeFullScreen(
                     spaceNameConfig = spaceNameConfig,
                     spaceName = spaceName2,
-                    adChoice = newAdChoice,
+                    adChoice = adChoice,
                     isResetConfig = false,
+                    includeHasBeenOpened = includeHasBeenOpened,
                     layoutToAttachAds = layoutToAttachAds,
                     layoutContainAds = layoutContainAds,
-                    viewAdsInflateFromXml = newViewAdsInflateFromXml,
-                    onAdsClick = onAdsClick)
-            }else if (stateNative3== StateLoadAd.SUCCESS){
+                    viewAdsInflateFromXml = viewAdsInflateFromXml,
+                    onAdsClick = onAdsClick
+                )
+            } else if (stateNative3 == StateLoadAd.SUCCESS) {
                 isAnyShow = true
                 showLoadedNativeFullScreen(
                     spaceNameConfig = spaceNameConfig,
                     spaceName = spaceName3,
-                    adChoice = newAdChoice,
+                    adChoice = adChoice,
                     isResetConfig = false,
+                    includeHasBeenOpened = includeHasBeenOpened,
                     layoutToAttachAds = layoutToAttachAds,
                     layoutContainAds = layoutContainAds,
-                    viewAdsInflateFromXml = newViewAdsInflateFromXml,
-                    onAdsClick = onAdsClick)
+                    viewAdsInflateFromXml = viewAdsInflateFromXml,
+                    onAdsClick = onAdsClick
+                )
             }
         }
 
 
-        safePreloadAds(spaceNameConfig = spaceNameConfig , spaceNameAds = spaceName1 , adChoice = newAdChoice , preloadCallback = object : PreloadCallback{
-            override fun onLoadDone() {
-                stateNative1 = StateLoadAd.SUCCESS
-                checkShowNative()
-            }
-        })
-        safePreloadAds(spaceNameConfig = spaceNameConfig , spaceNameAds = spaceName2 , adChoice = newAdChoice , preloadCallback = object : PreloadCallback{
-            override fun onLoadDone() {
-                stateNative2 = StateLoadAd.SUCCESS
-                checkShowNative()
-            }
-        })
-        safePreloadAds(spaceNameConfig = spaceNameConfig , spaceNameAds = spaceName3 , adChoice = newAdChoice , preloadCallback = object : PreloadCallback{
-            override fun onLoadDone() {
-                stateNative3 = StateLoadAd.SUCCESS
-                checkShowNative()
-            }
-        })
+        safePreloadAds(
+            spaceNameConfig = spaceNameConfig,
+            spaceNameAds = spaceName1,
+            adChoice = adChoice,
+            preloadCallback = object : PreloadCallback {
+                override fun onLoadDone() {
+                    stateNative1 = StateLoadAd.SUCCESS
+                    checkShowNative()
+                }
+            })
+        safePreloadAds(
+            spaceNameConfig = spaceNameConfig,
+            spaceNameAds = spaceName2,
+            adChoice = adChoice,
+            preloadCallback = object : PreloadCallback {
+                override fun onLoadDone() {
+                    stateNative2 = StateLoadAd.SUCCESS
+                    checkShowNative()
+                }
+            })
+        safePreloadAds(
+            spaceNameConfig = spaceNameConfig,
+            spaceNameAds = spaceName3,
+            adChoice = adChoice,
+            preloadCallback = object : PreloadCallback {
+                override fun onLoadDone() {
+                    stateNative3 = StateLoadAd.SUCCESS
+                    checkShowNative()
+                }
+            })
 
-    }else{
+    } else {
         layoutToAttachAds.visibility = View.GONE
         layoutContainAds?.visibility = View.GONE
     }
@@ -373,71 +438,83 @@ fun Fragment.show3NativeFullScreenUsePriority(
     spaceName3: String,
     timeOut: Long = AdsConstant.timeDelayNative,
     includeHasBeenOpened: Boolean = false,
-    adChoice: Int? = null,
+    adChoice: Int = AdsConstant.TOP_LEFT,
     isResetConfig: Boolean = true,
     layoutToAttachAds: ViewGroup,
     layoutContainAds: ViewGroup? = null,
-    viewAdsInflateFromXml: View? = LayoutInflater.from(context).inflate(R.layout.layout_native_full_screen, null),
+    viewAdsInflateFromXml: View = LayoutInflater.from(context)
+        .inflate(R.layout.layout_native_full_screen, null),
     onAdsClick: (() -> Unit)? = null
 ) {
     if (checkConditionShowAds(context, spaceNameConfig)) {
 
-        //lay data ve view
-        var newAdChoice = adChoice
-        var newViewAdsInflateFromXml = viewAdsInflateFromXml
 
         AdsConstant.listConfigAds[spaceNameConfig]?.let { config ->
 
-            if (isResetConfig){
-                config.getConfigNative(
-                    context = context,
-                    default = ConfigNative(
-                        ratio = "360:94",
-                        adChoice = AdsConstant.TOP_LEFT,
-                        viewAds = LayoutInflater.from(context)
-                            .inflate(R.layout.layout_native_medium_logotop_ctabot, null)
-                    )
-                ).let { configNative ->
-
-                    if (newAdChoice == null) {
-                        newAdChoice = configNative.adChoice
-                    }
-
-                    if (newViewAdsInflateFromXml == null) {
-                        newViewAdsInflateFromXml = configNative.viewAds
-                    }
-                }
-
-                //set cta color
-                runCatching {
-                    if (newViewAdsInflateFromXml != null) {
-                        val colorStateList = ColorStateList.valueOf(Color.parseColor(config.ctaColor))
-                        val ctaButton =
-                            newViewAdsInflateFromXml!!.findViewById<TextView>(R.id.ad_call_to_action)
-                        ctaButton.backgroundTintList = colorStateList
-                        ctaButton.setTextColor(Color.parseColor(config.textCTAColor))
-                    }
-                }
+            if (isResetConfig) {
 
                 //set background color
                 runCatching {
-                    if (newViewAdsInflateFromXml != null) {
-                        val adViewHolder =
-                            newViewAdsInflateFromXml!!.findViewById<ConstraintLayout>(R.id.adViewHolder)
-                        adViewHolder.setBackgroundColor(Color.parseColor(config.backGroundColor))
-                    }
+                    val adViewHolder =
+                        viewAdsInflateFromXml.findViewById<ConstraintLayout>(R.id.adViewHolder)
+                    adViewHolder.setBackgroundColor(Color.parseColor(config.backGroundColor))
                 }
 
                 //set content text color
                 runCatching {
-                    if (newViewAdsInflateFromXml != null) {
-                        val headLineText =
-                            newViewAdsInflateFromXml!!.findViewById<TextView>(R.id.ad_headline)
-                        val bodyText = newViewAdsInflateFromXml!!.findViewById<TextView>(R.id.ad_body)
-                        headLineText.setTextColor(Color.parseColor(config.textContentColor))
-                        bodyText.setTextColor(Color.parseColor(config.textContentColor))
+                    val headLineText = viewAdsInflateFromXml.findViewById<TextView>(R.id.ad_headline)
+                    val bodyText = viewAdsInflateFromXml.findViewById<TextView>(R.id.ad_body)
+                    headLineText.setTextColor(Color.parseColor(config.textContentColor))
+                    bodyText.setTextColor(Color.parseColor(config.textContentColor))
+                }
+
+
+                //set cta shape
+                //set cta color
+                //set cta radius
+                //set cta ratio
+                runCatching {
+                    val listGradientColor = mutableListOf<Int>()
+                    config.ctaGradientListColor?.forEach { colorString ->
+                        kotlin.runCatching {
+                            listGradientColor.add(Color.parseColor(colorString))
+                        }
                     }
 
+                    if (listGradientColor.isEmpty()) {
+                        if (context != null) {
+                            listGradientColor.add(context!!.getColor(R.color.cta_color))
+                            listGradientColor.add(context!!.getColor(R.color.cta_color))
+                        } else {
+                            listGradientColor.add(Color.parseColor("#3ADB41"))
+                            listGradientColor.add(Color.parseColor("#3ADB41"))
+                        }
+                    }else if (listGradientColor.size == 1){
+                        listGradientColor.add(listGradientColor[0])
+                    }
+
+                    val gradientDrawable = GradientDrawable(
+                        GradientDrawable.Orientation.LEFT_RIGHT,
+                        listGradientColor.toIntArray()
+                    ).apply {
+                        shape = GradientDrawable.RECTANGLE
+                        cornerRadius = TypedValue.applyDimension(
+                            TypedValue.COMPLEX_UNIT_DIP,
+                            config.ctaConnerRadius.toFloat(),
+                            Resources.getSystem().displayMetrics
+                        )
+                    }
+                    val ctaButton =
+                        viewAdsInflateFromXml.findViewById<TextView>(R.id.ad_call_to_action)
+                    ctaButton.backgroundTintList = null
+                    ctaButton.background = gradientDrawable
+                    ctaButton.setTextColor(Color.parseColor(config.textCTAColor))
+                    if (config.ctaRatio != null) {
+                        val ctaButtonParams =
+                            ctaButton?.layoutParams as ConstraintLayout.LayoutParams?
+                        ctaButtonParams?.dimensionRatio = config.ctaRatio
+                        ctaButton?.layoutParams = ctaButtonParams
+                    }
                 }
 
             }
@@ -459,12 +536,14 @@ fun Fragment.show3NativeFullScreenUsePriority(
                 spaceName1 = spaceName1,
                 spaceName2 = spaceName2,
                 spaceName3 = spaceName3,
-                adChoice = newAdChoice,
+                adChoice = adChoice,
+                includeHasBeenOpened = includeHasBeenOpened,
                 isResetConfig = false,
                 layoutToAttachAds = layoutToAttachAds,
                 layoutContainAds = layoutContainAds,
-                viewAdsInflateFromXml = newViewAdsInflateFromXml,
-                onAdsClick = onAdsClick)
+                viewAdsInflateFromXml = viewAdsInflateFromXml,
+                onAdsClick = onAdsClick
+            )
         }
 
         val handler = Handler(Looper.getMainLooper())
@@ -480,11 +559,12 @@ fun Fragment.show3NativeFullScreenUsePriority(
                 showLoadedNativeFullScreen(
                     spaceNameConfig = spaceNameConfig,
                     spaceName = spaceName1,
-                    adChoice = newAdChoice,
+                    adChoice = adChoice,
                     isResetConfig = false,
+                    includeHasBeenOpened = includeHasBeenOpened,
                     layoutToAttachAds = layoutToAttachAds,
                     layoutContainAds = layoutContainAds,
-                    viewAdsInflateFromXml = newViewAdsInflateFromXml,
+                    viewAdsInflateFromXml = viewAdsInflateFromXml,
                     onAdsClick = onAdsClick
                 )
             } else if (stateNative1 == StateLoadAd.LOAD_FAILED && stateNative2 == StateLoadAd.SUCCESS) {
@@ -494,11 +574,12 @@ fun Fragment.show3NativeFullScreenUsePriority(
                 showLoadedNativeFullScreen(
                     spaceNameConfig = spaceNameConfig,
                     spaceName = spaceName2,
-                    adChoice = newAdChoice,
+                    adChoice = adChoice,
                     isResetConfig = false,
+                    includeHasBeenOpened = includeHasBeenOpened,
                     layoutToAttachAds = layoutToAttachAds,
                     layoutContainAds = layoutContainAds,
-                    viewAdsInflateFromXml = newViewAdsInflateFromXml,
+                    viewAdsInflateFromXml = viewAdsInflateFromXml,
                     onAdsClick = onAdsClick
                 )
             } else if (stateNative1 == StateLoadAd.LOAD_FAILED && stateNative2 == StateLoadAd.LOAD_FAILED && stateNative3 == StateLoadAd.SUCCESS) {
@@ -508,11 +589,12 @@ fun Fragment.show3NativeFullScreenUsePriority(
                 showLoadedNativeFullScreen(
                     spaceNameConfig = spaceNameConfig,
                     spaceName = spaceName3,
-                    adChoice = newAdChoice,
+                    adChoice = adChoice,
                     isResetConfig = false,
+                    includeHasBeenOpened = includeHasBeenOpened,
                     layoutToAttachAds = layoutToAttachAds,
                     layoutContainAds = layoutContainAds,
-                    viewAdsInflateFromXml = newViewAdsInflateFromXml,
+                    viewAdsInflateFromXml = viewAdsInflateFromXml,
                     onAdsClick = onAdsClick
                 )
             } else if (stateNative1 == StateLoadAd.LOAD_FAILED && stateNative2 == StateLoadAd.LOAD_FAILED && stateNative3 == StateLoadAd.LOAD_FAILED) {
@@ -524,7 +606,7 @@ fun Fragment.show3NativeFullScreenUsePriority(
         safePreloadAds(
             spaceNameConfig = spaceNameConfig,
             spaceNameAds = spaceName1,
-            adChoice = newAdChoice,
+            adChoice = adChoice,
             preloadCallback = object : PreloadCallback {
                 override fun onLoadDone() {
                     stateNative1 = StateLoadAd.SUCCESS
@@ -539,7 +621,7 @@ fun Fragment.show3NativeFullScreenUsePriority(
         safePreloadAds(
             spaceNameConfig = spaceNameConfig,
             spaceNameAds = spaceName2,
-            adChoice = newAdChoice,
+            adChoice = adChoice,
             preloadCallback = object : PreloadCallback {
                 override fun onLoadDone() {
                     stateNative2 = StateLoadAd.SUCCESS
@@ -554,7 +636,7 @@ fun Fragment.show3NativeFullScreenUsePriority(
         safePreloadAds(
             spaceNameConfig = spaceNameConfig,
             spaceNameAds = spaceName3,
-            adChoice = newAdChoice,
+            adChoice = adChoice,
             preloadCallback = object : PreloadCallback {
                 override fun onLoadDone() {
                     stateNative3 = StateLoadAd.SUCCESS

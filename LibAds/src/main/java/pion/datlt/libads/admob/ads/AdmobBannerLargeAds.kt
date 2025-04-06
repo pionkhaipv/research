@@ -54,7 +54,8 @@ class AdmobBannerLargeAds : AdmobAds() {
         adChoice: Int?,
         positionCollapsibleBanner: String?,
         isOneTimeCollapsible: Boolean?,
-        widthBannerAdaptiveAds: Int?
+        widthBannerAdaptiveAds: Int?,
+        timeShowNativeCollapsibleAfterClose: Int?
     ) {
         mAdCallback = adCallback
         mDestinationToShowAds = destinationToShowAds
@@ -77,7 +78,8 @@ class AdmobBannerLargeAds : AdmobAds() {
                             layoutToAttachAds = layoutToAttachAds,
                             viewAdsInflateFromXml = viewAdsInflateFromXml,
                             lifecycle = lifecycle,
-                            adCallback = adCallback
+                            adCallback = adCallback,
+                            timeShowNativeCollapsibleAfterClose = timeShowNativeCollapsibleAfterClose
                         )
                     }
 
@@ -167,7 +169,7 @@ class AdmobBannerLargeAds : AdmobAds() {
                         "TESTERADSEVENT",
                         "load success banner large : ads name ${adsChild.spaceName} id ${adsChild.adsId}"
                     )
-
+                    timeLoader = Date().time
                     adView?.let {
                         it.responseInfo?.adapterResponses?.forEach { responseInfo ->
                             if (responseInfo.adSourceId.isNotEmpty()) {
@@ -182,7 +184,6 @@ class AdmobBannerLargeAds : AdmobAds() {
 
                     stateLoadAd = StateLoadAd.SUCCESS
                     loadCallback?.onLoadDone()
-                    timeLoader = Date().time
                     if (isPreload) {
                         mCallbackPreload?.onLoadDone()
                     }
@@ -221,7 +222,8 @@ class AdmobBannerLargeAds : AdmobAds() {
         adCallback: AdCallback?,
         lifecycle: Lifecycle?,
         layoutToAttachAds: ViewGroup?,
-        viewAdsInflateFromXml: View?
+        viewAdsInflateFromXml: View?,
+        timeShowNativeCollapsibleAfterClose: Int?
     ) {
         mAdCallback = adCallback
         mDestinationToShowAds = destinationToShowAds
@@ -232,6 +234,13 @@ class AdmobBannerLargeAds : AdmobAds() {
                 Log.d(
                     "TESTERADSEVENT",
                     "show failed banner large : ads name ${adsChild.spaceName} id ${adsChild.adsId} error : show in wrong destination"
+                )
+            } else if (!wasLoadTimeLessThanNHoursAgo()) {
+                stateLoadAd = StateLoadAd.SHOW_FAILED
+                adCallback?.onAdFailToLoad("ads expired")
+                Log.d(
+                    "TESTERADSEVENT",
+                    "show failed banner large : ads name ${adsChild.spaceName} id ${adsChild.adsId} error : ads expired"
                 )
             } else {
                 layoutToAttachAds.removeAllViews()
