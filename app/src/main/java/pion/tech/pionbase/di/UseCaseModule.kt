@@ -2,13 +2,8 @@ package pion.tech.pionbase.di
 
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
-import com.google.firebase.remoteconfig.FirebaseRemoteConfig
-import pion.tech.pionbase.home.data.api.ApiInterface
 import pion.tech.pionbase.app.data.dataStore.PreferencesDataSource
 import pion.tech.pionbase.app.data.dataStore.DataStoreSource
-import pion.tech.pionbase.home.data.repository.ApiRepositoryImpl
-import pion.tech.pionbase.app.data.repository.DataStoreRepositoryImpl
-import pion.tech.pionbase.app.data.repository.RemoteConfigRepositoryImpl
 import pion.tech.pionbase.home.domain.repository.ApiRepository
 import pion.tech.pionbase.app.domain.repository.DataStoreRepository
 import pion.tech.pionbase.app.domain.repository.RemoteConfigRepository
@@ -25,7 +20,7 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-class DataModule {
+class UseCaseModule {
 
     @Provides
     @Singleton
