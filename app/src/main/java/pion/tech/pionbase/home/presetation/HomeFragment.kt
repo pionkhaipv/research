@@ -2,6 +2,8 @@ package pion.tech.pionbase.home.presetation
 
 import android.view.View
 import dagger.hilt.android.AndroidEntryPoint
+import pion.tech.pionbase.app.presentation.GetAppCategoryUiState
+import pion.tech.pionbase.app.presentation.GetTemplateUiState
 import pion.tech.pionbase.databinding.FragmentHomeBinding
 import pion.tech.pionbase.core.presentation.common.base.BaseFragment
 import pion.tech.pionbase.home.presetation.adapter.DemoMultipleAdapter

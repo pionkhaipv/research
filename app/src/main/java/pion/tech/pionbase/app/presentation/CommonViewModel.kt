@@ -1,4 +1,4 @@
-package pion.tech.pionbase.home.presetation
+package pion.tech.pionbase.app.presentation
 
 import pion.tech.pionbase.home.domain.usecase.AppCategoryUseCase
 import pion.tech.pionbase.app.domain.usecase.FetchRemoteConfigUseCase

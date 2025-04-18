@@ -22,7 +22,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
-import pion.tech.pionbase.home.presetation.CommonViewModel
+import pion.tech.pionbase.app.presentation.CommonViewModel
 import pion.tech.pionbase.app.presentation.MainActivity
 import pion.tech.pionbase.core.presentation.navigator.NavigatorImpl
 import pion.tech.pionbase.core.presentation.navigator.Navigator
