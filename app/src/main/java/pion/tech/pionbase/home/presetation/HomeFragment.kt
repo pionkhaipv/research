@@ -19,6 +19,8 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(
 
     val adapter = DemoMultipleAdapter()
     override fun init(view: View) {
+        logger.logScreen("home_show")
+        logger.logEvent("home_view")
         initView()
         plusEvent()
         settingEvent()

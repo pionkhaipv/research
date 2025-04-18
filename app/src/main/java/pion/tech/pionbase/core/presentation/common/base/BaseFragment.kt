@@ -24,9 +24,11 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import pion.tech.pionbase.app.presentation.CommonViewModel
 import pion.tech.pionbase.app.presentation.MainActivity
+import pion.tech.pionbase.core.presentation.firebaseAnalytics.FirebaseAnalyticsLogger
 import pion.tech.pionbase.core.presentation.navigator.NavigatorImpl
 import pion.tech.pionbase.core.presentation.navigator.Navigator
 import timber.log.Timber
+import javax.inject.Inject
 
 typealias Inflate<Binding> = (LayoutInflater, ViewGroup?, Boolean) -> Binding
 
@@ -34,6 +36,9 @@ abstract class BaseFragment<Binding : ViewBinding, VM : ViewModel>(
     private val inflate: Inflate<Binding>,
     private val viewModelClass: Class<VM>
 ) : Fragment() {
+
+    @Inject
+    lateinit var logger: FirebaseAnalyticsLogger
 
     private var _navigator: Navigator? = null
     val navigator: Navigator
