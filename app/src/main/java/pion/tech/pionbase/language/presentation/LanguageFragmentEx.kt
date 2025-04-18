@@ -1,6 +1,5 @@
 package pion.tech.pionbase.language.presentation
 
-import androidx.activity.addCallback
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.os.LocaleListCompat
 import androidx.core.view.isVisible
@@ -25,7 +24,7 @@ fun LanguageFragment.applyEvent() {
             if (isCameFromSetting()) {
                 findNavController().popBackStack(R.id.settingFragment, false)
             } else {
-                safeNav(R.id.languageFragment, R.id.action_languageFragment_to_onboardFragment)
+                navigator.openLanguageToOnboard()
             }
         } else {
             displayToast(getString(R.string.something_error))
@@ -54,6 +53,6 @@ fun setLocale(languageCode: String?) {
 }
 
 fun LanguageFragment.isCameFromSetting(): Boolean {
-    return navController.previousBackStackEntry?.destination?.id == R.id.settingFragment
+    return navigator.isCameFrom(R.id.settingFragment)
 
 }

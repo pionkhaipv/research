@@ -56,7 +56,7 @@ fun SettingFragment.bindView() {
 
 fun SettingFragment.languageEvent() {
     binding.btnLanguage.setPreventDoubleClickScaleView {
-        safeNav(R.id.settingFragment, R.id.action_settingFragment_to_languageFragment)
+        navigator.openSettingToLanguage()
     }
 }
 

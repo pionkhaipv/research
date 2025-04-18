@@ -10,7 +10,7 @@ import pion.tech.pionbase.core.presentation.common.base.createDiffCallback
 class DemoMultipleAdapter : BaseListAdapter<String, ViewDataBinding>(
     createDiffCallback(
         areItemsTheSame = { oldItem, newItem -> oldItem == newItem },
-        areContentsTheSame = { oldItem, newItem -> false }
+        areContentsTheSame = { oldItem, newItem -> true }
     )
 ) {
     private val VIEW_TYPE_1 = 1

@@ -21,5 +21,5 @@ fun SplashFragment.startAnimation() {
 }
 
 fun SplashFragment.goToLanguageScreen() {
-    safeNav(R.id.splashFragment, R.id.action_splashFragment_to_languageFragment)
+    navigator.openSplashToLanguage()
 }

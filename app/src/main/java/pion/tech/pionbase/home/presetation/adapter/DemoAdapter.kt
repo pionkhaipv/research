@@ -8,7 +8,7 @@ import pion.tech.pionbase.core.presentation.common.base.createDiffCallback
 class DemoAdapter : BaseListAdapter<String, ItemDummyBinding>(
     createDiffCallback(
         areItemsTheSame = { oldItem, newItem -> oldItem == newItem },
-        areContentsTheSame = { oldItem, newItem -> false }
+        areContentsTheSame = { oldItem, newItem -> true }
     )
 ) {
     override fun getLayoutRes(viewType: Int): Int = R.layout.item_dummy

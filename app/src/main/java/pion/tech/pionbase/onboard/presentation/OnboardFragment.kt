@@ -27,6 +27,6 @@ class OnboardFragment : BaseFragment<FragmentOnboardBinding, OnboardViewModel>(
     }
 
     override fun onDoneOnboard() {
-        safeNav(R.id.onboardFragment, R.id.action_onboardFragment_to_homeFragment)
+        navigator.openOnboardToHome()
     }
 }

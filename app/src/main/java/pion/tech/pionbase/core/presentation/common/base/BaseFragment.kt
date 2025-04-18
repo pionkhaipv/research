@@ -16,7 +16,6 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination
 import androidx.navigation.fragment.findNavController
-import androidx.navigation.navOptions
 import androidx.viewbinding.ViewBinding
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
@@ -25,7 +24,8 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import pion.tech.pionbase.home.presetation.CommonViewModel
 import pion.tech.pionbase.app.presentation.MainActivity
-import pion.tech.pionbase.language.presentation.backEvent
+import pion.tech.pionbase.core.presentation.navigator.NavigatorImpl
+import pion.tech.pionbase.core.presentation.navigator.Navigator
 import timber.log.Timber
 
 typealias Inflate<Binding> = (LayoutInflater, ViewGroup?, Boolean) -> Binding
@@ -35,7 +35,11 @@ abstract class BaseFragment<Binding : ViewBinding, VM : ViewModel>(
     private val viewModelClass: Class<VM>
 ) : Fragment() {
 
-    lateinit var navController: NavController
+    private var _navigator: Navigator? = null
+    val navigator: Navigator
+        get() = checkNotNull(_navigator) {
+            "Fragment $this navigator cannot be accessed before onCreateView() or after onDestroyView()"
+        }
 
     private var _binding: Binding? = null
 
@@ -49,7 +53,6 @@ abstract class BaseFragment<Binding : ViewBinding, VM : ViewModel>(
     val viewModel: VM by lazy {
         ViewModelProvider(this)[viewModelClass]
     }
-
 
     private var isInit = false
     private var saveView = false
@@ -69,15 +72,17 @@ abstract class BaseFragment<Binding : ViewBinding, VM : ViewModel>(
         } else {
             _binding = inflate.invoke(inflater, container, false)
         }
+
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        navController = findNavController()
-        navController.addOnDestinationChangedListener { _, _, _ ->
+        val currentDestinationId = findNavController().currentDestination?.id ?: 0
+        _navigator = NavigatorImpl(findNavController(), lifecycle, currentDestinationId)
+        _navigator?.addOnDestinationChangedListener(listener = { controller: NavController, destination: NavDestination?, bundle: Bundle? ->
             showHideLoading(false)
-        }
+        })
         init(view)
         subscribeObserver(view)
     }
@@ -89,64 +94,6 @@ abstract class BaseFragment<Binding : ViewBinding, VM : ViewModel>(
     override fun onDestroyView() {
         _binding = null
         super.onDestroyView()
-    }
-
-    val navOptionAnim = navOptions {
-        anim {
-//            enter = R.anim.slide_in_left
-//            exit = R.anim.slide_out_right
-//            popEnter = R.anim.slide_in_right
-//            popExit = R.anim.slide_out_left
-        }
-    }
-
-    fun safeNav(currentDestination: Int, action: Int, bundle: Bundle? = null) {
-        if (navController.currentDestination?.id == currentDestination) {
-            doActionWhenResume {
-                try {
-                    navController.navigate(action, bundle, navOptionAnim)
-                } catch (e: IllegalArgumentException) {
-                    Timber.tag(TAG).e("safeNav: ${e.message}")
-                }
-            }
-        }
-    }
-
-    var navObserver: LifecycleEventObserver? = null
-    fun safeNavInter(currentDestination: Int, action: Int, bundle: Bundle? = null) {
-        if (navController.currentDestination?.id == currentDestination) {
-            runCatching {
-                navObserver = object : LifecycleEventObserver {
-                    override fun onStateChanged(source: LifecycleOwner, event: Lifecycle.Event) {
-                        if (event == Lifecycle.Event.ON_RESUME) {
-                            lifecycle.removeObserver(this)
-                            runCatching {
-                                if (navController.currentDestination?.id == currentDestination) {
-                                    navController.navigate(action, bundle, navOptionAnim)
-                                }
-                            }
-                        }
-                    }
-                }
-                lifecycle.addObserver(navObserver!!)
-                navController.addOnDestinationChangedListener(object :
-                    NavController.OnDestinationChangedListener {
-                    override fun onDestinationChanged(
-                        controller: NavController,
-                        destination: NavDestination,
-                        arguments: Bundle?
-                    ) {
-                        if (destination.id != currentDestination) {
-                            navController.removeOnDestinationChangedListener(this)
-                            lifecycle.removeObserver(navObserver as LifecycleEventObserver)
-                        }
-                    }
-                })
-                if (navController.currentDestination?.id == currentDestination) {
-                    navController.navigate(action, bundle, navOptionAnim)
-                }
-            }
-        }
     }
 
     fun showHideLoading(isShow: Boolean) {

@@ -34,6 +34,6 @@ fun HomeFragment.backEvent() {
 
 fun HomeFragment.settingEvent() {
     binding.btnSetting.setPreventDoubleClickScaleView {
-        safeNav(R.id.homeFragment, R.id.action_homeFragment_to_settingFragment)
+        navigator.openHomeToSetting()
     }
 }
