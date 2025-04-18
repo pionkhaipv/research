@@ -18,11 +18,16 @@ import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentManager
+import pion.tech.pionbase.core.presentation.firebaseAnalytics.FirebaseAnalyticsLogger
 import timber.log.Timber
+import javax.inject.Inject
 
 abstract class BaseDialogFragment<T : ViewDataBinding>(
     @LayoutRes private val contentLayoutId: Int,
 ) : DialogFragment() {
+
+    @Inject
+    lateinit var logger: FirebaseAnalyticsLogger
 
     private var bindingComponent: DataBindingComponent? = DataBindingUtil.getDefaultComponent()
 

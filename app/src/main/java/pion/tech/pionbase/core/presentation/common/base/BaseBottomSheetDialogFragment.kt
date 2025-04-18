@@ -15,11 +15,16 @@ import androidx.databinding.ViewDataBinding
 import androidx.fragment.app.FragmentManager
 import com.google.android.material.R
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import pion.tech.pionbase.core.presentation.firebaseAnalytics.FirebaseAnalyticsLogger
 import timber.log.Timber
+import javax.inject.Inject
 
 abstract class BaseBottomSheetDialogFragment<T : ViewDataBinding>(
     @LayoutRes private val contentLayoutId: Int
 ) : BottomSheetDialogFragment() {
+
+    @Inject
+    lateinit var logger: FirebaseAnalyticsLogger
 
     private var bindingComponent: DataBindingComponent? = DataBindingUtil.getDefaultComponent()
 
