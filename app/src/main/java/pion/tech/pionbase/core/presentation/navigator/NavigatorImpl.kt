@@ -6,7 +6,7 @@ import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination
-import pion.tech.pionbase.R
+import androidx.navigation.NavOptions
 
 class NavigatorImpl(
     private val navController: NavController,
@@ -20,7 +20,7 @@ class NavigatorImpl(
         return navController.currentDestination?.id == currentDestinationId
     }
 
-    private fun safeNav(actionId: Int, bundle: Bundle? = null) {
+    private fun safeNav(actionId: Int, bundle: Bundle? = null, navOptions: NavOptions? = null) {
         if (!isAtCurrentDestination()) return
         runCatching {
             navObserver = object : LifecycleEventObserver {
@@ -29,7 +29,7 @@ class NavigatorImpl(
                         lifecycle.removeObserver(this)
                         runCatching {
                             if (navController.currentDestination?.id == currentDestinationId) {
-                                navController.navigate(actionId, bundle)
+                                navController.navigate(actionId, bundle, navOptions)
                             }
                         }
                     }
@@ -52,29 +52,30 @@ class NavigatorImpl(
             })
 
             if (navController.currentDestination?.id == currentDestinationId) {
-                navController.navigate(actionId, bundle)
+                navController.navigate(actionId, bundle, navOptions)
             }
         }
     }
 
-    override fun openHomeToSetting(bundle: Bundle?) {
-        safeNav(R.id.action_homeFragment_to_settingFragment, bundle)
+    override fun navigateTo(actionId: Int, bundle: Bundle?) {
+        safeNav(actionId, bundle)
     }
 
-    override fun openLanguageToOnboard(bundle: Bundle?) {
-        safeNav(R.id.action_languageFragment_to_onboardFragment, bundle)
+    override fun navigateTo(actionId: Int, bundle: Bundle?, enterAnim: Int, exitAnim: Int) {
+        val navOptions = NavOptions.Builder()
+            .setEnterAnim(enterAnim)
+            .setExitAnim(exitAnim)
+            .build()
+        safeNav(actionId, bundle, navOptions)
     }
 
-    override fun openOnboardToHome(bundle: Bundle?) {
-        safeNav(R.id.action_onboardFragment_to_homeFragment, bundle)
-    }
-
-    override fun openSettingToLanguage(bundle: Bundle?) {
-        safeNav(R.id.action_settingFragment_to_languageFragment, bundle)
-    }
-
-    override fun openSplashToLanguage(bundle: Bundle?) {
-        safeNav(R.id.action_splashFragment_to_languageFragment, bundle)
+    override fun navigateTo(actionId: Int, bundle: Bundle?, clearBackStack: Boolean) {
+        val navOptions = if (clearBackStack) {
+            NavOptions.Builder()
+                .setPopUpTo(navController.graph.startDestinationId, true)
+                .build()
+        } else null
+        safeNav(actionId, bundle, navOptions)
     }
 
     override fun navigateUp() {
@@ -89,10 +90,7 @@ class NavigatorImpl(
         return navController.previousBackStackEntry?.destination?.id == destinationId
     }
 
-    override fun popBackStack(
-        destinationId: Int,
-        inclusive: Boolean
-    ): Boolean {
+    override fun popBackStack(destinationId: Int, inclusive: Boolean): Boolean {
         return navController.popBackStack(destinationId, inclusive)
     }
 }
