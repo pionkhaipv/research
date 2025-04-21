@@ -1,7 +1,6 @@
 package pion.tech.pionbase.splash.presentation
 
-import androidx.activity.addCallback
-import pion.tech.pionbase.R
+import pion.tech.pionbase.core.presentation.navigator.NavigationRoute
 
 fun SplashFragment.backEvent() {
     onSystemBack {
@@ -21,5 +20,5 @@ fun SplashFragment.startAnimation() {
 }
 
 fun SplashFragment.goToLanguageScreen() {
-    navigator.openSplashToLanguage()
+    navigator.navigateTo(NavigationRoute.SPLASH_TO_LANGUAGE)
 }

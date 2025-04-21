@@ -1,9 +1,8 @@
 package pion.tech.pionbase.home.presetation
 
-import androidx.activity.addCallback
-import pion.tech.pionbase.R
-import pion.tech.pionbase.home.presetation.bottomSheet.DemoBottomSheet
+import pion.tech.pionbase.core.presentation.navigator.NavigationRoute
 import pion.tech.pionbase.core.presentation.util.setPreventDoubleClickScaleView
+import pion.tech.pionbase.home.presetation.bottomSheet.DemoBottomSheet
 
 fun HomeFragment.initView() {
     binding.rvMain.adapter = adapter
@@ -34,6 +33,6 @@ fun HomeFragment.backEvent() {
 
 fun HomeFragment.settingEvent() {
     binding.btnSetting.setPreventDoubleClickScaleView {
-        navigator.openHomeToSetting()
+        navigator.navigateTo(NavigationRoute.HOME_TO_SETTING)
     }
 }

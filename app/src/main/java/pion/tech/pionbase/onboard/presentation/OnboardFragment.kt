@@ -2,9 +2,9 @@ package pion.tech.pionbase.onboard.presentation
 
 import android.view.View
 import dagger.hilt.android.AndroidEntryPoint
-import pion.tech.pionbase.R
 import pion.tech.pionbase.databinding.FragmentOnboardBinding
 import pion.tech.pionbase.core.presentation.common.base.BaseFragment
+import pion.tech.pionbase.core.presentation.navigator.NavigationRoute
 import pion.tech.pionbase.onboard.presentation.adapter.OnboardAdapter
 
 @AndroidEntryPoint
@@ -27,6 +27,6 @@ class OnboardFragment : BaseFragment<FragmentOnboardBinding, OnboardViewModel>(
     }
 
     override fun onDoneOnboard() {
-        navigator.openOnboardToHome()
+        navigator.navigateTo(NavigationRoute.ONBOARD_TO_HOME)
     }
 }

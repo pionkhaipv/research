@@ -12,7 +12,6 @@ import pion.datlt.libads.utils.isNeedToShowConsent
 import pion.datlt.libads.utils.resetConsent
 import pion.datlt.libads.utils.showPolicyForm
 import pion.tech.pionbase.BuildConfig
-import pion.tech.pionbase.R
 import pion.tech.pionbase.setting.presentation.dialog.AdvertisementDialog
 import pion.tech.pionbase.setting.presentation.dialog.DeveloperDialog
 import pion.tech.pionbase.core.presentation.util.Constant
@@ -20,6 +19,7 @@ import pion.tech.pionbase.core.presentation.util.gone
 import pion.tech.pionbase.core.presentation.util.setPreventDoubleClickScaleView
 import pion.tech.pionbase.core.presentation.util.show
 import androidx.core.net.toUri
+import pion.tech.pionbase.core.presentation.navigator.NavigationRoute
 
 fun SettingFragment.backEvent() {
     onSystemBack {
@@ -56,7 +56,7 @@ fun SettingFragment.bindView() {
 
 fun SettingFragment.languageEvent() {
     binding.btnLanguage.setPreventDoubleClickScaleView {
-        navigator.openSettingToLanguage()
+        navigator.navigateTo(NavigationRoute.SETTING_TO_LANGUAGE)
     }
 }
 
