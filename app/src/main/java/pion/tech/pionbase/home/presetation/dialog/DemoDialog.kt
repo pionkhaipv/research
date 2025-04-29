@@ -1,11 +1,11 @@
 package pion.tech.pionbase.home.presetation.dialog
 
 import android.os.Bundle
+import com.piontech.core.base.BaseDialogFragment
 import dagger.hilt.android.AndroidEntryPoint
 import pion.tech.pionbase.R
 import pion.tech.pionbase.databinding.DialogDemoBinding
-import pion.tech.pionbase.core.presentation.common.base.BaseDialogFragment
-import pion.tech.pionbase.core.presentation.util.BundleKey
+import pion.tech.pionbase.util.BundleKey
 
 @AndroidEntryPoint
 class DemoDialog : BaseDialogFragment<DialogDemoBinding>(

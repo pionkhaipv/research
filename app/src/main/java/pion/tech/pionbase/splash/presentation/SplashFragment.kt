@@ -1,23 +1,28 @@
 package pion.tech.pionbase.splash.presentation
 
+import android.animation.ValueAnimator
 import android.util.Log
 import android.view.View
+import com.piontech.core.base.BaseFragment
+import com.piontech.core.utils.collectFlowOnView
 import dagger.hilt.android.AndroidEntryPoint
 import pion.datlt.libads.AdsController
 import pion.datlt.libads.utils.loadAndShowConsentFormIfRequire
 import pion.datlt.libads.utils.requestConsentInfoUpdate
+import pion.tech.pionbase.main.presentation.CommonViewModel
 import pion.tech.pionbase.databinding.FragmentSplashBinding
-import pion.tech.pionbase.app.presentation.MainActivity
-import pion.tech.pionbase.core.presentation.common.base.BaseFragment
-import pion.tech.pionbase.core.presentation.util.Constant
-import pion.tech.pionbase.core.presentation.util.collectFlowOnView
+import pion.tech.pionbase.main.presentation.MainActivity
+import pion.tech.pionbase.util.Constant
 
 
 @AndroidEntryPoint
-class SplashFragment : BaseFragment<FragmentSplashBinding, SplashViewModel>(
+class SplashFragment : BaseFragment<FragmentSplashBinding, SplashViewModel, CommonViewModel>(
     FragmentSplashBinding::inflate,
-    SplashViewModel::class.java
+    SplashViewModel::class.java,
+    CommonViewModel::class.java,
 ) {
+
+    var progressAnimator: ValueAnimator? = null
 
     override fun init(view: View) {
         backEvent()
@@ -55,6 +60,11 @@ class SplashFragment : BaseFragment<FragmentSplashBinding, SplashViewModel>(
             }
 
         }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        releaseAnimation()
     }
 
 }

@@ -1,9 +1,9 @@
 package pion.tech.pionbase.home.presetation.adapter
 
+import com.piontech.core.base.BaseListAdapter
+import com.piontech.core.base.createDiffCallback
 import pion.tech.pionbase.R
 import pion.tech.pionbase.databinding.ItemDummyBinding
-import pion.tech.pionbase.core.presentation.common.base.BaseListAdapter
-import pion.tech.pionbase.core.presentation.common.base.createDiffCallback
 
 class DemoAdapter : BaseListAdapter<String, ItemDummyBinding>(
     createDiffCallback(

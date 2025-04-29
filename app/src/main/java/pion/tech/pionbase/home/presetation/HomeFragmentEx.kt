@@ -1,7 +1,7 @@
 package pion.tech.pionbase.home.presetation
 
-import pion.tech.pionbase.core.presentation.navigator.NavigationRoute
-import pion.tech.pionbase.core.presentation.util.setPreventDoubleClickScaleView
+import pion.tech.pionbase.main.presentation.Route
+import pion.tech.pionbase.util.setPreventDoubleClickScaleView
 import pion.tech.pionbase.home.presetation.bottomSheet.DemoBottomSheet
 
 fun HomeFragment.initView() {
@@ -33,6 +33,6 @@ fun HomeFragment.backEvent() {
 
 fun HomeFragment.settingEvent() {
     binding.btnSetting.setPreventDoubleClickScaleView {
-        navigator.navigateTo(NavigationRoute.HOME_TO_SETTING)
+        navigator.navigateTo(Route.HOME_TO_SETTING)
     }
 }

@@ -1,7 +1,7 @@
 package pion.tech.pionbase.home.domain.usecase
 
 import kotlinx.coroutines.flow.Flow
-import pion.tech.pionbase.core.presentation.util.Result
+import pion.tech.pionbase.util.Result
 import pion.tech.pionbase.home.domain.model.TemplateData
 import pion.tech.pionbase.home.domain.repository.ApiRepository
 

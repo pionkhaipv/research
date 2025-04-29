@@ -8,8 +8,8 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
-import pion.tech.pionbase.app.data.roomDb.AppDatabase
-import pion.tech.pionbase.app.data.roomDb.dao.DummyDAO
+import pion.tech.pionbase.main.data.roomDb.AppDatabase
+import pion.tech.pionbase.main.data.roomDb.dao.DummyDAO
 
 @InstallIn(SingletonComponent::class)
 @Module

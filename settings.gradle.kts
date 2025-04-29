@@ -31,3 +31,4 @@ include(":app")
 rootProject.name = "PionBase"
 include(":LibIAP")
 include(":LibAds")
+include(":core")

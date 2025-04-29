@@ -1,7 +1,7 @@
 package pion.tech.pionbase.home.data.model
 
 import com.google.gson.annotations.SerializedName
-import pion.tech.pionbase.app.domain.model.ApiObjectResponseData
+import pion.tech.pionbase.main.domain.model.ApiObjectResponseData
 
 data class ApiObjectResponseEntity<T>(
     @SerializedName("message") var message: String,

@@ -5,10 +5,10 @@ import androidx.core.os.LocaleListCompat
 import androidx.core.view.isVisible
 import androidx.navigation.fragment.findNavController
 import pion.tech.pionbase.R
-import pion.tech.pionbase.core.presentation.navigator.NavigationRoute
-import pion.tech.pionbase.core.presentation.util.displayToast
-import pion.tech.pionbase.core.presentation.util.setPreventDoubleClick
-import pion.tech.pionbase.core.presentation.util.setPreventDoubleClickScaleView
+import pion.tech.pionbase.main.presentation.Route
+import pion.tech.pionbase.util.displayToast
+import pion.tech.pionbase.util.setPreventDoubleClick
+import pion.tech.pionbase.util.setPreventDoubleClickScaleView
 
 fun LanguageFragment.initView() {
     adapter.setListener(this)
@@ -25,7 +25,7 @@ fun LanguageFragment.applyEvent() {
             if (isCameFromSetting()) {
                 findNavController().popBackStack(R.id.settingFragment, false)
             } else {
-                navigator.navigateTo(NavigationRoute.LANGUAGE_TO_ONBOARD)
+                navigator.navigateTo(Route.LANGUAGE_TO_ONBOARD)
             }
         } else {
             displayToast(getString(R.string.something_error))

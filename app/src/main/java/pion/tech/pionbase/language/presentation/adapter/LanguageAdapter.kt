@@ -1,12 +1,12 @@
 package pion.tech.pionbase.language.presentation.adapter
 
+import com.piontech.core.base.BaseListAdapter
+import com.piontech.core.base.createDiffCallback
+import com.piontech.core.utils.loadImage
 import pion.tech.pionbase.R
 import pion.tech.pionbase.databinding.ItemLanguageBinding
-import pion.tech.pionbase.core.presentation.common.base.BaseListAdapter
-import pion.tech.pionbase.core.presentation.common.base.createDiffCallback
 import pion.tech.pionbase.language.presentation.model.LanguageUIModel
-import pion.tech.pionbase.core.presentation.util.loadImage
-import pion.tech.pionbase.core.presentation.util.setPreventDoubleClick
+import pion.tech.pionbase.util.setPreventDoubleClick
 
 class LanguageAdapter : BaseListAdapter<LanguageUIModel, ItemLanguageBinding>(
     createDiffCallback(

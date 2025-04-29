@@ -2,8 +2,6 @@ package pion.tech.pionbase.setting.presentation
 
 import android.annotation.SuppressLint
 import android.content.Intent
-import android.net.Uri
-import androidx.activity.addCallback
 import androidx.core.view.isVisible
 import androidx.navigation.fragment.findNavController
 import com.example.libiap.IAPConnector
@@ -14,12 +12,12 @@ import pion.datlt.libads.utils.showPolicyForm
 import pion.tech.pionbase.BuildConfig
 import pion.tech.pionbase.setting.presentation.dialog.AdvertisementDialog
 import pion.tech.pionbase.setting.presentation.dialog.DeveloperDialog
-import pion.tech.pionbase.core.presentation.util.Constant
-import pion.tech.pionbase.core.presentation.util.gone
-import pion.tech.pionbase.core.presentation.util.setPreventDoubleClickScaleView
-import pion.tech.pionbase.core.presentation.util.show
+import pion.tech.pionbase.util.Constant
+import pion.tech.pionbase.util.gone
+import pion.tech.pionbase.util.setPreventDoubleClickScaleView
+import pion.tech.pionbase.util.show
 import androidx.core.net.toUri
-import pion.tech.pionbase.core.presentation.navigator.NavigationRoute
+import pion.tech.pionbase.main.presentation.Route
 
 fun SettingFragment.backEvent() {
     onSystemBack {
@@ -56,7 +54,7 @@ fun SettingFragment.bindView() {
 
 fun SettingFragment.languageEvent() {
     binding.btnLanguage.setPreventDoubleClickScaleView {
-        navigator.navigateTo(NavigationRoute.SETTING_TO_LANGUAGE)
+        navigator.navigateTo(Route.SETTING_TO_LANGUAGE)
     }
 }
 

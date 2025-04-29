@@ -1,10 +1,10 @@
 package pion.tech.pionbase.home.presetation.bottomSheet
 
 import android.os.Bundle
+import com.piontech.core.base.BaseBottomSheetDialogFragment
 import dagger.hilt.android.AndroidEntryPoint
 import pion.tech.pionbase.R
 import pion.tech.pionbase.databinding.BottomSheetDemoBinding
-import pion.tech.pionbase.core.presentation.common.base.BaseBottomSheetDialogFragment
 
 @AndroidEntryPoint
 class DemoBottomSheet :

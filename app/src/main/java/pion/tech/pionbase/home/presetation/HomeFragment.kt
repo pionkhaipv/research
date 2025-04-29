@@ -1,20 +1,22 @@
 package pion.tech.pionbase.home.presetation
 
 import android.view.View
+import com.piontech.core.base.BaseFragment
+import com.piontech.core.utils.collectFlowOnView
 import dagger.hilt.android.AndroidEntryPoint
-import pion.tech.pionbase.app.presentation.GetAppCategoryUiState
-import pion.tech.pionbase.app.presentation.GetTemplateUiState
+import pion.tech.pionbase.main.presentation.CommonViewModel
+import pion.tech.pionbase.main.presentation.GetAppCategoryUiState
+import pion.tech.pionbase.main.presentation.GetTemplateUiState
 import pion.tech.pionbase.databinding.FragmentHomeBinding
-import pion.tech.pionbase.core.presentation.common.base.BaseFragment
 import pion.tech.pionbase.home.presetation.adapter.DemoMultipleAdapter
 import pion.tech.pionbase.home.presetation.dialog.DemoDialog
-import pion.tech.pionbase.core.presentation.util.collectFlowOnView
-import pion.tech.pionbase.core.presentation.util.displayToast
+import pion.tech.pionbase.util.displayToast
 
 @AndroidEntryPoint
-class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(
+class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel, CommonViewModel>(
     FragmentHomeBinding::inflate,
-    HomeViewModel::class.java
+    HomeViewModel::class.java,
+    CommonViewModel::class.java
 ), DemoDialog.Listener {
 
     val adapter = DemoMultipleAdapter()
@@ -47,7 +49,8 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(
                 }
 
                 is GetAppCategoryUiState.Success -> {
-                    val templateCategoryId = it.listAppCategory.firstOrNull { item -> item.name == "Template" }?.id
+                    val templateCategoryId =
+                        it.listAppCategory.firstOrNull { item -> item.name == "Template" }?.id
                     if (templateCategoryId != null) {
                         commonViewModel.getTemplate(templateCategoryId)
                     }

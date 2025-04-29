@@ -3,7 +3,7 @@ package pion.tech.pionbase.onboard.presentation.viewpager
 import pion.tech.pionbase.databinding.LayoutIapBinding
 import pion.tech.pionbase.onboard.presentation.OnboardFragment
 import pion.tech.pionbase.onboard.presentation.adapter.OnboardAdapter
-import pion.tech.pionbase.core.presentation.util.setPreventDoubleClickScaleView
+import pion.tech.pionbase.util.setPreventDoubleClickScaleView
 
 class OnboardViewHolder5(
     val binding: LayoutIapBinding,

@@ -1,10 +1,10 @@
 package pion.tech.pionbase.setting.presentation.dialog
 
 import android.os.Bundle
+import com.piontech.core.base.BaseDialogFragment
 import pion.tech.pionbase.R
 import pion.tech.pionbase.databinding.DialogAdvertisementBinding
-import pion.tech.pionbase.core.presentation.common.base.BaseDialogFragment
-import pion.tech.pionbase.core.presentation.util.setPreventDoubleClickScaleView
+import pion.tech.pionbase.util.setPreventDoubleClickScaleView
 
 class AdvertisementDialog : BaseDialogFragment<DialogAdvertisementBinding>(R.layout.dialog_advertisement) {
 

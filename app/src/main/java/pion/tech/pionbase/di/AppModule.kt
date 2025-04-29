@@ -6,7 +6,6 @@ import android.content.SharedPreferences
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStore
-import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.google.firebase.remoteconfig.ktx.remoteConfig
@@ -17,23 +16,13 @@ import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import pion.tech.pionbase.BuildConfig
 import pion.tech.pionbase.R
-import pion.tech.pionbase.core.presentation.firebaseAnalytics.FirebaseAnalyticsLogger
-import pion.tech.pionbase.core.presentation.firebaseAnalytics.FirebaseAnalyticsLoggerImpl
 import javax.inject.Singleton
 
-val Context.dataStore by preferencesDataStore(name = BuildConfig.APPLICATION_ID)
+val Context.dataStore by preferencesDataStore(name = "${BuildConfig.APPLICATION_ID}_preferences")
 
 @InstallIn(SingletonComponent::class)
 @Module
 object AppModule {
-
-    @Provides
-    fun provideSharedPreferences(application: Application): SharedPreferences {
-        return application.getSharedPreferences(
-            "CLEAN_PREFERENCES",
-            Context.MODE_PRIVATE
-        )
-    }
 
     @Provides
     @Singleton
@@ -56,18 +45,6 @@ object AppModule {
     @Singleton
     fun provideDataStore(application: Application): DataStore<Preferences> {
         return application.dataStore
-    }
-
-    @Provides
-    @Singleton
-    fun provideFirebaseAnalytics(application: Application): FirebaseAnalytics {
-        return FirebaseAnalytics.getInstance(application)
-    }
-
-    @Provides
-    @Singleton
-    fun provideFirebaseAnalyticsLogger(firebaseAnalytics: FirebaseAnalytics): FirebaseAnalyticsLogger {
-        return FirebaseAnalyticsLoggerImpl(firebaseAnalytics)
     }
 
 

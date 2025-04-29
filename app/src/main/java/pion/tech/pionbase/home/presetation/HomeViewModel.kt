@@ -1,11 +1,11 @@
 package pion.tech.pionbase.home.presetation
 
-import pion.tech.pionbase.app.domain.usecase.DataStoreUseCase
+import com.piontech.core.base.BaseViewModel
+import pion.tech.pionbase.main.domain.usecase.DataStoreUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import pion.tech.pionbase.core.presentation.common.base.BaseViewModel
 import javax.inject.Inject
 
 @HiltViewModel

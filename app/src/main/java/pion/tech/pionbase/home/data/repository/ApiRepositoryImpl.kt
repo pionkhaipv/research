@@ -9,7 +9,7 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import pion.tech.pionbase.home.data.api.ApiInterface
 import pion.tech.pionbase.home.domain.repository.ApiRepository
-import pion.tech.pionbase.core.presentation.util.Result
+import pion.tech.pionbase.util.Result
 import pion.tech.pionbase.home.data.model.template.toDomain
 import pion.tech.pionbase.home.data.model.toDomain
 

@@ -1,16 +1,18 @@
 package pion.tech.pionbase.onboard.presentation
 
 import android.view.View
+import com.piontech.core.base.BaseFragment
 import dagger.hilt.android.AndroidEntryPoint
+import pion.tech.pionbase.main.presentation.CommonViewModel
+import pion.tech.pionbase.main.presentation.Route
 import pion.tech.pionbase.databinding.FragmentOnboardBinding
-import pion.tech.pionbase.core.presentation.common.base.BaseFragment
-import pion.tech.pionbase.core.presentation.navigator.NavigationRoute
 import pion.tech.pionbase.onboard.presentation.adapter.OnboardAdapter
 
 @AndroidEntryPoint
-class OnboardFragment : BaseFragment<FragmentOnboardBinding, OnboardViewModel>(
+class OnboardFragment : BaseFragment<FragmentOnboardBinding, OnboardViewModel, CommonViewModel>(
     FragmentOnboardBinding::inflate,
-    OnboardViewModel::class.java
+    OnboardViewModel::class.java,
+    CommonViewModel::class.java,
 ), OnboardAdapter.Listener {
     var adapter: OnboardAdapter? = null
     override fun init(view: View) {
@@ -27,6 +29,6 @@ class OnboardFragment : BaseFragment<FragmentOnboardBinding, OnboardViewModel>(
     }
 
     override fun onDoneOnboard() {
-        navigator.navigateTo(NavigationRoute.ONBOARD_TO_HOME)
+        navigator.navigateTo(Route.ONBOARD_TO_HOME)
     }
 }

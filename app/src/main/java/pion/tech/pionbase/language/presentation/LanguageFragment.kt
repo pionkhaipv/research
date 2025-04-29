@@ -2,17 +2,19 @@ package pion.tech.pionbase.language.presentation
 
 import android.view.View
 import androidx.core.view.isVisible
+import com.piontech.core.base.BaseFragment
+import com.piontech.core.utils.collectFlowOnView
 import dagger.hilt.android.AndroidEntryPoint
+import pion.tech.pionbase.main.presentation.CommonViewModel
 import pion.tech.pionbase.databinding.FragmentLanguageBinding
 import pion.tech.pionbase.language.presentation.model.LanguageUIModel
-import pion.tech.pionbase.core.presentation.common.base.BaseFragment
 import pion.tech.pionbase.language.presentation.adapter.LanguageAdapter
-import pion.tech.pionbase.core.presentation.util.collectFlowOnView
 
 @AndroidEntryPoint
-class LanguageFragment : BaseFragment<FragmentLanguageBinding, LanguageViewModel>(
+class LanguageFragment : BaseFragment<FragmentLanguageBinding, LanguageViewModel,CommonViewModel>(
     FragmentLanguageBinding::inflate,
-    LanguageViewModel::class.java
+    LanguageViewModel::class.java,
+    CommonViewModel::class.java,
 ), LanguageAdapter.Listener {
 
     val adapter = LanguageAdapter()
