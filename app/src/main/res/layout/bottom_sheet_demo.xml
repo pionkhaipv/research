@@ -15,7 +15,7 @@
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:background="@drawable/bg_radius_16"
+            android:theme="@style/RoundedCorner.16"
             android:padding="@dimen/_16dp"
             android:orientation="vertical"
             android:backgroundTint="@color/white"
