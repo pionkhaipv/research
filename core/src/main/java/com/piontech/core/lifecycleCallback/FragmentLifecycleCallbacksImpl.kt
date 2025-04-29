@@ -1,4 +1,4 @@
-package pion.tech.pionbase.core.presentation.common.lifecycleCallback
+package com.piontech.core.lifecycleCallback
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment

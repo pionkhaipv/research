@@ -13,7 +13,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import pion.datlt.libads.AdsController
 import pion.tech.pionbase.BuildConfig
 import pion.tech.pionbase.R
-import pion.tech.pionbase.core.presentation.common.lifecycleCallback.FragmentLifecycleCallbacksImpl
+import com.piontech.core.lifecycleCallback.FragmentLifecycleCallbacksImpl
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {

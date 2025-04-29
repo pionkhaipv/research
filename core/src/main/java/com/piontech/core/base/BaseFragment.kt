@@ -6,7 +6,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.activity.addCallback
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.LifecycleOwner
@@ -17,14 +16,14 @@ import androidx.navigation.NavController
 import androidx.navigation.NavDestination
 import androidx.navigation.fragment.findNavController
 import androidx.viewbinding.ViewBinding
+import com.piontech.core.firebaseAnalytics.FirebaseAnalyticsLogger
+import com.piontech.core.navigator.Navigator
+import com.piontech.core.navigator.NavigatorImpl
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
-import com.piontech.core.firebaseAnalytics.FirebaseAnalyticsLogger
-import com.piontech.core.navigator.NavigatorImpl
-import com.piontech.core.navigator.Navigator
 import timber.log.Timber
 import javax.inject.Inject
 

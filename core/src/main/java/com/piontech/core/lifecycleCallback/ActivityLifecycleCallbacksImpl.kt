@@ -1,4 +1,4 @@
-package pion.tech.pionbase.core.presentation.common.lifecycleCallback
+package com.piontech.core.lifecycleCallback
 
 import android.app.Activity
 import android.app.Application
