@@ -17,7 +17,7 @@ import pion.tech.pionbase.util.gone
 import pion.tech.pionbase.util.setPreventDoubleClickScaleView
 import pion.tech.pionbase.util.show
 import androidx.core.net.toUri
-import pion.tech.pionbase.main.presentation.Route
+import pion.tech.pionbase.R
 
 fun SettingFragment.backEvent() {
     onSystemBack {
@@ -54,7 +54,7 @@ fun SettingFragment.bindView() {
 
 fun SettingFragment.languageEvent() {
     binding.btnLanguage.setPreventDoubleClickScaleView {
-        navigator.navigateTo(Route.SETTING_TO_LANGUAGE)
+        navigator.navigateTo(R.id.action_settingFragment_to_languageFragment)
     }
 }
 

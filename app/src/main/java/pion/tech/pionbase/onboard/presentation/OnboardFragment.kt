@@ -3,8 +3,8 @@ package pion.tech.pionbase.onboard.presentation
 import android.view.View
 import com.piontech.core.base.BaseFragment
 import dagger.hilt.android.AndroidEntryPoint
+import pion.tech.pionbase.R
 import pion.tech.pionbase.main.presentation.CommonViewModel
-import pion.tech.pionbase.main.presentation.Route
 import pion.tech.pionbase.databinding.FragmentOnboardBinding
 import pion.tech.pionbase.onboard.presentation.adapter.OnboardAdapter
 
@@ -29,6 +29,6 @@ class OnboardFragment : BaseFragment<FragmentOnboardBinding, OnboardViewModel, C
     }
 
     override fun onDoneOnboard() {
-        navigator.navigateTo(Route.ONBOARD_TO_HOME)
+        navigator.navigateTo(R.id.action_onboardFragment_to_homeFragment)
     }
 }
