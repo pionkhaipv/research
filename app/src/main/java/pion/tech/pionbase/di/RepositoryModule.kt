@@ -7,7 +7,6 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import pion.tech.pionbase.main.data.dataStore.PreferencesDataSource
 import pion.tech.pionbase.main.data.repository.DataStoreRepositoryImpl
 import pion.tech.pionbase.main.data.repository.RemoteConfigRepositoryImpl
 import pion.tech.pionbase.main.domain.repository.DataStoreRepository
@@ -17,7 +16,6 @@ import pion.tech.pionbase.home.data.repository.ApiRepositoryImpl
 import pion.tech.pionbase.home.domain.repository.ApiRepository
 import pion.tech.pionbase.language.data.repository.LanguageRepositoryImpl
 import pion.tech.pionbase.language.domain.repository.LanguageRepository
-import pion.tech.pionbase.main.data.dataStore.DataStoreSource
 import javax.inject.Singleton
 
 @Module
@@ -26,16 +24,10 @@ class RepositoryModule {
 
     @Provides
     @Singleton
-    fun providePreferencesDataSource(dataStore: DataStore<Preferences>): PreferencesDataSource {
-        return DataStoreSource(dataStore)
-    }
-
-    @Provides
-    @Singleton
     fun providePreferencesRepository(
-        preferencesDataSource: PreferencesDataSource
+        dataStore: DataStore<Preferences>
     ): DataStoreRepository {
-        return DataStoreRepositoryImpl(preferencesDataSource)
+        return DataStoreRepositoryImpl(dataStore)
     }
 
     @Provides

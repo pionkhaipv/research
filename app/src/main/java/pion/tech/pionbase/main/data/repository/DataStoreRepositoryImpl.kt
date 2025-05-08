@@ -1,26 +1,56 @@
 package pion.tech.pionbase.main.data.repository
 
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.booleanPreferencesKey
+import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.emptyPreferences
+import androidx.datastore.preferences.core.stringPreferencesKey
 import pion.tech.pionbase.main.domain.repository.DataStoreRepository
 import kotlinx.coroutines.flow.Flow
-import pion.tech.pionbase.main.data.dataStore.PreferencesDataSource
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.map
+import java.io.IOException
 
 class DataStoreRepositoryImpl(
-    private val preferencesDataSource: PreferencesDataSource
+    private val dataStore: DataStore<Preferences>
 ) : DataStoreRepository {
+
+    private val isPremiumKey = booleanPreferencesKey("isPremiumKey")
+    private val tokenKey = stringPreferencesKey("tokenKey")
+
     override suspend fun getIsPremium(): Flow<Boolean> {
-        return preferencesDataSource.getIsPremium()
+        return dataStore.data
+            .catch { exception ->
+                if (exception is IOException) emit(emptyPreferences())
+                else throw exception
+            }
+            .map { prefs ->
+                prefs[isPremiumKey] ?: false
+            }
     }
 
     override suspend fun setIsPremium(isPremium: Boolean) {
-        preferencesDataSource.setIsPremium(isPremium)
+        dataStore.edit {
+            it[isPremiumKey] = isPremium
+        }
     }
 
     override suspend fun getToken(): Flow<String?> {
-        return preferencesDataSource.getToken()
+        return dataStore.data
+            .catch { exception ->
+                if (exception is IOException) emit(emptyPreferences())
+                else throw exception
+            }
+            .map { prefs ->
+                prefs[tokenKey]
+            }
     }
 
     override suspend fun setToken(token: String) {
-        preferencesDataSource.setToken(token)
+        dataStore.edit {
+            it[tokenKey] = token
+        }
     }
 
 }
