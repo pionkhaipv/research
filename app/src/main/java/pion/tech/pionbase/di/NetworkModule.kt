@@ -35,7 +35,9 @@ import javax.net.ssl.X509TrustManager
 class NetworkModule {
 
     companion object {
-        const val DEFAULT_TIMEOUT = 30
+        private const val DEFAULT_TIMEOUT = 30
+        private const val CACHE_SIZE = 10 * 1024 * 1024L // 10 MB
+        private const val CACHE_DIR = "http-cache"
     }
 
     @Provides
@@ -46,28 +48,40 @@ class NetworkModule {
 
     @Provides
     @Singleton
+    fun provideLoggingInterceptor(): HttpLoggingInterceptor {
+        val loggingInterceptor = HttpLoggingInterceptor()
+        loggingInterceptor.level = if (BuildConfig.DEBUG)
+            HttpLoggingInterceptor.Level.BODY
+        else
+            HttpLoggingInterceptor.Level.NONE
+        return loggingInterceptor
+    }
+
+    @Provides
+    @Singleton
+    fun provideHeaderInterceptor(): Interceptor = Interceptor { chain ->
+        val request = chain.request()
+            .newBuilder()
+            .header("Accept", "application/json")
+            .build()
+        chain.proceed(request)
+    }
+
+    @Provides
+    @Singleton
     fun provideHttpClient(
         cache: Cache?,
+        loggingInterceptor: HttpLoggingInterceptor,
+        headerInterceptor: Interceptor,
         @ApplicationContext application: Context
     ): OkHttpClient {
-        val loggingInterceptor = HttpLoggingInterceptor()
-        loggingInterceptor.level = HttpLoggingInterceptor.Level.NONE
         return OkHttpClient.Builder()
             .sslSocketFactory(
                 provideSSLSocketFactory()!!,
                 provideUnTrustManager()[0] as X509TrustManager
             )
             .cache(cache)
-            .addInterceptor(
-                Interceptor { chain: Interceptor.Chain ->
-                    val request = chain.request()
-                        .newBuilder()
-                        .header("Accept", "application/json")
-                        .build()
-
-                    chain.proceed(request)
-                }
-            )
+            .addInterceptor(headerInterceptor)
             .addInterceptor(loggingInterceptor)
             .addInterceptor(ChuckerInterceptor(application))
             .connectTimeout(DEFAULT_TIMEOUT.toLong(), TimeUnit.SECONDS)
@@ -111,9 +125,8 @@ class NetworkModule {
     @Provides
     @Singleton
     fun provideCache(@ApplicationContext application: Context): Cache {
-        val cacheSize = 10 * 1024 * 1024.toLong() // 10 MB
-        val httpCacheDirectory = File(application.cacheDir, "http-cache")
-        return Cache(httpCacheDirectory, cacheSize)
+        val httpCacheDirectory = File(application.cacheDir, CACHE_DIR)
+        return Cache(httpCacheDirectory, CACHE_SIZE)
     }
 
     @Provides
