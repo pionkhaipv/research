@@ -2,26 +2,24 @@ package pion.tech.pionbase.main.presentation
 
 import com.piontech.core.base.BaseViewModel
 import com.piontech.core.base.launchIO
-import pion.tech.pionbase.home.domain.usecase.AppCategoryUseCase
-import pion.tech.pionbase.main.domain.usecase.FetchRemoteConfigUseCase
-import pion.tech.pionbase.home.domain.usecase.TemplateUseCase
 import pion.tech.pionbase.util.onError
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import pion.tech.pionbase.home.domain.repository.ApiRepository
 import pion.tech.pionbase.util.onSuccess
 import pion.tech.pionbase.home.presetation.model.AppCategoryUIModel
 import pion.tech.pionbase.main.presentation.model.RemoteConfigUIModel
 import pion.tech.pionbase.main.presentation.model.toPresentation
 import pion.tech.pionbase.home.presetation.model.TemplateUIModel
 import pion.tech.pionbase.home.presetation.model.toPresentation
+import pion.tech.pionbase.main.domain.repository.RemoteConfigRepository
 import javax.inject.Inject
 
 @HiltViewModel
 class CommonViewModel @Inject constructor(
-    private val fetchRemoteConfigUseCase: FetchRemoteConfigUseCase,
-    private val appCategoryUseCase: AppCategoryUseCase,
-    private val templateUseCase: TemplateUseCase
+    private val remoteConfigRepository: RemoteConfigRepository,
+    private val apiRepository: ApiRepository,
 ) : BaseViewModel() {
 
     private val _remoteConfigDataStateFlow = MutableStateFlow<RemoteConfigUIModel?>(null)
@@ -41,7 +39,7 @@ class CommonViewModel @Inject constructor(
 
     private fun fetchRemoteConfigData() {
         launchIO {
-            fetchRemoteConfigUseCase.invoke().collect {
+            remoteConfigRepository.fetchRemoteConfig().collect {
                 _remoteConfigDataStateFlow.value = it.toPresentation()
             }
         }
@@ -52,7 +50,7 @@ class CommonViewModel @Inject constructor(
             if (_getCategoryUiState.value is GetAppCategoryUiState.Standby || _getCategoryUiState.value is GetAppCategoryUiState.Success) return@launchIO
 
             _getCategoryUiState.value = GetAppCategoryUiState.Standby
-            appCategoryUseCase.invoke().collect {
+            apiRepository.getAppCategory().collect {
                 it.onSuccess { data ->
                     _getCategoryUiState.value =
                         GetAppCategoryUiState.Success(data.map { item -> item.toPresentation() })
@@ -68,7 +66,7 @@ class CommonViewModel @Inject constructor(
             if (_getTemplateUiState.value is GetTemplateUiState.Standby || _getTemplateUiState.value is GetTemplateUiState.Success) return@launchIO
 
             _getTemplateUiState.value = GetTemplateUiState.Standby
-            templateUseCase.invoke(categoryId)
+            apiRepository.getTemplateData(categoryId)
                 .collect {
                     it.onSuccess { data ->
                         _getTemplateUiState.value =

@@ -1,4 +1,4 @@
-package pion.tech.pionbase.language.domain.usecase
+package pion.tech.pionbase.language.data.repository
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -6,9 +6,10 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import pion.tech.pionbase.language.domain.model.LanguageData
+import pion.tech.pionbase.language.domain.repository.LanguageRepository
 
-class GetLanguageUseCase {
-    operator fun invoke(): Flow<List<LanguageData>> {
+class LanguageRepositoryImpl:LanguageRepository {
+    override fun getLanguage(): Flow<List<LanguageData>> {
         val listLanguageData = listOf(
             LanguageData("https://flagcdn.com/w320/us.png", "English", "en"),
             LanguageData("https://flagcdn.com/w320/es.png", "Español", "es"),

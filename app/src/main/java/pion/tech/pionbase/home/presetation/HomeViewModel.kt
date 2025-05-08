@@ -1,16 +1,16 @@
 package pion.tech.pionbase.home.presetation
 
 import com.piontech.core.base.BaseViewModel
-import pion.tech.pionbase.main.domain.usecase.DataStoreUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import pion.tech.pionbase.main.domain.repository.DataStoreRepository
 import javax.inject.Inject
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-    private val dataStoreUseCase: DataStoreUseCase,
+    private val dataStoreRepository: DataStoreRepository,
 ) : BaseViewModel() {
 
     private val _countValue = MutableStateFlow(0)
@@ -21,7 +21,7 @@ class HomeViewModel @Inject constructor(
     }
 
     suspend fun getIsPremiumValue(): Flow<Boolean> {
-        return dataStoreUseCase.getIsPremium()
+        return dataStoreRepository.getIsPremium()
     }
 
 
