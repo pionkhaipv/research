@@ -7,15 +7,15 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import pion.tech.pionbase.main.data.repository.DataStoreRepositoryImpl
-import pion.tech.pionbase.main.data.repository.RemoteConfigRepositoryImpl
-import pion.tech.pionbase.main.domain.repository.DataStoreRepository
-import pion.tech.pionbase.main.domain.repository.RemoteConfigRepository
-import pion.tech.pionbase.home.data.api.ApiInterface
-import pion.tech.pionbase.home.data.repository.ApiRepositoryImpl
-import pion.tech.pionbase.home.domain.repository.ApiRepository
-import pion.tech.pionbase.language.data.repository.LanguageRepositoryImpl
-import pion.tech.pionbase.language.domain.repository.LanguageRepository
+import pion.tech.pionbase.feature.home.data.api.ApiInterface
+import pion.tech.pionbase.feature.home.data.repository.ApiRepositoryImpl
+import pion.tech.pionbase.feature.home.domain.repository.ApiRepository
+import pion.tech.pionbase.feature.language.data.repository.LanguageRepositoryImpl
+import pion.tech.pionbase.feature.language.domain.repository.LanguageRepository
+import pion.tech.pionbase.app.data.repository.DataStoreRepositoryImpl
+import pion.tech.pionbase.app.data.repository.RemoteConfigRepositoryImpl
+import pion.tech.pionbase.app.domain.repository.DataStoreRepository
+import pion.tech.pionbase.app.domain.repository.RemoteConfigRepository
 import javax.inject.Singleton
 
 @Module
