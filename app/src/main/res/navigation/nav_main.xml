@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/splashFragment"
-        android:name="pion.tech.pionbase.splash.presentation.SplashFragment"
+        android:name="pion.tech.pionbase.feature.splash.presentation.SplashFragment"
         android:label="SplashFragment"
         tools:layout="@layout/fragment_splash">
         <action
@@ -16,7 +16,7 @@
     </fragment>
     <fragment
         android:id="@+id/homeFragment"
-        android:name="pion.tech.pionbase.home.presetation.HomeFragment"
+        android:name="pion.tech.pionbase.feature.home.presetation.HomeFragment"
         android:label="HomeFragment"
         tools:layout="@layout/fragment_home" >
         <action
@@ -25,7 +25,7 @@
     </fragment>
     <fragment
         android:id="@+id/languageFragment"
-        android:name="pion.tech.pionbase.language.presentation.LanguageFragment"
+        android:name="pion.tech.pionbase.feature.language.presentation.LanguageFragment"
         android:label="LanguageFragment"
         tools:layout="@layout/fragment_language">
         <action
@@ -34,7 +34,7 @@
     </fragment>
     <fragment
         android:id="@+id/onboardFragment"
-        android:name="pion.tech.pionbase.onboard.presentation.OnboardFragment"
+        android:name="pion.tech.pionbase.feature.onboard.presentation.OnboardFragment"
         android:label="OnboardFragment"
         tools:layout="@layout/fragment_onboard">
         <action
@@ -43,7 +43,7 @@
     </fragment>
     <fragment
         android:id="@+id/settingFragment"
-        android:name="pion.tech.pionbase.setting.presentation.SettingFragment"
+        android:name="pion.tech.pionbase.feature.setting.presentation.SettingFragment"
         android:label="SettingFragment"
         tools:layout="@layout/fragment_setting" >
         <action

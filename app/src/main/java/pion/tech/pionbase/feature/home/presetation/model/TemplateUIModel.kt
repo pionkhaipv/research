@@ -1,6 +1,6 @@
 package pion.tech.pionbase.feature.home.presetation.model
 
-import pion.tech.pionbase.feature.home.domain.model.TemplateData
+import pion.tech.pionbase.feature.home.domain.model.template.TemplateData
 
 data class TemplateUIModel(
     val name: String? = null,
@@ -15,8 +15,8 @@ data class TemplateUIModel(
     val countryId: String? = null
 )
 
-fun pion.tech.pionbase.feature.home.domain.model.TemplateData.toPresentation() =
-    pion.tech.pionbase.feature.home.presetation.model.TemplateUIModel(
+fun TemplateData.toPresentation() =
+    TemplateUIModel(
         name = this.name,
         duration = this.duration,
         videoPreview = this.videoPreview,
