@@ -11,12 +11,13 @@ import pion.tech.pionbase.feature.language.presentation.adapter.LanguageAdapter
 import pion.tech.pionbase.feature.language.presentation.model.LanguageUIModel
 
 @AndroidEntryPoint
-class LanguageFragment : BaseFragment<FragmentLanguageBinding, LanguageViewModel,CommonViewModel>(
-    FragmentLanguageBinding::inflate,
-    LanguageViewModel::class.java,
-    CommonViewModel::class.java,
-), LanguageAdapter.Listener {
-
+class LanguageFragment :
+    BaseFragment<FragmentLanguageBinding, LanguageViewModel, CommonViewModel>(
+        FragmentLanguageBinding::inflate,
+        LanguageViewModel::class.java,
+        CommonViewModel::class.java,
+    ),
+    LanguageAdapter.Listener {
     val adapter = LanguageAdapter()
 
     override fun init(view: View) {
@@ -31,9 +32,11 @@ class LanguageFragment : BaseFragment<FragmentLanguageBinding, LanguageViewModel
         }
     }
 
-    override fun onClickLanguage(item: LanguageUIModel, position: Int) {
+    override fun onClickLanguage(
+        item: LanguageUIModel,
+        position: Int,
+    ) {
         binding.ivDone.isVisible = true
         viewModel.selectLanguage(item)
     }
-
 }

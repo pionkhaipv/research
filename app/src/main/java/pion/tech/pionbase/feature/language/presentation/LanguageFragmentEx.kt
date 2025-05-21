@@ -52,7 +52,4 @@ fun setLocale(languageCode: String?) {
     AppCompatDelegate.setApplicationLocales(locales)
 }
 
-fun LanguageFragment.isCameFromSetting(): Boolean {
-    return navigator.isCameFrom(R.id.settingFragment)
-
-}
+fun LanguageFragment.isCameFromSetting(): Boolean = navigator.isCameFrom(R.id.settingFragment)

@@ -9,21 +9,20 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
+import com.piontech.core.lifecycleCallback.FragmentLifecycleCallbacksImpl
 import dagger.hilt.android.AndroidEntryPoint
 import pion.datlt.libads.AdsController
 import pion.tech.pionbase.BuildConfig
 import pion.tech.pionbase.R
-import com.piontech.core.lifecycleCallback.FragmentLifecycleCallbacksImpl
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         supportFragmentManager.registerFragmentLifecycleCallbacks(
             FragmentLifecycleCallbacksImpl(),
-            true
+            true,
         )
         setContentView(R.layout.activity_main)
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
@@ -38,11 +37,12 @@ class MainActivity : AppCompatActivity() {
         AdsController.Companion.init(
             activity = this,
             isDebug = BuildConfig.DEBUG,
-            listAppId = arrayListOf(
-                getString(R.string.admob_application_id)
-            ),
+            listAppId =
+                arrayListOf(
+                    getString(R.string.admob_application_id),
+                ),
             packageName = packageName,
-            navController = getNavHost()
+            navController = getNavHost(),
         )
     }
 
@@ -60,10 +60,10 @@ class MainActivity : AppCompatActivity() {
                 findViewById<TextView>(R.id.viewShowOpenApp).isVisible = false
             },
             onPaidEvent = {
-                //do nothing
-            })
+                // do nothing
+            },
+        )
     }
-
 
     private fun getNavHost(): NavController {
         val navHostFragment =

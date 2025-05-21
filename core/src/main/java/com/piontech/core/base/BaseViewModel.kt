@@ -9,40 +9,46 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
-abstract class BaseViewModel : ViewModel() {
-
-}
+abstract class BaseViewModel : ViewModel()
 
 fun ViewModel.launchIO(
     onError: (Throwable) -> Unit = { },
-    block: suspend CoroutineScope.() -> Unit
+    block: suspend CoroutineScope.() -> Unit,
 ): Job {
-    val exceptionHandler = CoroutineExceptionHandler { _, throwable ->
-        Timber.e("${this::class.java.simpleName} error: $throwable")
-        onError(throwable)
-    }
+    val exceptionHandler =
+        CoroutineExceptionHandler { _, throwable ->
+            Timber.e("${this::class.java.simpleName} error: $throwable")
+            viewModelScope.launch(Dispatchers.Main) {
+                onError(throwable)
+            }
+        }
     return viewModelScope.launch(Dispatchers.IO + exceptionHandler, block = block)
 }
 
 fun ViewModel.launchDefault(
     onError: (Throwable) -> Unit = { },
-    block: suspend CoroutineScope.() -> Unit
+    block: suspend CoroutineScope.() -> Unit,
 ): Job {
-    val exceptionHandler = CoroutineExceptionHandler { _, throwable ->
-        Timber.e("${this::class.java.simpleName} error: $throwable")
-        onError(throwable)
-    }
+    val exceptionHandler =
+        CoroutineExceptionHandler { _, throwable ->
+            Timber.e("${this::class.java.simpleName} error: $throwable")
+            viewModelScope.launch(Dispatchers.Main) {
+                onError(throwable)
+            }
+        }
     return viewModelScope.launch(Dispatchers.Default + exceptionHandler, block = block)
 }
 
 fun ViewModel.launchMain(
     onError: (Throwable) -> Unit = { },
-    block: suspend CoroutineScope.() -> Unit
+    block: suspend CoroutineScope.() -> Unit,
 ): Job {
-    val exceptionHandler = CoroutineExceptionHandler { _, throwable ->
-        Timber.e("${this::class.java.simpleName} error: $throwable")
-        onError(throwable)
-    }
+    val exceptionHandler =
+        CoroutineExceptionHandler { _, throwable ->
+            Timber.e("${this::class.java.simpleName} error: $throwable")
+            viewModelScope.launch(Dispatchers.Main) {
+                onError(throwable)
+            }
+        }
     return viewModelScope.launch(Dispatchers.Main + exceptionHandler, block = block)
 }
-

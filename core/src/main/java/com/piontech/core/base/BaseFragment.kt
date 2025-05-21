@@ -29,28 +29,28 @@ import javax.inject.Inject
 
 typealias Inflate<Binding> = (LayoutInflater, ViewGroup?, Boolean) -> Binding
 
-
 abstract class BaseFragment<Binding : ViewBinding, VM : ViewModel, CommonVM : ViewModel>(
     private val inflate: Inflate<Binding>,
     private val viewModelClass: Class<VM>,
-    private val commonViewModelClass: Class<CommonVM>
+    private val commonViewModelClass: Class<CommonVM>,
 ) : Fragment() {
-
     @Inject
     lateinit var logger: FirebaseAnalyticsLogger
 
     private var _navigator: Navigator? = null
     val navigator: Navigator
-        get() = checkNotNull(_navigator) {
-            "Fragment $this navigator cannot be accessed before onCreateView() or after onDestroyView()"
-        }
+        get() =
+            checkNotNull(_navigator) {
+                "Fragment $this navigator cannot be accessed before onCreateView() or after onDestroyView()"
+            }
 
     private var _binding: Binding? = null
 
     val binding: Binding
-        get() = checkNotNull(_binding) {
-            "Fragment $this binding cannot be accessed before onCreateView() or after onDestroyView()"
-        }
+        get() =
+            checkNotNull(_binding) {
+                "Fragment $this binding cannot be accessed before onCreateView() or after onDestroyView()"
+            }
 
     val commonViewModel: CommonVM by lazy {
         ViewModelProvider(requireActivity())[commonViewModelClass]
@@ -66,7 +66,7 @@ abstract class BaseFragment<Binding : ViewBinding, VM : ViewModel, CommonVM : Vi
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View? {
         if (saveView) {
             if (_binding == null) {
@@ -82,7 +82,10 @@ abstract class BaseFragment<Binding : ViewBinding, VM : ViewModel, CommonVM : Vi
         return binding.root
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+    override fun onViewCreated(
+        view: View,
+        savedInstanceState: Bundle?,
+    ) {
         super.onViewCreated(view, savedInstanceState)
         val currentDestinationId = findNavController().currentDestination?.id ?: 0
         _navigator = NavigatorImpl(findNavController(), lifecycle, currentDestinationId)
@@ -122,45 +125,59 @@ abstract class BaseFragment<Binding : ViewBinding, VM : ViewModel, CommonVM : Vi
 }
 
 fun Fragment.doActionWhenResume(action: () -> Unit) {
-    lifecycle.addObserver(object : LifecycleEventObserver {
-        override fun onStateChanged(source: LifecycleOwner, event: Lifecycle.Event) {
-            if (event == Lifecycle.Event.ON_RESUME) {
-                action.invoke()
-                lifecycle.removeObserver(this)
+    lifecycle.addObserver(
+        object : LifecycleEventObserver {
+            override fun onStateChanged(
+                source: LifecycleOwner,
+                event: Lifecycle.Event,
+            ) {
+                if (event == Lifecycle.Event.ON_RESUME) {
+                    action.invoke()
+                    lifecycle.removeObserver(this)
+                }
             }
-        }
-    })
+        },
+    )
 }
 
 fun Fragment.launchIO(
     onError: (Throwable) -> Unit = { },
-    block: suspend CoroutineScope.() -> Unit
+    block: suspend CoroutineScope.() -> Unit,
 ): Job {
-    val exceptionHandler = CoroutineExceptionHandler { _, throwable ->
-        Timber.e("${this::class.java.simpleName} error: $throwable")
-        onError(throwable)
-    }
+    val exceptionHandler =
+        CoroutineExceptionHandler { _, throwable ->
+            Timber.e("${this::class.java.simpleName} error: $throwable")
+            lifecycleScope.launch(Dispatchers.Main) {
+                onError(throwable)
+            }
+        }
     return lifecycleScope.launch(Dispatchers.IO + exceptionHandler, block = block)
 }
 
 fun Fragment.launchDefault(
     onError: (Throwable) -> Unit = { },
-    block: suspend CoroutineScope.() -> Unit
+    block: suspend CoroutineScope.() -> Unit,
 ): Job {
-    val exceptionHandler = CoroutineExceptionHandler { _, throwable ->
-        Timber.e("${this::class.java.simpleName} error: $throwable")
-        onError(throwable)
-    }
+    val exceptionHandler =
+        CoroutineExceptionHandler { _, throwable ->
+            Timber.e("${this::class.java.simpleName} error: $throwable")
+            lifecycleScope.launch(Dispatchers.Main) {
+                onError(throwable)
+            }
+        }
     return lifecycleScope.launch(Dispatchers.Default + exceptionHandler, block = block)
 }
 
 fun Fragment.launchMain(
     onError: (Throwable) -> Unit = { },
-    block: suspend CoroutineScope.() -> Unit
+    block: suspend CoroutineScope.() -> Unit,
 ): Job {
-    val exceptionHandler = CoroutineExceptionHandler { _, throwable ->
-        Timber.e("${this::class.java.simpleName} error: $throwable")
-        onError(throwable)
-    }
+    val exceptionHandler =
+        CoroutineExceptionHandler { _, throwable ->
+            Timber.e("${this::class.java.simpleName} error: $throwable")
+            lifecycleScope.launch(Dispatchers.Main) {
+                onError(throwable)
+            }
+        }
     return lifecycleScope.launch(Dispatchers.Main + exceptionHandler, block = block)
 }
