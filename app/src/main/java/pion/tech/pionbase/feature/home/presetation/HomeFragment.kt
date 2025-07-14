@@ -193,18 +193,13 @@ class HomeFragment :
     }
 
     private fun settingEvent() {
-        binding.btnSetting.setOnClickListener {
-            // Navigate to setting fragment
-            navigateToSetting()
+        binding.btnAdDetector.setOnClickListener {
+            navigator.navigateTo(R.id.action_homeFragment_to_popupStatisticsFragment)
         }
 
         binding.btnRunningApps.setOnClickListener {
             navigateToRunningApps()
         }
-    }
-
-    private fun navigateToSetting() {
-        // Add navigation logic to setting fragment
     }
 
     private fun navigateToRunningApps() {

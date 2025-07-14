@@ -1,6 +1,5 @@
 package pion.tech.pionbase.feature.home.presetation
 
-import pion.tech.pionbase.R
 import pion.tech.pionbase.feature.home.presetation.bottomSheet.DemoBottomSheet
 import pion.tech.pionbase.util.setPreventDoubleClickScaleView
 
@@ -29,15 +28,4 @@ fun HomeFragment.onBackEvent() {
 }
 
 fun HomeFragment.backEvent() {
-}
-
-fun HomeFragment.settingEvent() {
-    binding.btnSetting.setPreventDoubleClickScaleView {
-        navigator.navigateTo(R.id.action_homeFragment_to_popupStatisticsFragment)
-//        val intent =
-//            Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION).apply {
-//                data = "package:${requireContext().packageName}".toUri()
-//            }
-//        overlayPermissionLauncher.launch(intent)
-    }
 }
