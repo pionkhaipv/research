@@ -1,9 +1,6 @@
 package pion.tech.pionbase.feature.home.presetation
 
-import android.content.BroadcastReceiver
 import android.content.Context
-import android.content.Intent
-import android.content.IntentFilter
 import android.content.pm.ApplicationInfo
 import android.content.pm.PackageManager
 import android.graphics.drawable.Drawable
@@ -12,7 +9,6 @@ import android.provider.Settings
 import android.util.Log
 import android.view.View
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.piontech.core.base.BaseFragment
 import dagger.hilt.android.AndroidEntryPoint
 import pion.tech.pionbase.R
@@ -20,7 +16,6 @@ import pion.tech.pionbase.app.presentation.CommonViewModel
 import pion.tech.pionbase.databinding.FragmentHomeBinding
 import pion.tech.pionbase.feature.home.presetation.adapter.DemoAdapter
 import pion.tech.pionbase.feature.home.presetation.dialog.DemoDialog
-import pion.tech.pionbase.service.PopupDetectionService
 import pion.tech.pionbase.util.AccessibilityServiceHelper
 import pion.tech.pionbase.util.displayToast
 
@@ -45,23 +40,6 @@ class HomeFragment :
         }
 
     // BroadcastReceiver để nhận thông báo popup
-    private val popupDetectionReceiver =
-        object : BroadcastReceiver() {
-            override fun onReceive(
-                context: Context?,
-                intent: Intent?,
-            ) {
-                // Xử lý thông báo khi phát hiện popup quảng cáo
-                if (intent?.action == PopupDetectionService.ACTION_POPUP_DETECTED) {
-                    val appName = intent.getStringExtra(PopupDetectionService.EXTRA_APP_NAME) ?: "Unknown"
-                    val popupType = intent.getStringExtra(PopupDetectionService.EXTRA_POPUP_TYPE) ?: "Unknown"
-
-                    // Hiển thị thông báo cho user
-//                    displayToast(getString(R.string.popup_detected_message, appName))
-                    Log.d("asgawggawgwawga", "onReceive: Popup detected from $appName - Type: $popupType")
-                }
-            }
-        }
 
     override fun init(view: View) {
         logger.logScreen("home_show")
@@ -212,23 +190,6 @@ class HomeFragment :
         } else {
             true
         }
-
-    override fun onResume() {
-        super.onResume()
-        // Đăng ký BroadcastReceiver
-        val filter = IntentFilter(PopupDetectionService.ACTION_POPUP_DETECTED)
-        LocalBroadcastManager
-            .getInstance(requireContext())
-            .registerReceiver(popupDetectionReceiver, filter)
-    }
-
-    override fun onPause() {
-        super.onPause()
-        // Hủy đăng ký BroadcastReceiver
-        LocalBroadcastManager
-            .getInstance(requireContext())
-            .unregisterReceiver(popupDetectionReceiver)
-    }
 
     private fun setupPopupDetection() {
         val serviceStatus = AccessibilityServiceHelper.getServiceStatus(requireContext())

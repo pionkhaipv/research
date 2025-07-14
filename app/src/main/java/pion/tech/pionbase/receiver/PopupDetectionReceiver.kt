@@ -5,7 +5,6 @@ import android.content.Context
 import android.content.Intent
 import android.util.Log
 import dagger.hilt.android.AndroidEntryPoint
-import pion.tech.pionbase.service.PopupDetectionService
 
 @AndroidEntryPoint
 class PopupDetectionReceiver : BroadcastReceiver() {
@@ -17,17 +16,6 @@ class PopupDetectionReceiver : BroadcastReceiver() {
         context: Context?,
         intent: Intent?,
     ) {
-        if (intent?.action == PopupDetectionService.ACTION_POPUP_DETECTED) {
-            val appPackage = intent.getStringExtra(PopupDetectionService.EXTRA_APP_PACKAGE)
-            val appName = intent.getStringExtra(PopupDetectionService.EXTRA_APP_NAME)
-            val popupType = intent.getStringExtra(PopupDetectionService.EXTRA_POPUP_TYPE)
-            val detectionTime = intent.getLongExtra(PopupDetectionService.EXTRA_DETECTION_TIME, 0L)
-
-            Log.i(TAG, "Popup detected: $appName ($appPackage) - Type: $popupType")
-
-            // Xử lý khi phát hiện popup quảng cáo
-            handlePopupDetected(context, appPackage, appName, popupType, detectionTime)
-        }
     }
 
     private fun handlePopupDetected(
