@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="@dimen/_16dp"
+    android:background="?attr/selectableItemBackground">
+
+    <TextView
+        android:id="@+id/tv_permission_name"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:textSize="@dimen/_16sp"
+        android:textStyle="bold"
+        android:textColor="@color/black"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/tv_danger_level"
+        tools:text="Location Access" />
+
+    <TextView
+        android:id="@+id/tv_danger_level"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingHorizontal="@dimen/_8dp"
+        android:paddingVertical="@dimen/_4dp"
+        android:textSize="@dimen/_12sp"
+        android:textColor="@color/white"
+        android:textStyle="bold"
+        android:background="@drawable/bg_danger_level"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="Cao" />
+
+    <TextView
+        android:id="@+id/tv_permission_description"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/_4dp"
+        android:textSize="@dimen/_14sp"
+        android:textColor="@color/gray"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tv_permission_name"
+        app:layout_constraintEnd_toEndOf="parent"
+        tools:text="Truy cập vị trí chính xác của thiết bị" />
+
+    <LinearLayout
+        android:id="@+id/ll_summary"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/_8dp"
+        android:orientation="horizontal"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tv_permission_description"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <TextView
+            android:id="@+id/tv_app_count"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textSize="@dimen/_12sp"
+            android:textColor="@color/colorPrimary"
+            android:textStyle="bold"
+            tools:text="5 ứng dụng" />
+
+        <ImageView
+            android:id="@+id/iv_expand_icon"
+            android:layout_width="@dimen/_24dp"
+            android:layout_height="@dimen/_24dp"
+            android:src="@drawable/ic_expand_more"
+            android:tint="@color/gray" />
+
+    </LinearLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_apps"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/_8dp"
+        android:visibility="gone"
+        android:nestedScrollingEnabled="false"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/ll_summary"
+        app:layout_constraintEnd_toEndOf="parent"
+        tools:listitem="@layout/item_app_permission" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

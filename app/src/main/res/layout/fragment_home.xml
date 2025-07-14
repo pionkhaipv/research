@@ -56,6 +56,15 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/btn_ad_detector" />
 
+    <Button
+        android:id="@+id/btn_dangerous_permissions"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/_8dp"
+        android:text="Dangerous Permissions"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/btn_running_apps" />
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_main"
         android:layout_width="match_parent"
@@ -63,5 +72,5 @@
         android:orientation="vertical"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/btn_running_apps" />
+        app:layout_constraintTop_toBottomOf="@id/btn_dangerous_permissions" />
 </androidx.constraintlayout.widget.ConstraintLayout>

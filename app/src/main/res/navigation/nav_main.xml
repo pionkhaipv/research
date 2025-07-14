@@ -28,6 +28,9 @@
         <action
             android:id="@+id/action_homeFragment_to_runningAppsFragment"
             app:destination="@id/runningAppsFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_dangerousPermissionsFragment"
+            app:destination="@id/dangerousPermissionsFragment" />
     </fragment>
     <fragment
         android:id="@+id/languageFragment"
@@ -64,4 +67,8 @@
         android:id="@+id/runningAppsFragment"
         android:name="pion.tech.pionbase.feature.runningapps.presentation.RunningAppsFragment"
         android:label="RunningAppsFragment" />
+    <fragment
+        android:id="@+id/dangerousPermissionsFragment"
+        android:name="pion.tech.pionbase.feature.permissions.presentation.DangerousPermissionsFragment"
+        android:label="DangerousPermissionsFragment" />
 </navigation>

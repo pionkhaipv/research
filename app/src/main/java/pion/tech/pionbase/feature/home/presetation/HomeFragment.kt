@@ -200,6 +200,10 @@ class HomeFragment :
         binding.btnRunningApps.setOnClickListener {
             navigateToRunningApps()
         }
+
+        binding.btnDangerousPermissions.setOnClickListener {
+            navigator.navigateTo(R.id.action_homeFragment_to_dangerousPermissionsFragment)
+        }
     }
 
     private fun navigateToRunningApps() {
@@ -257,6 +261,11 @@ class HomeFragment :
 
     private fun navigateToRunningAppsScreen() {
         navigator.navigateTo(R.id.action_homeFragment_to_runningAppsFragment)
+    }
+
+    private fun navigateToSetting() {
+        // Implement navigation to setting fragment
+        navigator.navigateTo(R.id.action_homeFragment_to_settingFragment)
     }
 
     private fun onBackEvent() {
