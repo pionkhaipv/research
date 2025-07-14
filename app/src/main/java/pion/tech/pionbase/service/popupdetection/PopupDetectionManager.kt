@@ -16,7 +16,7 @@ import pion.tech.pionbase.service.PopupNotificationHelper
 
 /**
  * Manager class for handling popup detection logic and reporting
- * Implements Observer pattern for detection events
+ * Simplified without AdNodeAnalyzer dependency
  */
 class PopupDetectionManager(
     private val context: Context,
@@ -35,13 +35,11 @@ class PopupDetectionManager(
         // Throttling constants
         const val ANALYSIS_THROTTLE_MS = 500L
         const val MIN_TIME_BETWEEN_SAME_PACKAGE_MS = 1000L
-        const val APP_OPEN_AD_DETECTION_DELAY_MS = 200L
     }
 
     private val handler = Handler(Looper.getMainLooper())
     private val packageManager by lazy { context.packageManager }
     private val serviceScope = CoroutineScope(Dispatchers.IO)
-    private val adNodeAnalyzer = AdNodeAnalyzer()
 
     // Throttling state
     private var lastAnalysisTime = 0L
@@ -164,6 +162,4 @@ class PopupDetectionManager(
             analysisAction()
         }, delay)
     }
-
-    fun getAdNodeAnalyzer(): AdNodeAnalyzer = adNodeAnalyzer
 }

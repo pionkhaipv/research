@@ -6,7 +6,7 @@ import pion.tech.pionbase.service.PopupDetectionService
 
 /**
  * Handler for different types of accessibility events
- * Implements Strategy pattern for event handling
+ * Simplified without AdNodeAnalyzer - relies on pattern detection only
  */
 interface AccessibilityEventHandler {
     fun canHandle(eventType: Int): Boolean
@@ -35,13 +35,14 @@ class WindowStateChangedHandler : AccessibilityEventHandler {
 
         Log.d(TAG, "Window state changed: $packageName, $className")
 
-        // Check if it's likely a popup/ad
+        // Direct pattern detection without node analysis
         if (AdPatternDetector.isLikelyPopup(className) ||
             AdPatternDetector.isKnownAdActivity(className) ||
             AdPatternDetector.isKnownAdPackage(packageName)
         ) {
-            Log.d(TAG, "Detected potential ad/popup - analyzing: $packageName, $className")
-            service.analyzeCurrentWindow(packageName)
+            Log.d(TAG, "Detected potential ad/popup: $packageName, $className")
+            val appName = manager.getAppName(packageName)
+            manager.reportPopupDetected(packageName, appName, "WINDOW_AD")
         }
     }
 }
@@ -60,16 +61,18 @@ class WindowContentChangedHandler : AccessibilityEventHandler {
         if (packageName == service.packageName || AdPatternDetector.isSystemPackage(packageName)) return
 
         val className = event.className?.toString()
-        if (className != null &&
-            !AdPatternDetector.isLikelyPopup(className) &&
-            !AdPatternDetector.isLikelyAdRelated(className)
-        ) {
-            return
-        }
 
-        // Schedule delayed analysis to let UI stabilize
-        manager.scheduleDelayedAnalysis(packageName) {
-            service.analyzeCurrentWindow(packageName)
+        // Direct pattern check without node analysis
+        if (className != null &&
+            (
+                AdPatternDetector.isLikelyPopup(className) ||
+                    AdPatternDetector.isLikelyAdRelated(className) ||
+                    AdPatternDetector.isKnownAdPackage(packageName)
+            )
+        ) {
+            // Report directly without delayed analysis
+            val appName = manager.getAppName(packageName)
+            manager.reportPopupDetected(packageName, appName, "CONTENT_AD")
         }
     }
 }
@@ -91,19 +94,10 @@ class ViewClickedHandler : AccessibilityEventHandler {
         // Skip own package
         if (packageName == service.packageName) return
 
-        event.source?.let { nodeInfo ->
-            try {
-                val analyzer = manager.getAdNodeAnalyzer()
-                if (analyzer.isLikelyAdView(nodeInfo)) {
-                    val result = analyzer.analyzeForAds(nodeInfo)
-                    if (result.isAd) {
-                        val appName = manager.getAppName(packageName)
-                        manager.reportPopupDetected(packageName, appName, "AD_CLICK")
-                    }
-                }
-            } catch (e: Exception) {
-                Log.w(TAG, "Error analyzing clicked view", e)
-            }
+        // Simple pattern check on package name only
+        if (AdPatternDetector.isKnownAdPackage(packageName)) {
+            val appName = manager.getAppName(packageName)
+            manager.reportPopupDetected(packageName, appName, "AD_CLICK")
         }
     }
 }

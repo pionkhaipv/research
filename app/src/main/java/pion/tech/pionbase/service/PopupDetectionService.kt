@@ -5,18 +5,23 @@ import android.accessibilityservice.AccessibilityServiceInfo
 import android.util.Log
 import android.view.accessibility.AccessibilityEvent
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.*
 import pion.tech.pionbase.app.data.roomDb.dao.PopupDetectionDAO
 import pion.tech.pionbase.service.popupdetection.*
 import javax.inject.Inject
 
 /**
- * Optimized PopupDetectionService using Strategy and Observer patterns
- * Delegated complex logic to specialized classes for better maintainability
+ * Simplified PopupDetectionService without AdNodeAnalyzer
+ * Uses only pattern detection for better performance and stability
  */
 @AndroidEntryPoint
 class PopupDetectionService : AccessibilityService() {
     companion object {
         private const val TAG = "PopupDetectionService"
+
+        // Event processing limits to prevent system overload
+        private const val MAX_EVENTS_PER_SECOND = 15
+        private const val MEMORY_CLEANUP_INTERVAL_MS = 30000L // 30 seconds
     }
 
     @Inject
@@ -25,80 +30,196 @@ class PopupDetectionService : AccessibilityService() {
     private lateinit var detectionManager: PopupDetectionManager
     private lateinit var eventHandlers: List<AccessibilityEventHandler>
 
+    // Service lifecycle management
+    private var serviceScope: CoroutineScope? = null
+    private var isServiceActive = false
+
+    // Event throttling
+    private var eventCount = 0
+    private var lastEventResetTime = 0L
+
     override fun onServiceConnected() {
         super.onServiceConnected()
-        Log.d(TAG, "Popup Detection Service Connected")
 
-        // Initialize components
-        detectionManager = PopupDetectionManager(this, popupDetectionDAO)
-        eventHandlers = EventHandlerFactory.createHandlers()
+        try {
+            Log.d(TAG, "Popup Detection Service Connected")
+            isServiceActive = true
 
-        // Configure accessibility service
-        configureAccessibilityService()
-    }
+            // Initialize coroutine scope with error handler
+            serviceScope =
+                CoroutineScope(
+                    Dispatchers.Main + SupervisorJob() +
+                        CoroutineExceptionHandler { _, throwable ->
+                            Log.e(TAG, "Uncaught exception in service scope", throwable)
+                        },
+                )
 
-    private fun configureAccessibilityService() {
-        val info =
-            AccessibilityServiceInfo().apply {
-                eventTypes = AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED or
-                    AccessibilityEvent.TYPE_WINDOW_CONTENT_CHANGED or
-                    AccessibilityEvent.TYPE_VIEW_CLICKED or
-                    AccessibilityEvent.TYPE_NOTIFICATION_STATE_CHANGED or
-                    AccessibilityEvent.TYPE_WINDOWS_CHANGED or
-                    AccessibilityEvent.TYPE_VIEW_FOCUSED or
-                    AccessibilityEvent.TYPE_VIEW_SCROLLED
+            // Initialize components with error handling
+            initializeComponents()
 
-                feedbackType = AccessibilityServiceInfo.FEEDBACK_GENERIC
-                flags = AccessibilityServiceInfo.FLAG_INCLUDE_NOT_IMPORTANT_VIEWS or
-                    AccessibilityServiceInfo.FLAG_REPORT_VIEW_IDS or
-                    AccessibilityServiceInfo.FLAG_RETRIEVE_INTERACTIVE_WINDOWS or
-                    AccessibilityServiceInfo.FLAG_REQUEST_ENHANCED_WEB_ACCESSIBILITY or
-                    AccessibilityServiceInfo.FLAG_REQUEST_TOUCH_EXPLORATION_MODE
+            // Configure accessibility service
+            configureAccessibilityService()
 
-                notificationTimeout = 50
-            }
-        serviceInfo = info
-    }
-
-    override fun onAccessibilityEvent(event: AccessibilityEvent?) {
-        event?.let { accessibilityEvent ->
-            // Find appropriate handler and delegate
-            eventHandlers
-                .find { it.canHandle(accessibilityEvent.eventType) }
-                ?.handle(accessibilityEvent, this, detectionManager)
+            // Start memory cleanup task
+            startMemoryCleanupTask()
+        } catch (e: Exception) {
+            Log.e(TAG, "Error during service connection", e)
+            handleServiceError(e)
         }
     }
 
-    fun analyzeCurrentWindow(packageName: String) {
-        if (detectionManager.shouldThrottleAnalysis(packageName)) return
+    private fun initializeComponents() {
+        try {
+            detectionManager = PopupDetectionManager(this, popupDetectionDAO)
+            eventHandlers = EventHandlerFactory.createHandlers()
+            Log.d(TAG, "Components initialized successfully")
+        } catch (e: Exception) {
+            Log.e(TAG, "Error initializing components", e)
+            throw e
+        }
+    }
+
+    private fun configureAccessibilityService() {
+        try {
+            val info =
+                AccessibilityServiceInfo().apply {
+                    eventTypes = AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED or
+                        AccessibilityEvent.TYPE_WINDOW_CONTENT_CHANGED or
+                        AccessibilityEvent.TYPE_VIEW_CLICKED or
+                        AccessibilityEvent.TYPE_NOTIFICATION_STATE_CHANGED
+
+                    feedbackType = AccessibilityServiceInfo.FEEDBACK_GENERIC
+                    flags = AccessibilityServiceInfo.FLAG_INCLUDE_NOT_IMPORTANT_VIEWS or
+                        AccessibilityServiceInfo.FLAG_REPORT_VIEW_IDS
+
+                    notificationTimeout = 100 // Reduced complexity for better performance
+                }
+            serviceInfo = info
+            Log.d(TAG, "Accessibility service configured")
+        } catch (e: Exception) {
+            Log.e(TAG, "Error configuring accessibility service", e)
+            throw e
+        }
+    }
+
+    override fun onAccessibilityEvent(event: AccessibilityEvent?) {
+        if (!isServiceActive || event == null) return
 
         try {
-            val rootNode = rootInActiveWindow ?: return
-            val analysisResult = detectionManager.getAdNodeAnalyzer().analyzeForAds(rootNode)
+            // Throttle events to prevent system overload
+            if (!shouldProcessEvent()) {
+                return
+            }
 
-            if (analysisResult.isAd) {
-                val appName = detectionManager.getAppName(packageName)
-                Log.d(TAG, "Popup ad detected in $appName ($packageName)")
+            // Process event safely
+            processEventSafely(event)
+        } catch (e: Exception) {
+            Log.w(TAG, "Error processing accessibility event", e)
+            // Don't crash the service, just log and continue
+        }
+    }
 
-                detectionManager.reportPopupDetected(
-                    packageName = packageName,
-                    appName = appName,
-                    popupType = analysisResult.adType,
-                )
+    private fun shouldProcessEvent(): Boolean {
+        val currentTime = System.currentTimeMillis()
+
+        // Reset counter every second
+        if (currentTime - lastEventResetTime > 1000) {
+            eventCount = 0
+            lastEventResetTime = currentTime
+        }
+
+        // Check if we're exceeding the rate limit
+        if (eventCount >= MAX_EVENTS_PER_SECOND) {
+            Log.d(TAG, "Event rate limiting applied")
+            return false
+        }
+
+        eventCount++
+        return true
+    }
+
+    private fun processEventSafely(event: AccessibilityEvent) {
+        try {
+            // Find appropriate handler and delegate
+            val handler = eventHandlers.find { it.canHandle(event.eventType) }
+
+            if (handler != null) {
+                // Process in background to avoid blocking main thread
+                serviceScope?.launch(Dispatchers.IO) {
+                    try {
+                        handler.handle(event, this@PopupDetectionService, detectionManager)
+                    } catch (e: Exception) {
+                        Log.w(TAG, "Error in event handler", e)
+                    }
+                }
             }
         } catch (e: Exception) {
-            Log.e(TAG, "Error analyzing current window", e)
-        } finally {
-            detectionManager.updateAnalysisTime(packageName)
+            Log.w(TAG, "Error in processEventSafely", e)
+        }
+    }
+
+    private fun startMemoryCleanupTask() {
+        serviceScope?.launch {
+            while (isServiceActive) {
+                try {
+                    delay(MEMORY_CLEANUP_INTERVAL_MS)
+                    performMemoryCleanup()
+                } catch (e: Exception) {
+                    Log.w(TAG, "Error during memory cleanup", e)
+                }
+            }
+        }
+    }
+
+    private fun performMemoryCleanup() {
+        try {
+            // Suggest garbage collection
+            System.gc()
+            Log.d(TAG, "Memory cleanup performed")
+        } catch (e: Exception) {
+            Log.w(TAG, "Error during memory cleanup", e)
+        }
+    }
+
+    private fun handleServiceError(error: Exception) {
+        Log.e(TAG, "Service error occurred", error)
+
+        try {
+            // Attempt to reinitialize components
+            if (::popupDetectionDAO.isInitialized) {
+                initializeComponents()
+                Log.i(TAG, "Service components reinitialized after error")
+            }
+        } catch (e: Exception) {
+            Log.e(TAG, "Failed to recover from service error", e)
+            // Don't crash, let system handle the service restart
         }
     }
 
     override fun onInterrupt() {
         Log.d(TAG, "Popup Detection Service Interrupted")
+        isServiceActive = false
+
+        try {
+            serviceScope?.cancel()
+        } catch (e: Exception) {
+            Log.w(TAG, "Error canceling service scope", e)
+        }
     }
 
     override fun onDestroy() {
-        super.onDestroy()
         Log.d(TAG, "Popup Detection Service Destroyed")
+        isServiceActive = false
+
+        try {
+            // Cancel all coroutines
+            serviceScope?.cancel()
+
+            Log.d(TAG, "Service cleanup completed")
+        } catch (e: Exception) {
+            Log.w(TAG, "Error during service destruction", e)
+        } finally {
+            super.onDestroy()
+        }
     }
 }
