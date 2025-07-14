@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="@dimen/_16dp"
+    android:background="?attr/selectableItemBackground">
+
+    <ImageView
+        android:id="@+id/iv_app_icon"
+        android:layout_width="@dimen/_48dp"
+        android:layout_height="@dimen/_48dp"
+        android:scaleType="centerCrop"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        tools:src="@mipmap/ic_launcher" />
+
+    <TextView
+        android:id="@+id/tv_app_name"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/_12dp"
+        android:layout_marginEnd="@dimen/_8dp"
+        android:textSize="@dimen/_16sp"
+        android:textStyle="bold"
+        android:textColor="@color/black"
+        android:maxLines="1"
+        android:ellipsize="end"
+        app:layout_constraintStart_toEndOf="@id/iv_app_icon"
+        app:layout_constraintTop_toTopOf="@id/iv_app_icon"
+        app:layout_constraintEnd_toStartOf="@id/tv_memory_usage"
+        tools:text="WhatsApp" />
+
+    <TextView
+        android:id="@+id/tv_package_name"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/_4dp"
+        android:textSize="@dimen/_12sp"
+        android:textColor="@color/gray"
+        android:maxLines="1"
+        android:ellipsize="end"
+        app:layout_constraintStart_toStartOf="@id/tv_app_name"
+        app:layout_constraintTop_toBottomOf="@id/tv_app_name"
+        app:layout_constraintEnd_toStartOf="@id/tv_memory_usage"
+        tools:text="com.whatsapp" />
+
+    <TextView
+        android:id="@+id/tv_app_type"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/_2dp"
+        android:textSize="@dimen/_10sp"
+        android:textColor="@color/gray"
+        app:layout_constraintStart_toStartOf="@id/tv_app_name"
+        app:layout_constraintTop_toBottomOf="@id/tv_package_name"
+        app:layout_constraintEnd_toStartOf="@id/tv_memory_usage"
+        tools:text="User App" />
+
+    <TextView
+        android:id="@+id/tv_memory_usage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="@dimen/_14sp"
+        android:textStyle="bold"
+        android:textColor="@color/colorPrimary"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/iv_app_icon"
+        app:layout_constraintBottom_toBottomOf="@id/iv_app_icon"
+        tools:text="128 MB" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -6,9 +6,11 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.piontech.core.base.BaseFragment
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
+import pion.tech.pionbase.R
 import pion.tech.pionbase.app.presentation.CommonViewModel
 import pion.tech.pionbase.databinding.FragmentPopupStatisticsBinding
 import pion.tech.pionbase.feature.popup.adapter.PopupDetectionAdapter
+import pion.tech.pionbase.util.AccessibilityServiceHelper
 import timber.log.Timber
 
 @AndroidEntryPoint
@@ -23,6 +25,9 @@ class PopupStatisticsFragment :
     override fun init(view: View) {
         setupRecyclerView()
         observeViewModel()
+
+        // Kiểm tra và setup AccessibilityService
+        setupPopupDetection()
     }
 
     override fun subscribeObserver(view: View) {
@@ -88,5 +93,29 @@ class PopupStatisticsFragment :
                 }
             }
         }
+    }
+
+    private fun setupPopupDetection() {
+        val serviceStatus = AccessibilityServiceHelper.getServiceStatus(requireContext())
+
+        if (!serviceStatus.canDetectPopups) {
+            // Hiển thị dialog yêu cầu bật AccessibilityService
+            showEnableAccessibilityDialog()
+        } else {
+            Timber.d("Dịch vụ phát hiện popup đã sẵn sàng")
+        }
+    }
+
+    private fun showEnableAccessibilityDialog() {
+        val builder =
+            androidx.appcompat.app.AlertDialog
+                .Builder(requireContext())
+        builder.setTitle(R.string.popup_detection_title)
+        builder.setMessage(R.string.accessibility_service_disabled)
+        builder.setPositiveButton(R.string.go_to_accessibility_settings) { _, _ ->
+            AccessibilityServiceHelper.openAccessibilitySettings(requireContext())
+        }
+        builder.setNegativeButton("Hủy", null)
+        builder.show()
     }
 }

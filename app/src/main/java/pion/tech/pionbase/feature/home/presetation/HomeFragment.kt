@@ -1,6 +1,8 @@
 package pion.tech.pionbase.feature.home.presetation
 
+import android.app.AppOpsManager
 import android.content.Context
+import android.content.Intent
 import android.content.pm.ApplicationInfo
 import android.content.pm.PackageManager
 import android.graphics.drawable.Drawable
@@ -8,7 +10,6 @@ import android.os.Build
 import android.provider.Settings
 import android.util.Log
 import android.view.View
-import androidx.activity.result.contract.ActivityResultContracts
 import com.piontech.core.base.BaseFragment
 import dagger.hilt.android.AndroidEntryPoint
 import pion.tech.pionbase.R
@@ -16,7 +17,6 @@ import pion.tech.pionbase.app.presentation.CommonViewModel
 import pion.tech.pionbase.databinding.FragmentHomeBinding
 import pion.tech.pionbase.feature.home.presetation.adapter.DemoAdapter
 import pion.tech.pionbase.feature.home.presetation.dialog.DemoDialog
-import pion.tech.pionbase.util.AccessibilityServiceHelper
 import pion.tech.pionbase.util.displayToast
 
 data class AppWithOverlayPermission(
@@ -35,11 +35,6 @@ class HomeFragment :
     ),
     DemoDialog.Listener {
     val adapter = DemoAdapter()
-    val overlayPermissionLauncher =
-        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
-        }
-
-    // BroadcastReceiver để nhận thông báo popup
 
     override fun init(view: View) {
         logger.logScreen("home_show")
@@ -48,9 +43,6 @@ class HomeFragment :
         plusEvent()
         settingEvent()
         onBackEvent()
-
-        // Kiểm tra và setup AccessibilityService
-        setupPopupDetection()
 
         // Test hàm lấy danh sách app có quyền overlay
     }
@@ -76,7 +68,8 @@ class HomeFragment :
 
         try {
             // Lấy danh sách tất cả ứng dụng đã cài đặt
-            val installedApps = packageManager.getInstalledApplications(PackageManager.GET_META_DATA)
+            val installedApps =
+                packageManager.getInstalledApplications(PackageManager.GET_META_DATA)
 
             for (appInfo in installedApps) {
                 // Bỏ qua system apps nếu muốn (có thể comment dòng này nếu muốn bao gồm system apps)
@@ -128,7 +121,8 @@ class HomeFragment :
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             try {
                 val context = requireContext()
-                val appOpsManager = context.getSystemService(Context.APP_OPS_SERVICE) as android.app.AppOpsManager
+                val appOpsManager =
+                    context.getSystemService(Context.APP_OPS_SERVICE) as android.app.AppOpsManager
                 val packageManager = context.packageManager
 
                 // Lấy UID của ứng dụng
@@ -188,27 +182,89 @@ class HomeFragment :
             true
         }
 
-    private fun setupPopupDetection() {
-        val serviceStatus = AccessibilityServiceHelper.getServiceStatus(requireContext())
+    private fun initView() {
+        binding.rvMain.adapter = adapter
+    }
 
-        if (!serviceStatus.canDetectPopups) {
-            // Hiển thị dialog yêu cầu bật AccessibilityService
-            showEnableAccessibilityDialog()
-        } else {
-            displayToast("Dịch vụ phát hiện popup đã sẵn sàng")
+    private fun plusEvent() {
+        binding.btnPlus.setOnClickListener {
+            viewModel.plusValue()
         }
     }
 
-    private fun showEnableAccessibilityDialog() {
+    private fun settingEvent() {
+        binding.btnSetting.setOnClickListener {
+            // Navigate to setting fragment
+            navigateToSetting()
+        }
+
+        binding.btnRunningApps.setOnClickListener {
+            navigateToRunningApps()
+        }
+    }
+
+    private fun navigateToSetting() {
+        // Add navigation logic to setting fragment
+    }
+
+    private fun navigateToRunningApps() {
+        // Check permission trước khi navigate
+        checkUsageStatsPermission()
+    }
+
+    private fun checkUsageStatsPermission() {
+        val appOpsManager =
+            requireContext().getSystemService(Context.APP_OPS_SERVICE) as AppOpsManager
+        val mode =
+            appOpsManager.checkOpNoThrow(
+                AppOpsManager.OPSTR_GET_USAGE_STATS,
+                android.os.Process.myUid(),
+                requireContext().packageName,
+            )
+
+        if (mode == AppOpsManager.MODE_ALLOWED) {
+            // Đã có quyền, navigate trực tiếp
+            navigateToRunningAppsScreen()
+        } else {
+            // Chưa có quyền, hiển thị dialog xin quyền
+            showUsageStatsPermissionDialog()
+        }
+    }
+
+    private fun showUsageStatsPermissionDialog() {
         val builder =
             androidx.appcompat.app.AlertDialog
                 .Builder(requireContext())
-        builder.setTitle(R.string.popup_detection_title)
-        builder.setMessage(R.string.accessibility_service_disabled)
-        builder.setPositiveButton(R.string.go_to_accessibility_settings) { _, _ ->
-            AccessibilityServiceHelper.openAccessibilitySettings(requireContext())
+        builder.setTitle("Usage Stats Permission Required")
+        builder.setMessage(
+            "To display running apps accurately, this app needs access to usage statistics. Please grant the permission in the next screen.",
+        )
+        builder.setPositiveButton("Grant Permission") { _, _ ->
+            requestUsageStatsPermission()
         }
-        builder.setNegativeButton("Hủy", null)
+        builder.setNegativeButton("Continue without permission") { _, _ ->
+            navigateToRunningAppsScreen()
+        }
         builder.show()
+    }
+
+    private fun requestUsageStatsPermission() {
+        try {
+            val intent = Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS)
+            startActivity(intent)
+            // Sau khi user quay lại từ settings, navigate đến Running Apps
+            navigateToRunningAppsScreen()
+        } catch (e: Exception) {
+            displayToast("Cannot open usage access settings")
+            navigateToRunningAppsScreen()
+        }
+    }
+
+    private fun navigateToRunningAppsScreen() {
+        navigator.navigateTo(R.id.action_homeFragment_to_runningAppsFragment)
+    }
+
+    private fun onBackEvent() {
+        // Handle back press if needed
     }
 }
