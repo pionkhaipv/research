@@ -53,9 +53,6 @@ class HomeFragment :
         setupPopupDetection()
 
         // Test hàm lấy danh sách app có quyền overlay
-        val appsWithOverlay = getAppsWithOverlayPermission()
-        adapter.submitList(appsWithOverlay)
-        Log.d("asgagwwgaawgawg", "init: $appsWithOverlay")
     }
 
     override fun subscribeObserver(view: View) {
