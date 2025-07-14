@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="4dp"
+    app:cardCornerRadius="8dp"
+    app:cardElevation="2dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="12dp">
+
+        <!-- Icon app hoặc icon warning -->
+        <ImageView
+            android:id="@+id/imageAppIcon"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_gravity="center_vertical"
+            android:layout_marginEnd="12dp"
+            android:background="@drawable/circle_background"
+            android:padding="8dp"
+            android:src="@drawable/ic_warning"
+            android:scaleType="centerCrop" />
+
+        <!-- Thông tin popup -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+
+                <TextView
+                    android:id="@+id/textAppName"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:textColor="@android:color/black"
+                    tools:text="App Name" />
+
+                <!-- Icon báo đã chặn -->
+                <ImageView
+                    android:id="@+id/imageBlocked"
+                    android:layout_width="16dp"
+                    android:layout_height="16dp"
+                    android:src="@drawable/ic_block"
+                    android:layout_marginStart="8dp"
+                    android:visibility="gone" />
+
+                <TextView
+                    android:id="@+id/textBlocked"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Đã chặn"
+                    android:textSize="10sp"
+                    android:textColor="@color/colorAccent"
+                    android:layout_marginStart="4dp"
+                    android:visibility="gone" />
+
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/textPopupType"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="12sp"
+                android:textColor="@android:color/darker_gray"
+                android:layout_marginTop="2dp"
+                tools:text="Loại: TEXT_AD" />
+
+            <TextView
+                android:id="@+id/textPackageName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="10sp"
+                android:textColor="@android:color/darker_gray"
+                android:layout_marginTop="2dp"
+                android:alpha="0.7"
+                tools:text="com.example.app" />
+
+            <TextView
+                android:id="@+id/textDetectionTime"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="11sp"
+                android:textColor="@android:color/darker_gray"
+                android:layout_marginTop="4dp"
+                tools:text="12/07/2025 14:30:25" />
+
+            <TextView
+                android:id="@+id/textConfidence"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="10sp"
+                android:textColor="@color/colorPrimary"
+                android:layout_marginTop="2dp"
+                android:visibility="gone"
+                tools:text="Độ tin cậy: 85%" />
+
+        </LinearLayout>
+
+        <!-- Button xóa -->
+        <ImageButton
+            android:id="@+id/buttonDelete"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_gravity="center_vertical"
+            android:layout_marginStart="8dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:src="@drawable/ic_delete"
+            android:padding="6dp"
+            android:alpha="0.6" />
+
+    </LinearLayout>
+
+</androidx.cardview.widget.CardView>

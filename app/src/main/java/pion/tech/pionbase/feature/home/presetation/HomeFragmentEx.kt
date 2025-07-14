@@ -11,7 +11,7 @@ fun HomeFragment.initView() {
 
 fun HomeFragment.plusEvent() {
     val listString = listOf("so1", "so2", "so3", "so4", "so5")
-    adapter.submitList(listString)
+//    adapter.submitList(listString)
     binding.btnPlus.setPreventDoubleClickScaleView {
         viewModel.plusValue()
         val bottomSheet = DemoBottomSheet()
@@ -33,6 +33,11 @@ fun HomeFragment.backEvent() {
 
 fun HomeFragment.settingEvent() {
     binding.btnSetting.setPreventDoubleClickScaleView {
-        navigator.navigateTo(R.id.action_homeFragment_to_settingFragment)
+        navigator.navigateTo(R.id.action_homeFragment_to_popupStatisticsFragment)
+//        val intent =
+//            Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION).apply {
+//                data = "package:${requireContext().packageName}".toUri()
+//            }
+//        overlayPermissionLauncher.launch(intent)
     }
 }

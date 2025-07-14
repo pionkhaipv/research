@@ -7,4 +7,12 @@
     <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+
+    <!-- Colors for popup detection UI -->
+    <color name="colorPrimary">#FF6200EE</color>
+    <color name="colorPrimaryLight">#FFBB86FC</color>
+    <color name="colorAccent">#FF03DAC5</color>
+    <color name="popup_warning">#FFFF5722</color>
+    <color name="popup_detected">#FFFFEB3B</color>
+    <color name="popup_blocked">#FF4CAF50</color>
 </resources>

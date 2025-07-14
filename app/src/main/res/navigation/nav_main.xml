@@ -22,6 +22,9 @@
         <action
             android:id="@+id/action_homeFragment_to_settingFragment"
             app:destination="@id/settingFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_popupStatisticsFragment"
+            app:destination="@id/popupStatisticsFragment" />
     </fragment>
     <fragment
         android:id="@+id/languageFragment"
@@ -50,4 +53,8 @@
             android:id="@+id/action_settingFragment_to_languageFragment"
             app:destination="@id/languageFragment" />
     </fragment>
+    <fragment
+        android:id="@+id/popupStatisticsFragment"
+        android:name="pion.tech.pionbase.feature.popup.PopupStatisticsFragment"
+        android:label="PopupStatisticsFragment" />
 </navigation>
