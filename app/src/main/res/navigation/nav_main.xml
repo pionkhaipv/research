@@ -31,6 +31,9 @@
         <action
             android:id="@+id/action_homeFragment_to_dangerousPermissionsFragment"
             app:destination="@id/dangerousPermissionsFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_notificationManagerFragment"
+            app:destination="@id/notificationManagerFragment" />
     </fragment>
     <fragment
         android:id="@+id/languageFragment"
@@ -71,4 +74,9 @@
         android:id="@+id/dangerousPermissionsFragment"
         android:name="pion.tech.pionbase.feature.permissions.presentation.DangerousPermissionsFragment"
         android:label="DangerousPermissionsFragment" />
+    <fragment
+        android:id="@+id/notificationManagerFragment"
+        android:name="pion.tech.pionbase.feature.notifications.presentation.NotificationManagerFragment"
+        android:label="NotificationManagerFragment"
+        tools:layout="@layout/fragment_notification_manager" />
 </navigation>

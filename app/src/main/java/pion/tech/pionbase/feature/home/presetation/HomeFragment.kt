@@ -204,6 +204,10 @@ class HomeFragment :
         binding.btnDangerousPermissions.setOnClickListener {
             navigator.navigateTo(R.id.action_homeFragment_to_dangerousPermissionsFragment)
         }
+
+        binding.btnNotificationManager.setOnClickListener {
+            navigator.navigateTo(R.id.action_homeFragment_to_notificationManagerFragment)
+        }
     }
 
     private fun navigateToRunningApps() {
