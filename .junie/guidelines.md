@@ -1,8 +1,6 @@
-# Project Guidelines
-
 Project Structure:
 Follow Google’s recommended app architecture, using only the UI Layer and Data Layer, skipping the Domain Layer.
-Always use a Repository for data fetching and handling.
+Always use a Repository with Hilt for data fetching and handling.
 
 Model Separation by Layer:
 
