@@ -12,6 +12,8 @@ import pion.tech.pionbase.feature.home.domain.repository.ApiRepository
 import pion.tech.pionbase.feature.home.presetation.model.AppCategoryUIModel
 import pion.tech.pionbase.feature.home.presetation.model.TemplateUIModel
 import pion.tech.pionbase.feature.home.presetation.model.toPresentation
+import pion.tech.pionbase.util.ApiUiState
+import pion.tech.pionbase.util.handleApiCall
 import pion.tech.pionbase.util.onError
 import pion.tech.pionbase.util.onSuccess
 import javax.inject.Inject
@@ -31,11 +33,11 @@ class CommonViewModel
         }
 
         private val _getCategoryUiState =
-            MutableStateFlow<GetAppCategoryUiState>(GetAppCategoryUiState.None)
+            MutableStateFlow<ApiUiState<List<AppCategoryUIModel>>>(ApiUiState.None)
         val getCategoryUiState = _getCategoryUiState.asStateFlow()
 
         private val _getTemplateUiState =
-            MutableStateFlow<GetTemplateUiState>(GetTemplateUiState.None)
+            MutableStateFlow<ApiUiState<List<TemplateUIModel>>>(ApiUiState.None)
         val getTemplateUiState = _getTemplateUiState.asStateFlow()
 
         private fun fetchRemoteConfigData() {
@@ -47,77 +49,25 @@ class CommonViewModel
         }
 
         private fun getAppId() {
-            launchIO {
-                if (_getCategoryUiState.value is GetAppCategoryUiState.Standby ||
-                    _getCategoryUiState.value is GetAppCategoryUiState.Success
-                ) {
-                    return@launchIO
-                }
-
-                _getCategoryUiState.value = GetAppCategoryUiState.Standby
-                apiRepository.getAppCategory().collect {
-                    it
-                        .onSuccess { data ->
-                            _getCategoryUiState.value =
-                                GetAppCategoryUiState.Success(data.map { item -> item.toPresentation() })
-                        }.onError {
-                            _getCategoryUiState.value = GetAppCategoryUiState.Error
-                        }
-                }
-            }
+            handleApiCall(
+                stateFlow = _getCategoryUiState,
+                apiCall = { apiRepository.getAppCategory() },
+                transform = { data -> data.map { item -> item.toPresentation() } }
+            )
         }
 
         fun getTemplate(categoryId: String) {
-            launchIO {
-                if (_getTemplateUiState.value is GetTemplateUiState.Standby ||
-                    _getTemplateUiState.value is GetTemplateUiState.Success
-                ) {
-                    return@launchIO
-                }
-
-                _getTemplateUiState.value = GetTemplateUiState.Standby
-                apiRepository
-                    .getTemplateData(categoryId)
-                    .collect {
-                        it
-                            .onSuccess { data ->
-                                _getTemplateUiState.value =
-                                    GetTemplateUiState.Success(data.map { item -> item.toPresentation() })
-                            }.onError {
-                                _getTemplateUiState.value =
-                                    GetTemplateUiState.Error
-                            }
-                    }
-            }
+            handleApiCall(
+                stateFlow = _getTemplateUiState,
+                apiCall = { apiRepository.getTemplateData(categoryId) },
+                transform = { data -> data.map { item -> item.toPresentation() } }
+            )
         }
 
         fun getApiData() {
-            if (_getCategoryUiState.value !is GetAppCategoryUiState.Success || _getTemplateUiState.value !is GetTemplateUiState.Success) {
+            if (_getCategoryUiState.value !is ApiUiState.Success || _getTemplateUiState.value !is ApiUiState.Success) {
                 getAppId()
             }
         }
     }
 
-sealed interface GetAppCategoryUiState {
-    data object None : GetAppCategoryUiState
-
-    data object Standby : GetAppCategoryUiState
-
-    data class Success(
-        val listAppCategory: List<AppCategoryUIModel>,
-    ) : GetAppCategoryUiState
-
-    data object Error : GetAppCategoryUiState
-}
-
-sealed interface GetTemplateUiState {
-    data object None : GetTemplateUiState
-
-    data object Standby : GetTemplateUiState
-
-    data class Success(
-        val listTemplate: List<TemplateUIModel>,
-    ) : GetTemplateUiState
-
-    data object Error : GetTemplateUiState
-}

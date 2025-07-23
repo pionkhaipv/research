@@ -5,8 +5,8 @@ import com.piontech.core.base.BaseFragment
 import com.piontech.core.utils.collectFlowOnView
 import dagger.hilt.android.AndroidEntryPoint
 import pion.tech.pionbase.app.presentation.CommonViewModel
-import pion.tech.pionbase.app.presentation.GetAppCategoryUiState
-import pion.tech.pionbase.app.presentation.GetTemplateUiState
+import pion.tech.pionbase.util.ApiUiState
+import pion.tech.pionbase.util.handleUiState
 import pion.tech.pionbase.databinding.FragmentHomeBinding
 import pion.tech.pionbase.feature.home.presetation.adapter.DemoMultipleAdapter
 import pion.tech.pionbase.feature.home.presetation.dialog.DemoDialog
@@ -35,47 +35,25 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel, CommonView
         }
 
         commonViewModel.getCategoryUiState.collectFlowOnView(viewLifecycleOwner) {
-            when (it) {
-                GetAppCategoryUiState.Error -> {
-                    showHideLoading(false)
-                }
-
-                GetAppCategoryUiState.None -> {
-
-                }
-
-                GetAppCategoryUiState.Standby -> {
-                    showHideLoading(true)
-                }
-
-                is GetAppCategoryUiState.Success -> {
+            it.handleUiState(
+                onStandby = { showHideLoading(true) },
+                onSuccess = { listAppCategory ->
                     val templateCategoryId =
-                        it.listAppCategory.firstOrNull { item -> item.name == "Template" }?.id
+                        listAppCategory.firstOrNull { item -> item.name == "Template" }?.id
                     if (templateCategoryId != null) {
                         commonViewModel.getTemplate(templateCategoryId)
                     }
-                }
-            }
+                },
+                onError = { showHideLoading(false) }
+            )
         }
 
         commonViewModel.getTemplateUiState.collectFlowOnView(viewLifecycleOwner) {
-
-            when (it) {
-                GetTemplateUiState.Error -> {
-                    showHideLoading(false)
-                }
-
-                GetTemplateUiState.None -> {
-                }
-
-                GetTemplateUiState.Standby -> {
-                    showHideLoading(true)
-                }
-
-                is GetTemplateUiState.Success -> {
-                    showHideLoading(false)
-                }
-            }
+            it.handleUiState(
+                onStandby = { showHideLoading(true) },
+                onSuccess = { showHideLoading(false) },
+                onError = { showHideLoading(false) }
+            )
         }
     }
 
