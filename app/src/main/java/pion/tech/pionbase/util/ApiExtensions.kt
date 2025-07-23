@@ -6,42 +6,42 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 
 /**
- * Extension functions to reduce boilerplate code for API handling
+ * Extension functions to reduce boilerplate code for data handling (API and local operations)
  */
 
-sealed interface ApiUiState<out T> {
-    data object None : ApiUiState<Nothing>
+sealed interface UiState<out T> {
+    data object None : UiState<Nothing>
 
-    data object Standby : ApiUiState<Nothing>
+    data object Loading : UiState<Nothing>
 
     data class Success<T>(
         val data: T,
-    ) : ApiUiState<T>
+    ) : UiState<T>
 
-    data object Error : ApiUiState<Nothing>
+    data object Error : UiState<Nothing>
 }
 
 /**
  * Extension function to handle API calls with automatic state management
  */
 inline fun <T, R> BaseViewModel.handleApiCall(
-    stateFlow: MutableStateFlow<ApiUiState<T>>,
+    stateFlow: MutableStateFlow<UiState<T>>,
     crossinline apiCall: suspend () -> Flow<Result<R>>,
     crossinline transform: (R) -> T,
     skipIfInProgress: Boolean = true,
 ) {
     launchIO {
-        if (skipIfInProgress && (stateFlow.value is ApiUiState.Standby || stateFlow.value is ApiUiState.Success)) {
+        if (skipIfInProgress && (stateFlow.value is UiState.Loading || stateFlow.value is UiState.Success)) {
             return@launchIO
         }
 
-        stateFlow.value = ApiUiState.Standby
+        stateFlow.value = UiState.Loading
         apiCall().collect { result ->
             result
                 .onSuccess { data ->
-                    stateFlow.value = ApiUiState.Success(transform(data))
+                    stateFlow.value = UiState.Success(transform(data))
                 }.onError {
-                    stateFlow.value = ApiUiState.Error
+                    stateFlow.value = UiState.Error
                 }
         }
     }
@@ -51,7 +51,7 @@ inline fun <T, R> BaseViewModel.handleApiCall(
  * Extension function for simple API calls without transformation
  */
 inline fun <T> BaseViewModel.handleApiCall(
-    stateFlow: MutableStateFlow<ApiUiState<T>>,
+    stateFlow: MutableStateFlow<UiState<T>>,
     crossinline apiCall: suspend () -> Flow<Result<T>>,
     skipIfInProgress: Boolean = true,
 ) {
@@ -59,18 +59,41 @@ inline fun <T> BaseViewModel.handleApiCall(
 }
 
 /**
+ * Extension function for handling local data operations (non-API)
+ */
+inline fun <T> BaseViewModel.handleLocalDataCall(
+    stateFlow: MutableStateFlow<UiState<T>>,
+    crossinline dataCall: suspend () -> T,
+    skipIfInProgress: Boolean = true,
+) {
+    launchIO {
+        if (skipIfInProgress && (stateFlow.value is UiState.Loading || stateFlow.value is UiState.Success)) {
+            return@launchIO
+        }
+
+        stateFlow.value = UiState.Loading
+        try {
+            val data = dataCall()
+            stateFlow.value = UiState.Success(data)
+        } catch (e: Exception) {
+            stateFlow.value = UiState.Error
+        }
+    }
+}
+
+/**
  * Extension function to handle UI state changes with loading management
  */
-inline fun <T> ApiUiState<T>.handleUiState(
+inline fun <T> UiState<T>.handleUiState(
     crossinline onNone: () -> Unit = {},
-    crossinline onStandby: () -> Unit = {},
+    crossinline onLoading: () -> Unit = {},
     crossinline onSuccess: (T) -> Unit = {},
     crossinline onError: () -> Unit = {},
 ) {
     when (this) {
-        is ApiUiState.None -> onNone()
-        is ApiUiState.Standby -> onStandby()
-        is ApiUiState.Success -> onSuccess(data)
-        is ApiUiState.Error -> onError()
+        is UiState.None -> onNone()
+        is UiState.Loading -> onLoading()
+        is UiState.Success -> onSuccess(data)
+        is UiState.Error -> onError()
     }
 }

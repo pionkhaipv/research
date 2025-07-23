@@ -5,21 +5,22 @@ import com.piontech.core.base.BaseFragment
 import com.piontech.core.utils.collectFlowOnView
 import dagger.hilt.android.AndroidEntryPoint
 import pion.tech.pionbase.app.presentation.CommonViewModel
-import pion.tech.pionbase.util.ApiUiState
-import pion.tech.pionbase.util.handleUiState
 import pion.tech.pionbase.databinding.FragmentHomeBinding
 import pion.tech.pionbase.feature.home.presetation.adapter.DemoMultipleAdapter
 import pion.tech.pionbase.feature.home.presetation.dialog.DemoDialog
 import pion.tech.pionbase.util.displayToast
+import pion.tech.pionbase.util.handleUiState
 
 @AndroidEntryPoint
-class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel, CommonViewModel>(
-    FragmentHomeBinding::inflate,
-    HomeViewModel::class.java,
-    CommonViewModel::class.java
-), DemoDialog.Listener {
-
+class HomeFragment :
+    BaseFragment<FragmentHomeBinding, HomeViewModel, CommonViewModel>(
+        FragmentHomeBinding::inflate,
+        HomeViewModel::class.java,
+        CommonViewModel::class.java,
+    ),
+    DemoDialog.Listener {
     val adapter = DemoMultipleAdapter()
+
     override fun init(view: View) {
         logger.logScreen("home_show")
         logger.logEvent("home_view")
@@ -27,6 +28,9 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel, CommonView
         plusEvent()
         settingEvent()
         onBackEvent()
+
+        // Load installed apps
+        viewModel.getInstalledApps()
     }
 
     override fun subscribeObserver(view: View) {
@@ -34,9 +38,32 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel, CommonView
 //            binding.tvCount.text = "$it"
         }
 
+        // Observe installed apps state
+        viewModel.installedAppsUiState.collectFlowOnView(viewLifecycleOwner) {
+            it.handleUiState(
+                onLoading = {
+                    showHideLoading(true)
+                    logger.logEvent("installed_apps_loading")
+                },
+                onSuccess = { installedApps ->
+                    showHideLoading(false)
+                    logger.logEvent("installed_apps_loaded") {
+                        putString("count", installedApps.size.toString())
+                    }
+                    // Handle the list of installed apps here
+                    // You can update UI, show in RecyclerView, etc.
+                },
+                onError = {
+                    showHideLoading(false)
+                    logger.logEvent("installed_apps_error")
+                    displayToast("Failed to load installed apps")
+                },
+            )
+        }
+
         commonViewModel.getCategoryUiState.collectFlowOnView(viewLifecycleOwner) {
             it.handleUiState(
-                onStandby = { showHideLoading(true) },
+                onLoading = { showHideLoading(true) },
                 onSuccess = { listAppCategory ->
                     val templateCategoryId =
                         listAppCategory.firstOrNull { item -> item.name == "Template" }?.id
@@ -44,15 +71,15 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel, CommonView
                         commonViewModel.getTemplate(templateCategoryId)
                     }
                 },
-                onError = { showHideLoading(false) }
+                onError = { showHideLoading(false) },
             )
         }
 
         commonViewModel.getTemplateUiState.collectFlowOnView(viewLifecycleOwner) {
             it.handleUiState(
-                onStandby = { showHideLoading(true) },
+                onLoading = { showHideLoading(true) },
                 onSuccess = { showHideLoading(false) },
-                onError = { showHideLoading(false) }
+                onError = { showHideLoading(false) },
             )
         }
     }
@@ -63,5 +90,4 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel, CommonView
     override fun onDialogNegativeClick() {
         displayToast("Hello")
     }
-
 }

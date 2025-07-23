@@ -12,7 +12,7 @@ import pion.tech.pionbase.feature.home.domain.repository.ApiRepository
 import pion.tech.pionbase.feature.home.presetation.model.AppCategoryUIModel
 import pion.tech.pionbase.feature.home.presetation.model.TemplateUIModel
 import pion.tech.pionbase.feature.home.presetation.model.toPresentation
-import pion.tech.pionbase.util.ApiUiState
+import pion.tech.pionbase.util.UiState
 import pion.tech.pionbase.util.handleApiCall
 import pion.tech.pionbase.util.onError
 import pion.tech.pionbase.util.onSuccess
@@ -33,11 +33,11 @@ class CommonViewModel
         }
 
         private val _getCategoryUiState =
-            MutableStateFlow<ApiUiState<List<AppCategoryUIModel>>>(ApiUiState.None)
+            MutableStateFlow<UiState<List<AppCategoryUIModel>>>(UiState.None)
         val getCategoryUiState = _getCategoryUiState.asStateFlow()
 
         private val _getTemplateUiState =
-            MutableStateFlow<ApiUiState<List<TemplateUIModel>>>(ApiUiState.None)
+            MutableStateFlow<UiState<List<TemplateUIModel>>>(UiState.None)
         val getTemplateUiState = _getTemplateUiState.asStateFlow()
 
         private fun fetchRemoteConfigData() {
@@ -65,9 +65,8 @@ class CommonViewModel
         }
 
         fun getApiData() {
-            if (_getCategoryUiState.value !is ApiUiState.Success || _getTemplateUiState.value !is ApiUiState.Success) {
+            if (_getCategoryUiState.value !is UiState.Success || _getTemplateUiState.value !is UiState.Success) {
                 getAppId()
             }
         }
     }
-
