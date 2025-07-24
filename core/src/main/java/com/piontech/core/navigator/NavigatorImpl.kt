@@ -74,21 +74,6 @@ class NavigatorImpl(
     override fun navigateTo(
         actionId: Int,
         bundle: Bundle?,
-        enterAnim: Int,
-        exitAnim: Int,
-    ) {
-        val navOptions =
-            NavOptions
-                .Builder()
-                .setEnterAnim(enterAnim)
-                .setExitAnim(exitAnim)
-                .build()
-        safeNav(actionId, bundle, navOptions)
-    }
-
-    override fun navigateTo(
-        actionId: Int,
-        bundle: Bundle?,
         clearBackStack: Boolean,
     ) {
         val navOptions =
@@ -103,8 +88,99 @@ class NavigatorImpl(
         safeNav(actionId, bundle, navOptions)
     }
 
+    private fun safeNavigateUp() {
+        if (!isAtCurrentDestination()) return
+        runCatching {
+            navObserver =
+                object : LifecycleEventObserver {
+                    override fun onStateChanged(
+                        source: LifecycleOwner,
+                        event: Lifecycle.Event,
+                    ) {
+                        if (event == Lifecycle.Event.ON_RESUME) {
+                            lifecycle.removeObserver(this)
+                            runCatching {
+                                if (navController.currentDestination?.id == currentDestinationId) {
+                                    navController.navigateUp()
+                                }
+                            }
+                        }
+                    }
+                }
+            lifecycle.addObserver(navObserver!!)
+
+            navController.addOnDestinationChangedListener(
+                object :
+                    NavController.OnDestinationChangedListener {
+                    override fun onDestinationChanged(
+                        controller: NavController,
+                        destination: NavDestination,
+                        arguments: Bundle?,
+                    ) {
+                        if (destination.id != currentDestinationId) {
+                            navController.removeOnDestinationChangedListener(this)
+                            lifecycle.removeObserver(navObserver as LifecycleEventObserver)
+                        }
+                    }
+                },
+            )
+
+            if (navController.currentDestination?.id == currentDestinationId) {
+                navController.navigateUp()
+            }
+        }
+    }
+
+    private fun safePopBackStack(
+        destinationId: Int,
+        inclusive: Boolean,
+    ) {
+        if (!isAtCurrentDestination()) return
+        runCatching {
+            navObserver =
+                object : LifecycleEventObserver {
+                    override fun onStateChanged(
+                        source: LifecycleOwner,
+                        event: Lifecycle.Event,
+                    ) {
+                        if (event == Lifecycle.Event.ON_RESUME) {
+                            lifecycle.removeObserver(this)
+                            runCatching {
+                                if (navController.currentDestination?.id == currentDestinationId) {
+                                    navController.popBackStack(destinationId, inclusive)
+                                }
+                            }
+                        }
+                    }
+                }
+            lifecycle.addObserver(navObserver!!)
+
+            navController.addOnDestinationChangedListener(
+                object :
+                    NavController.OnDestinationChangedListener {
+                    override fun onDestinationChanged(
+                        controller: NavController,
+                        destination: NavDestination,
+                        arguments: Bundle?,
+                    ) {
+                        if (destination.id != currentDestinationId) {
+                            navController.removeOnDestinationChangedListener(this)
+                            lifecycle.removeObserver(navObserver as LifecycleEventObserver)
+                        }
+                    }
+                },
+            )
+
+            runCatching {
+                if (navController.currentDestination?.id == currentDestinationId) {
+                    navController.popBackStack(destinationId, inclusive)
+                }
+            }
+        }
+    }
+
     override fun navigateUp() {
-        navController.navigateUp()
+        safeNavigateUp()
     }
 
     override fun addOnDestinationChangedListener(listener: (NavController, NavDestination?, Bundle?) -> Unit) {
@@ -116,5 +192,7 @@ class NavigatorImpl(
     override fun popBackStack(
         destinationId: Int,
         inclusive: Boolean,
-    ): Boolean = navController.popBackStack(destinationId, inclusive)
+    ) {
+        safePopBackStack(destinationId, inclusive)
+    }
 }

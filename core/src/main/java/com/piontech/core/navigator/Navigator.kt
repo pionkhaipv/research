@@ -8,17 +8,19 @@ interface Navigator {
     /**
      * Navigate to a specific route with optional arguments
      */
-    fun navigateTo(actionId: Int, bundle: Bundle? = null)
-
-    /**
-     * Navigate to a specific route with animation
-     */
-    fun navigateTo(actionId: Int, bundle: Bundle? = null, enterAnim: Int, exitAnim: Int)
+    fun navigateTo(
+        actionId: Int,
+        bundle: Bundle? = null,
+    )
 
     /**
      * Navigate to a specific route and clear back stack
      */
-    fun navigateTo(actionId: Int, bundle: Bundle? = null, clearBackStack: Boolean = false)
+    fun navigateTo(
+        actionId: Int,
+        bundle: Bundle? = null,
+        clearBackStack: Boolean = false,
+    )
 
     /**
      * Navigate back to previous screen
@@ -38,5 +40,8 @@ interface Navigator {
     /**
      * Pop back stack to specific destination
      */
-    fun popBackStack(destinationId: Int, inclusive: Boolean): Boolean
+    fun popBackStack(
+        destinationId: Int,
+        inclusive: Boolean,
+    )
 }
