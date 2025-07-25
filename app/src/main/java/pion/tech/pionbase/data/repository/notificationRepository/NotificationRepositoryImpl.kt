@@ -7,14 +7,13 @@ import android.content.pm.ApplicationInfo
 import android.content.pm.PackageManager
 import android.os.Build
 import android.provider.Settings
+import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationManagerCompat
-import androidx.core.content.ContextCompat
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.take
 import kotlinx.coroutines.flow.toList
 import pion.tech.pionbase.data.model.notification.AppNotificationPermissionDtoModel
@@ -49,84 +48,129 @@ class NotificationRepositoryImpl(
 
                 val apps =
                     installedPackages
-                        .filter { appInfo ->
-                            // Filter based on Android version requirements
-                            when {
-                                // For Android < 11: Show all user apps
-                                Build.VERSION.SDK_INT < Build.VERSION_CODES.R -> {
-                                    (appInfo.flags and ApplicationInfo.FLAG_SYSTEM) == 0
-                                }
-                                // For Android >= 13: Show apps that have POST_NOTIFICATION permission declared
-                                Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU -> {
-                                    val isUserApp = (appInfo.flags and ApplicationInfo.FLAG_SYSTEM) == 0
-                                    if (!isUserApp) return@filter false
-
-                                    // Check if app has POST_NOTIFICATION permission declared in manifest
-                                    try {
-                                        val packageInfo =
-                                            packageManager.getPackageInfo(
-                                                appInfo.packageName,
-                                                PackageManager.GET_PERMISSIONS,
-                                            )
-                                        val permissions = packageInfo.requestedPermissions
-                                        permissions?.contains(Manifest.permission.POST_NOTIFICATIONS) == true
-                                    } catch (e: Exception) {
-                                        false
-                                    }
-                                }
-                                // For Android 11-12: Show all user apps (fallback)
-                                else -> {
-                                    (appInfo.flags and ApplicationInfo.FLAG_SYSTEM) == 0
-                                }
-                            }
-                        }.map { appInfo ->
-                            // Check if this app is blocked by our service
-                            val isBlocked = PionNotificationListenerService.isPackageBlocked(appInfo.packageName)
-
-                            // Check if this specific app has notification permissions enabled
-                            val hasNotificationPermission =
-                                try {
-                                    // For Android 13+, check if the app has POST_NOTIFICATION permission granted
-                                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                                        // Check if the app has POST_NOTIFICATION permission granted (not just declared)
-                                        val notificationManager = NotificationManagerCompat.from(context)
-                                        notificationManager.areNotificationsEnabled() // This checks system-wide, we need per-app check
-
-                                        // For now, assume all apps that declared the permission can potentially have it enabled
-                                        // In a real implementation, we would need to check per-app notification settings
-                                        true
-                                    } else {
-                                        // For older Android versions, assume notifications are enabled by default
-                                        true
-                                    }
-                                } catch (e: Exception) {
-                                    // Default to enabled if we can't determine the status
-                                    true
-                                }
-
-                            AppNotificationPermissionDtoModel(
-                                packageName = appInfo.packageName,
-                                appName =
-                                    try {
-                                        packageManager.getApplicationLabel(appInfo).toString()
-                                    } catch (e: Exception) {
-                                        appInfo.packageName
-                                    },
-                                icon =
-                                    try {
-                                        packageManager.getApplicationIcon(appInfo)
-                                    } catch (e: Exception) {
-                                        null
-                                    },
-                                isNotificationEnabled = !isBlocked && hasNotificationPermission,
-                            )
-                        }.sortedBy { it.appName.lowercase() }
+                        .filter { appInfo -> shouldIncludeApp(appInfo, packageManager) }
+                        .map { appInfo -> createAppPermissionModel(appInfo, packageManager) }
+                        .sortedBy { it.appName.lowercase() }
 
                 emit(Result.Success(apps))
             } catch (exception: Exception) {
                 emit(Result.Error(exception))
             }
         }.flowOn(Dispatchers.IO)
+
+    /**
+     * Determines if an app should be included based on Android version and permission requirements
+     */
+    private fun shouldIncludeApp(
+        appInfo: ApplicationInfo,
+        packageManager: PackageManager,
+    ): Boolean =
+        when {
+            // For Android < 11: Show all user apps
+            Build.VERSION.SDK_INT < Build.VERSION_CODES.R -> {
+                isUserApp(appInfo)
+            }
+            // For Android >= 13: Show apps that have POST_NOTIFICATION permission declared
+            Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU -> {
+                isUserApp(appInfo) && hasPostNotificationPermissionDeclared(appInfo.packageName, packageManager)
+            }
+            // For Android 11-12: Show all user apps (fallback)
+            else -> {
+                isUserApp(appInfo)
+            }
+        }
+
+    /**
+     * Checks if the app is a user-installed app (not system app)
+     */
+    private fun isUserApp(appInfo: ApplicationInfo): Boolean = (appInfo.flags and ApplicationInfo.FLAG_SYSTEM) == 0
+
+    /**
+     * Checks if the app has POST_NOTIFICATIONS permission declared in its manifest
+     */
+    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
+    private fun hasPostNotificationPermissionDeclared(
+        packageName: String,
+        packageManager: PackageManager,
+    ): Boolean =
+        try {
+            val packageInfo = packageManager.getPackageInfo(packageName, PackageManager.GET_PERMISSIONS)
+            val permissions = packageInfo.requestedPermissions
+            permissions?.contains(Manifest.permission.POST_NOTIFICATIONS) == true
+        } catch (e: Exception) {
+            e.printStackTrace()
+            false
+        }
+
+    /**
+     * Checks if the app has notification permissions enabled at system level
+     */
+    private fun hasSystemNotificationPermission(): Boolean =
+        try {
+            // For Android 13+, check if the app has POST_NOTIFICATION permission granted
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                // Check if the app has POST_NOTIFICATION permission granted (not just declared)
+                val notificationManager = NotificationManagerCompat.from(context)
+                notificationManager.areNotificationsEnabled() // This checks system-wide, we need per-app check
+
+                // For now, assume all apps that declared the permission can potentially have it enabled
+                // In a real implementation, we would need to check per-app notification settings
+                true
+            } else {
+                // For older Android versions, assume notifications are enabled by default
+                true
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            // Default to enabled if we can't determine the status
+            true
+        }
+
+    /**
+     * Safely gets the app name from PackageManager
+     */
+    private fun getAppName(
+        appInfo: ApplicationInfo,
+        packageManager: PackageManager,
+    ): String =
+        try {
+            packageManager.getApplicationLabel(appInfo).toString()
+        } catch (e: Exception) {
+            e.printStackTrace()
+            appInfo.packageName
+        }
+
+    /**
+     * Safely gets the app icon from PackageManager
+     */
+    private fun getAppIcon(
+        appInfo: ApplicationInfo,
+        packageManager: PackageManager,
+    ): android.graphics.drawable.Drawable? =
+        try {
+            packageManager.getApplicationIcon(appInfo)
+        } catch (e: Exception) {
+            e.printStackTrace()
+            null
+        }
+
+    /**
+     * Creates an AppNotificationPermissionDtoModel from ApplicationInfo
+     */
+    private fun createAppPermissionModel(
+        appInfo: ApplicationInfo,
+        packageManager: PackageManager,
+    ): AppNotificationPermissionDtoModel {
+        val isBlocked = PionNotificationListenerService.isPackageBlocked(appInfo.packageName)
+        val hasNotificationPermission = hasSystemNotificationPermission()
+
+        return AppNotificationPermissionDtoModel(
+            packageName = appInfo.packageName,
+            appName = getAppName(appInfo, packageManager),
+            icon = getAppIcon(appInfo, packageManager),
+            isNotificationEnabled = !isBlocked && hasNotificationPermission,
+        )
+    }
 
     override fun toggleNotificationPermission(
         packageName: String,
