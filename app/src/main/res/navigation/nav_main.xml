@@ -25,6 +25,9 @@
         <action
             android:id="@+id/action_homeFragment_to_notificationManagerFragment"
             app:destination="@id/notificationManagerFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_runningAppsFragment"
+            app:destination="@id/runningAppsFragment" />
     </fragment>
     <fragment
         android:id="@+id/languageFragment"
@@ -58,4 +61,9 @@
         android:name="pion.tech.pionbase.feature.notificationManager.NotificationManagerFragment"
         android:label="NotificationManagerFragment"
         tools:layout="@layout/fragment_notification_manager" />
+    <fragment
+        android:id="@+id/runningAppsFragment"
+        android:name="pion.tech.pionbase.feature.runningapps.RunningAppsFragment"
+        android:label="RunningAppsFragment"
+        tools:layout="@layout/fragment_running_apps" />
 </navigation>

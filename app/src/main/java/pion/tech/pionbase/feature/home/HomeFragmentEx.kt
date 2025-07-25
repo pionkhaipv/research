@@ -3,6 +3,7 @@ package pion.tech.pionbase.feature.home
 import pion.tech.pionbase.R
 import pion.tech.pionbase.feature.home.bottomSheet.DemoBottomSheet
 import pion.tech.pionbase.util.NotificationPermissionManager
+import pion.tech.pionbase.util.RunningAppsPermissionManager
 import pion.tech.pionbase.util.displayToast
 import pion.tech.pionbase.util.setPreventDoubleClickScaleView
 
@@ -45,6 +46,12 @@ fun HomeFragment.notificationManagerEvent() {
     }
 }
 
+fun HomeFragment.runningAppsEvent() {
+    binding.btnRunningApps.setPreventDoubleClickScaleView {
+        checkRunningAppsPermissionsAndNavigate()
+    }
+}
+
 fun HomeFragment.checkNotificationPermissionsAndNavigate() {
     if (NotificationPermissionManager.areAllNotificationPermissionsGranted(requireContext())) {
         // All permissions granted, navigate to notification manager
@@ -84,4 +91,46 @@ fun HomeFragment.checkPermissionsOnResume() {
             displayToast("Permissions are still required to use Notification Manager")
         }
     }
+
+    if (viewModel.isWaitingForRunningAppsPermissions()) {
+        viewModel.setWaitingForRunningAppsPermissions(false)
+
+        // Check if permissions are now granted
+        if (RunningAppsPermissionManager.areAllRunningAppsPermissionsGranted(requireContext())) {
+            displayToast("Permissions granted! Opening Running Apps...")
+            navigator.navigateTo(R.id.action_homeFragment_to_runningAppsFragment)
+        } else {
+            displayToast("Permissions are still required to use Running Apps Manager")
+        }
+    }
+}
+
+fun HomeFragment.checkRunningAppsPermissionsAndNavigate() {
+    if (RunningAppsPermissionManager.areAllRunningAppsPermissionsGranted(requireContext())) {
+        // All permissions granted, navigate to running apps
+        navigator.navigateTo(R.id.action_homeFragment_to_runningAppsFragment)
+    } else {
+        // Permissions not granted, show dialog and request permissions
+        val missingPermissions = RunningAppsPermissionManager.getMissingRunningAppsPermissions(requireContext())
+        val permissionMessage = if (missingPermissions.isNotEmpty()) {
+            "To use Running Apps Manager, please grant the following permissions:\n\n" +
+                missingPermissions.joinToString("\n• ", "• ")
+        } else {
+            RunningAppsPermissionManager.getPermissionExplanation()
+        }
+
+        displayToast("$permissionMessage\n\nOpening settings...")
+
+        // Request running apps permissions
+        RunningAppsPermissionManager.requestRunningAppsPermissions(this)
+
+        // Set flag to check permissions when user returns
+        setWaitingForRunningAppsPermissions(true)
+    }
+}
+
+fun HomeFragment.setWaitingForRunningAppsPermissions(waiting: Boolean) {
+    // Store the waiting state in a simple way
+    // We'll check this when the fragment resumes
+    viewModel.setWaitingForRunningAppsPermissions(waiting)
 }

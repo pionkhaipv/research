@@ -1,6 +1,9 @@
 package pion.tech.pionbase.feature.home
 
+import android.app.ActivityManager
+import android.content.Context.ACTIVITY_SERVICE
 import android.view.View
+import androidx.core.content.ContextCompat.getSystemService
 import com.piontech.core.base.BaseFragment
 import com.piontech.core.base.doActionWhenResume
 import com.piontech.core.utils.collectFlowOnView
@@ -29,6 +32,7 @@ class HomeFragment :
         plusEvent()
         settingEvent()
         notificationManagerEvent()
+        runningAppsEvent()
         onBackEvent()
 
         // Load installed apps

@@ -22,6 +22,8 @@ import pion.tech.pionbase.data.repository.notificationRepository.NotificationRep
 import pion.tech.pionbase.data.repository.notificationRepository.NotificationRepositoryImpl
 import pion.tech.pionbase.data.repository.remoteConfig.RemoteConfigRepository
 import pion.tech.pionbase.data.repository.remoteConfig.RemoteConfigRepositoryImpl
+import pion.tech.pionbase.data.repository.runningAppsRepository.RunningAppsRepository
+import pion.tech.pionbase.data.repository.runningAppsRepository.RunningAppsRepositoryImpl
 import javax.inject.Singleton
 
 @Module
@@ -54,4 +56,10 @@ class RepositoryModule {
     fun provideNotificationRepository(
         @ApplicationContext context: Context,
     ): NotificationRepository = NotificationRepositoryImpl(context)
+
+    @Provides
+    @Singleton
+    fun provideRunningAppsRepository(
+        @ApplicationContext context: Context,
+    ): RunningAppsRepository = RunningAppsRepositoryImpl(context)
 }

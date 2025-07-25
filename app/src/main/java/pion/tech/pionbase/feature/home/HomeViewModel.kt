@@ -35,6 +35,9 @@ class HomeViewModel
         private val _waitingForNotificationPermissions = MutableStateFlow(false)
         val waitingForNotificationPermissions = _waitingForNotificationPermissions.asStateFlow()
 
+        private val _waitingForRunningAppsPermissions = MutableStateFlow(false)
+        val waitingForRunningAppsPermissions = _waitingForRunningAppsPermissions.asStateFlow()
+
         fun plusValue() {
             _countValue.value += 1
         }
@@ -57,5 +60,13 @@ class HomeViewModel
 
         fun isWaitingForNotificationPermissions(): Boolean {
             return _waitingForNotificationPermissions.value
+        }
+
+        fun setWaitingForRunningAppsPermissions(waiting: Boolean) {
+            _waitingForRunningAppsPermissions.value = waiting
+        }
+
+        fun isWaitingForRunningAppsPermissions(): Boolean {
+            return _waitingForRunningAppsPermissions.value
         }
     }
