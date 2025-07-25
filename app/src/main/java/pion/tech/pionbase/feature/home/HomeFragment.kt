@@ -64,10 +64,12 @@ class HomeFragment :
                     // Handle the list of installed apps here
                     // You can update UI, show in RecyclerView, etc.
                 },
-                onError = {
+                onError = { exception ->
                     showHideLoading(false)
-                    logger.logEvent("installed_apps_error")
-                    displayToast("Failed to load installed apps")
+                    logger.logEvent("installed_apps_error") {
+                        putString("error_message", exception.message ?: "Unknown error")
+                    }
+                    displayToast("Failed to load installed apps: ${exception.message}")
                 },
             )
         }
@@ -82,7 +84,12 @@ class HomeFragment :
                         commonViewModel.getTemplate(templateCategoryId)
                     }
                 },
-                onError = { showHideLoading(false) },
+                onError = { exception ->
+                    showHideLoading(false)
+                    logger.logEvent("get_category_error") {
+                        putString("error_message", exception.message ?: "Unknown error")
+                    }
+                },
             )
         }
 
@@ -90,7 +97,12 @@ class HomeFragment :
             it.handleUiState(
                 onLoading = { showHideLoading(true) },
                 onSuccess = { showHideLoading(false) },
-                onError = { showHideLoading(false) },
+                onError = { exception ->
+                    showHideLoading(false)
+                    logger.logEvent("get_template_error") {
+                        putString("error_message", exception.message ?: "Unknown error")
+                    }
+                },
             )
         }
     }

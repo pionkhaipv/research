@@ -33,8 +33,11 @@ class RecentNotificationsFragment :
                     // Handle the list of recent notifications
                     // Update RecyclerView adapter here
                 },
-                onError = {
-                    displayToast("Failed to load recent notifications")
+                onError = { exception ->
+                    displayToast("Failed to load recent notifications: ${exception.message}")
+                    logger.logEvent("recent_notifications_error") {
+                        putString("error_message", exception.message ?: "Unknown error")
+                    }
                 },
             )
         }

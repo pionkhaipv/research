@@ -55,13 +55,16 @@ class RunningAppsFragment :
 
                     updateAppCount(apps.size)
                 },
-                onError = {
+                onError = { exception ->
                     showHideLoading(false)
                     binding.swipeRefresh.isRefreshing = false
                     binding.rvRunningApps.isVisible = false
                     binding.tvEmptyState.isVisible = true
-                    binding.tvEmptyState.text = "Failed to load running apps"
-                    displayToast("Failed to load running apps")
+                    binding.tvEmptyState.text = "Failed to load running apps: ${exception.message}"
+                    displayToast("Failed to load running apps: ${exception.message}")
+                    logger.logEvent("running_apps_error") {
+                        putString("error_message", exception.message ?: "Unknown error")
+                    }
                 },
             )
         }

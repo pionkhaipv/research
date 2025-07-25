@@ -49,11 +49,14 @@ class NotificationPermissionsFragment :
                         appPermissionsAdapter.submitList(apps)
                     }
                 },
-                onError = {
+                onError = { exception ->
                     binding.rvAppPermissions.isVisible = false
                     binding.tvEmptyState.isVisible = true
-                    binding.tvEmptyState.text = "Failed to load app permissions"
-                    displayToast("Failed to load app permissions")
+                    binding.tvEmptyState.text = "Failed to load app permissions: ${exception.message}"
+                    displayToast("Failed to load app permissions: ${exception.message}")
+                    logger.logEvent("app_permissions_error") {
+                        putString("error_message", exception.message ?: "Unknown error")
+                    }
                 },
             )
         }
@@ -68,8 +71,11 @@ class NotificationPermissionsFragment :
                         displayToast("Permission updated successfully")
                     }
                 },
-                onError = {
-                    displayToast("Failed to update permission")
+                onError = { exception ->
+                    displayToast("Failed to update permission: ${exception.message}")
+                    logger.logEvent("toggle_permission_error") {
+                        putString("error_message", exception.message ?: "Unknown error")
+                    }
                 },
             )
         }
