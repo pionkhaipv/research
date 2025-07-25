@@ -1,4 +1,4 @@
-package pion.tech.pionbase.app.data.model
+package pion.tech.pionbase.data.model
 
 import com.google.gson.annotations.SerializedName
 

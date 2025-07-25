@@ -6,7 +6,7 @@ import android.content.pm.PackageManager
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import pion.tech.pionbase.data.model.installedApp.InstalledAppDto
+import pion.tech.pionbase.data.model.installedApp.InstalledAppDtoModel
 import javax.inject.Inject
 
 class InstalledAppsRepositoryImpl
@@ -14,7 +14,7 @@ class InstalledAppsRepositoryImpl
     constructor(
         @ApplicationContext private val context: Context,
     ) : InstalledAppsRepository {
-        override suspend fun getInstalledApps(): List<InstalledAppDto> =
+        override suspend fun getInstalledApps(): List<InstalledAppDtoModel> =
             withContext(Dispatchers.IO) {
                 val packageManager = context.packageManager
                 val installedPackages =
@@ -22,7 +22,7 @@ class InstalledAppsRepositoryImpl
 
                 installedPackages
                     .map { appInfo ->
-                        InstalledAppDto(
+                        InstalledAppDtoModel(
                             packageName = appInfo.packageName,
                             appName =
                                 try {

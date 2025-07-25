@@ -10,7 +10,7 @@ data class InstalledAppUIModel(
     val isSystemApp: Boolean,
 )
 
-fun InstalledAppDto.toPresentation(): InstalledAppUIModel =
+fun InstalledAppDtoModel.toPresentation(): InstalledAppUIModel =
     InstalledAppUIModel(
         packageName = this.packageName,
         appName = this.appName,

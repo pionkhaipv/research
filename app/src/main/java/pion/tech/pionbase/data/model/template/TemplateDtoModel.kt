@@ -2,7 +2,7 @@ package pion.tech.pionbase.data.model.template
 
 import com.google.gson.annotations.SerializedName
 
-data class TemplateDto(
+data class TemplateDtoModel(
     @SerializedName("name")
     val name: String? = null,
     @SerializedName("duration")

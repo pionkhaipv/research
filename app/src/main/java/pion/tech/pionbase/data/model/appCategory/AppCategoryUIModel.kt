@@ -5,4 +5,4 @@ data class AppCategoryUIModel(
     val name: String,
 )
 
-fun AppCategoryDto.toPresentation(): AppCategoryUIModel = AppCategoryUIModel(id = this.id, name = this.name)
+fun AppCategoryDtoModel.toPresentation(): AppCategoryUIModel = AppCategoryUIModel(id = this.id, name = this.name)

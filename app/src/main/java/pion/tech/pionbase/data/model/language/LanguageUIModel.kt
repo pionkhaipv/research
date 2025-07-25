@@ -7,7 +7,7 @@ data class LanguageUIModel(
     var isSelected: Boolean,
 )
 
-fun LanguageDto.toPresentation() =
+fun LanguageDtoModel.toPresentation() =
     LanguageUIModel(
         thumbnail = this.thumbnail,
         nameCountry = this.nameCountry,

@@ -2,7 +2,7 @@ package pion.tech.pionbase.data.model.template
 
 import com.google.gson.annotations.SerializedName
 
-data class TemplateModelDto(
+data class TemplateResponseDtoModel(
     @SerializedName("id")
     val id: String,
     @SerializedName("name")
@@ -12,5 +12,5 @@ data class TemplateModelDto(
     @SerializedName("is_pro")
     val isPro: Boolean? = null,
     @SerializedName("custom_fields")
-    val customField: TemplateDto,
+    val customField: TemplateDtoModel,
 )

@@ -13,7 +13,7 @@ data class TemplateUIModel(
     val countryId: String? = null,
 )
 
-fun TemplateDto.toPresentation() =
+fun TemplateDtoModel.toPresentation() =
     TemplateUIModel(
         name = this.name,
         duration = this.duration,
