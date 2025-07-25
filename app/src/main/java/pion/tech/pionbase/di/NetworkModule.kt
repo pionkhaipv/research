@@ -71,7 +71,7 @@ class NetworkModule {
     @Provides
     @Singleton
     fun provideHttpClient(
-        cache: Cache?,
+        cache: Cache,
         loggingInterceptor: HttpLoggingInterceptor,
         headerInterceptor: Interceptor,
         @ApplicationContext application: Context,
@@ -79,7 +79,7 @@ class NetworkModule {
         OkHttpClient
             .Builder()
             .sslSocketFactory(
-                provideSSLSocketFactory()!!,
+                provideSSLSocketFactory(),
                 provideUnTrustManager()[0] as X509TrustManager,
             ).cache(cache)
             .addInterceptor(headerInterceptor)
@@ -92,20 +92,16 @@ class NetworkModule {
 
     @Singleton
     @Provides
-    fun provideSSLSocketFactory(): SSLSocketFactory? {
-        var sslContext: SSLContext? = null
-        try {
-            sslContext = SSLContext.getInstance("SSL")
-        } catch (e: NoSuchAlgorithmException) {
+    fun provideSSLSocketFactory(): SSLSocketFactory {
+        return try {
+            val sslContext = SSLContext.getInstance("SSL")
+            sslContext.init(null, provideUnTrustManager(), SecureRandom())
+            sslContext.socketFactory
+        } catch (e: Exception) {
             e.printStackTrace()
+            // Fallback to default SSL socket factory
+            SSLContext.getDefault().socketFactory
         }
-        try {
-            sslContext!!.init(null, provideUnTrustManager(), SecureRandom())
-        } catch (e: KeyManagementException) {
-            e.printStackTrace()
-        }
-
-        return sslContext!!.socketFactory
     }
 
     @Singleton

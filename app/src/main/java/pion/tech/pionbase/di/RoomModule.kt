@@ -10,33 +10,28 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import pion.tech.pionbase.data.database.AppDatabase
 import pion.tech.pionbase.data.local.dao.DummyDAO
+import javax.inject.Singleton
 
 @InstallIn(SingletonComponent::class)
 @Module
 object RoomModule {
-    @Volatile
-    private var INSTANCE: AppDatabase? = null
 
     @Provides
+    @Singleton
     fun provideDatabase(
         @ApplicationContext context: Context,
     ): AppDatabase =
-        INSTANCE ?: synchronized(this) {
-            val instance =
-                Room
-                    .databaseBuilder(
-                        context,
-                        AppDatabase::class.java,
-                        AppDatabase.DATABASE_NAME,
-                    ).fallbackToDestructiveMigration()
-                    .enableMultiInstanceInvalidation()
-                    .setJournalMode(RoomDatabase.JournalMode.AUTOMATIC)
-                    .build()
-
-            INSTANCE = instance
-            instance
-        }
+        Room
+            .databaseBuilder(
+                context,
+                AppDatabase::class.java,
+                AppDatabase.DATABASE_NAME,
+            ).fallbackToDestructiveMigration()
+            .enableMultiInstanceInvalidation()
+            .setJournalMode(RoomDatabase.JournalMode.AUTOMATIC)
+            .build()
 
     @Provides
+    @Singleton
     fun provideDummyDao(db: AppDatabase): DummyDAO = db.dummyDAO()
 }

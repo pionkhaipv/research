@@ -6,12 +6,16 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.map
 import pion.tech.pionbase.data.model.installedApp.InstalledAppUIModel
+import pion.tech.pionbase.data.model.installedApp.InstalledAppDtoModel
 import pion.tech.pionbase.data.model.installedApp.toPresentation
 import pion.tech.pionbase.data.repository.dataStore.DataStoreRepository
 import pion.tech.pionbase.data.repository.installedAppRepository.InstalledAppsRepository
 import pion.tech.pionbase.util.UiState
 import pion.tech.pionbase.util.handleLocalDataCall
+import pion.tech.pionbase.util.handleApiCall
+import pion.tech.pionbase.util.Result
 import javax.inject.Inject
 
 @HiltViewModel
@@ -32,14 +36,15 @@ class HomeViewModel
             _countValue.value += 1
         }
 
-        suspend fun getIsPremiumValue(): Flow<Boolean> = dataStoreRepository.getIsPremium()
+        suspend fun getIsPremiumValue(): Flow<Result<Boolean>> = dataStoreRepository.getIsPremium()
 
         fun getInstalledApps() {
-            handleLocalDataCall(
+            handleApiCall(
                 stateFlow = _installedAppsUiState,
-                dataCall = {
-                    installedAppsRepository.getInstalledApps().map { it.toPresentation() }
-                },
+                apiCall = { installedAppsRepository.getInstalledApps() },
+                transform = { dtoList: List<InstalledAppDtoModel> -> 
+                    dtoList.map { it.toPresentation() } 
+                }
             )
         }
     }

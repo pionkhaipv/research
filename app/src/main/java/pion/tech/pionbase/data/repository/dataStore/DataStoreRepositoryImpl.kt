@@ -9,6 +9,7 @@ import androidx.datastore.preferences.core.stringPreferencesKey
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
+import pion.tech.pionbase.util.Result
 import java.io.IOException
 
 class DataStoreRepositoryImpl(
@@ -17,39 +18,41 @@ class DataStoreRepositoryImpl(
     private val isPremiumKey = booleanPreferencesKey("isPremiumKey")
     private val tokenKey = stringPreferencesKey("tokenKey")
 
-    override fun getIsPremium(): Flow<Boolean> =
+    override fun getIsPremium(): Flow<Result<Boolean>> =
         dataStore.data
-            .catch { exception ->
-                if (exception is IOException) {
-                    emit(emptyPreferences())
-                } else {
-                    throw exception
-                }
-            }.map { prefs ->
-                prefs[isPremiumKey] ?: false
+            .map { prefs ->
+                Result.Success(prefs[isPremiumKey] ?: false) as Result<Boolean>
+            }.catch { exception ->
+                emit(Result.Error<Boolean>(exception) as Result<Boolean>)
             }
 
-    override suspend fun setIsPremium(isPremium: Boolean) {
-        dataStore.edit {
-            it[isPremiumKey] = isPremium
+    override suspend fun setIsPremium(isPremium: Boolean): Result<Unit> {
+        return try {
+            dataStore.edit {
+                it[isPremiumKey] = isPremium
+            }
+            Result.Success(Unit)
+        } catch (exception: Exception) {
+            Result.Error(exception)
         }
     }
 
-    override fun getToken(): Flow<String?> =
+    override fun getToken(): Flow<Result<String?>> =
         dataStore.data
-            .catch { exception ->
-                if (exception is IOException) {
-                    emit(emptyPreferences())
-                } else {
-                    throw exception
-                }
-            }.map { prefs ->
-                prefs[tokenKey]
+            .map { prefs ->
+                Result.Success(prefs[tokenKey]) as Result<String?>
+            }.catch { exception ->
+                emit(Result.Error<String?>(exception) as Result<String?>)
             }
 
-    override suspend fun setToken(token: String) {
-        dataStore.edit {
-            it[tokenKey] = token
+    override suspend fun setToken(token: String): Result<Unit> {
+        return try {
+            dataStore.edit {
+                it[tokenKey] = token
+            }
+            Result.Success(Unit)
+        } catch (exception: Exception) {
+            Result.Error(exception)
         }
     }
 }

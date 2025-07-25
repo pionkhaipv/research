@@ -12,6 +12,7 @@ import pion.tech.pionbase.app.CommonViewModel
 import pion.tech.pionbase.app.MainActivity
 import pion.tech.pionbase.databinding.FragmentSplashBinding
 import pion.tech.pionbase.util.Constant
+import pion.tech.pionbase.util.onSuccess
 
 @AndroidEntryPoint
 class SplashFragment :
@@ -28,33 +29,40 @@ class SplashFragment :
     }
 
     override fun subscribeObserver(view: View) {
-        commonViewModel.cachedRemoteConfig.collectFlowOnView(viewLifecycleOwner) {
-            if (it != null) {
-                Constant.isRemoteConfigSuccess = it.isRealData
-                AdsController.setConfigAds(it.firebaseRemoteConfig.getString("config_show_ads"))
-                AdsController.getInstance().setListAdsData(listJsonData = arrayListOf(it.firebaseRemoteConfig.getString("admob_id")))
-                (activity as? MainActivity)?.initAppResumeAds()
-                AdsController.getInstance().requestConsentInfoUpdate(
-                    onFailed = { error ->
-                        goToLanguageScreen()
-                    },
-                    onSuccess = { isRequire, isConsentAvailable ->
-                        if (isRequire) {
-                            AdsController
-                                .getInstance()
-                                .loadAndShowConsentFormIfRequire(
-                                    onConsentError = { errorConsent ->
-                                        goToLanguageScreen()
-                                    },
-                                    onConsentDone = {
-                                        goToLanguageScreen()
-                                    },
-                                )
-                        } else {
+        commonViewModel.cachedRemoteConfig.collectFlowOnView(viewLifecycleOwner) { result ->
+            result.onSuccess { remoteConfigData ->
+                if (remoteConfigData != null) {
+                    Constant.isRemoteConfigSuccess = remoteConfigData.isRealData
+                    AdsController.setConfigAds(remoteConfigData.firebaseRemoteConfig.getString("config_show_ads"))
+                    AdsController.getInstance().setListAdsData(
+                        listJsonData =
+                            arrayListOf(
+                                remoteConfigData.firebaseRemoteConfig.getString("admob_id"),
+                            ),
+                    )
+                    (activity as? MainActivity)?.initAppResumeAds()
+                    AdsController.getInstance().requestConsentInfoUpdate(
+                        onFailed = { error ->
                             goToLanguageScreen()
-                        }
-                    },
-                )
+                        },
+                        onSuccess = { isRequire, isConsentAvailable ->
+                            if (isRequire) {
+                                AdsController
+                                    .getInstance()
+                                    .loadAndShowConsentFormIfRequire(
+                                        onConsentError = { errorConsent ->
+                                            goToLanguageScreen()
+                                        },
+                                        onConsentDone = {
+                                            goToLanguageScreen()
+                                        },
+                                    )
+                            } else {
+                                goToLanguageScreen()
+                            }
+                        },
+                    )
+                }
             }
         }
     }

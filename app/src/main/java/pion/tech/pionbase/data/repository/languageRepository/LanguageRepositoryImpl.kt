@@ -6,9 +6,10 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import pion.tech.pionbase.data.model.language.LanguageDtoModel
+import pion.tech.pionbase.util.Result
 
 class LanguageRepositoryImpl : LanguageRepository {
-    override fun getLanguage(): Flow<List<LanguageDtoModel>> {
+    override fun getLanguage(): Flow<Result<List<LanguageDtoModel>>> {
         val listLanguageData =
             listOf(
                 LanguageDtoModel("https://flagcdn.com/w320/us.png", "English", "en"),
@@ -37,9 +38,11 @@ class LanguageRepositoryImpl : LanguageRepository {
                 LanguageDtoModel("https://flagcdn.com/w320/gr.png", "Ελληνικά", "el"),
             )
         return flow {
-            emit(listLanguageData)
-        }.catch {
-            emit(emptyList())
+            try {
+                emit(Result.Success(listLanguageData))
+            } catch (exception: Exception) {
+                emit(Result.Error(exception))
+            }
         }.flowOn(Dispatchers.IO)
     }
 }

@@ -6,8 +6,11 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import pion.tech.pionbase.data.model.language.LanguageUIModel
+import pion.tech.pionbase.data.model.language.LanguageDtoModel
 import pion.tech.pionbase.data.model.language.toPresentation
 import pion.tech.pionbase.data.repository.languageRepository.LanguageRepository
+import pion.tech.pionbase.util.Result
+import pion.tech.pionbase.util.onSuccess
 import javax.inject.Inject
 
 @HiltViewModel
@@ -25,8 +28,10 @@ class LanguageViewModel
 
         private fun loadLanguages() {
             launchIO {
-                repository.getLanguage().collect {
-                    _languageData.value = it.map { item -> item.toPresentation() }
+                repository.getLanguage().collect { result ->
+                    result.onSuccess { languageList ->
+                        _languageData.value = languageList.map { item -> item.toPresentation() }
+                    }
                 }
             }
         }

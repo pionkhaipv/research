@@ -8,23 +8,19 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.withTimeoutOrNull
 import pion.tech.pionbase.data.model.remoteConfig.RemoteConfigDtoModel
 import pion.tech.pionbase.util.Result
 import timber.log.Timber
-import javax.inject.Inject
-import javax.inject.Singleton
 import kotlin.coroutines.resume
 
 private const val TAG = "RemoteConfigRepositoryI"
 
-@Singleton
-class RemoteConfigRepositoryImpl
-    @Inject
-    constructor(
-        private val remoteConfig: FirebaseRemoteConfig,
-    ) : RemoteConfigRepository {
+class RemoteConfigRepositoryImpl(
+    private val remoteConfig: FirebaseRemoteConfig,
+) : RemoteConfigRepository {
         companion object {
             private const val TIMEOUT_MS = 7000L
 
@@ -59,7 +55,10 @@ class RemoteConfigRepositoryImpl
                 emit(Result.Success(defaultData))
             }.flowOn(Dispatchers.IO)
 
-        override fun getCachedRemoteConfig(): Flow<RemoteConfigDtoModel?> = _cachedRemoteConfig.asStateFlow()
+        override fun getCachedRemoteConfig(): Flow<Result<RemoteConfigDtoModel?>> = 
+            _cachedRemoteConfig.asStateFlow()
+                .map<RemoteConfigDtoModel?, Result<RemoteConfigDtoModel?>> { data -> Result.Success(data) }
+                .catch { exception -> emit(Result.Error<RemoteConfigDtoModel?>(exception)) }
 
         private suspend fun fetchRemoteConfigData(): RemoteConfigDtoModel =
             suspendCancellableCoroutine { cont ->

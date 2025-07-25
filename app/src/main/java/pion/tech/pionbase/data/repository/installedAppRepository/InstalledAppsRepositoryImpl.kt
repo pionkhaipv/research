@@ -5,45 +5,53 @@ import android.content.pm.ApplicationInfo
 import android.content.pm.PackageManager
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
 import pion.tech.pionbase.data.model.installedApp.InstalledAppDtoModel
-import javax.inject.Inject
+import pion.tech.pionbase.util.Result
 
-class InstalledAppsRepositoryImpl
-    @Inject
-    constructor(
-        @ApplicationContext private val context: Context,
-    ) : InstalledAppsRepository {
-        override suspend fun getInstalledApps(): List<InstalledAppDtoModel> =
-            withContext(Dispatchers.IO) {
+class InstalledAppsRepositoryImpl(
+    @ApplicationContext private val context: Context,
+) : InstalledAppsRepository {
+    override fun getInstalledApps(): Flow<Result<List<InstalledAppDtoModel>>> =
+        flow {
+            try {
                 val packageManager = context.packageManager
                 val installedPackages =
                     packageManager.getInstalledApplications(PackageManager.GET_META_DATA)
 
-                installedPackages
-                    .map { appInfo ->
-                        InstalledAppDtoModel(
-                            packageName = appInfo.packageName,
-                            appName =
-                                try {
-                                    packageManager.getApplicationLabel(appInfo).toString()
-                                } catch (e: Exception) {
-                                    appInfo.packageName
-                                },
-                            icon =
-                                try {
-                                    packageManager.getApplicationIcon(appInfo)
-                                } catch (e: Exception) {
-                                    null
-                                },
-                            versionName =
-                                try {
-                                    packageManager.getPackageInfo(appInfo.packageName, 0).versionName
-                                } catch (e: Exception) {
-                                    null
-                                },
-                            isSystemApp = (appInfo.flags and ApplicationInfo.FLAG_SYSTEM) != 0,
-                        )
-                    }.sortedBy { it.appName.lowercase() }
+                val apps =
+                    installedPackages
+                        .map { appInfo ->
+                            InstalledAppDtoModel(
+                                packageName = appInfo.packageName,
+                                appName =
+                                    try {
+                                        packageManager.getApplicationLabel(appInfo).toString()
+                                    } catch (e: Exception) {
+                                        appInfo.packageName
+                                    },
+                                icon =
+                                    try {
+                                        packageManager.getApplicationIcon(appInfo)
+                                    } catch (e: Exception) {
+                                        null
+                                    },
+                                versionName =
+                                    try {
+                                        packageManager.getPackageInfo(appInfo.packageName, 0).versionName
+                                    } catch (e: Exception) {
+                                        null
+                                    },
+                                isSystemApp = (appInfo.flags and ApplicationInfo.FLAG_SYSTEM) != 0,
+                            )
+                        }.sortedBy { it.appName.lowercase() }
+
+                emit(Result.Success(apps))
+            } catch (exception: Exception) {
+                emit(Result.Error(exception))
             }
-    }
+        }.flowOn(Dispatchers.IO)
+}

@@ -7,5 +7,5 @@ import pion.tech.pionbase.util.Result
 interface RemoteConfigRepository {
     fun fetchRemoteConfig(): Flow<Result<RemoteConfigDtoModel>>
 
-    fun getCachedRemoteConfig(): Flow<RemoteConfigDtoModel?>
+    fun getCachedRemoteConfig(): Flow<Result<RemoteConfigDtoModel?>>
 }
