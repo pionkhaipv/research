@@ -17,7 +17,7 @@ class DataStoreRepositoryImpl(
     private val isPremiumKey = booleanPreferencesKey("isPremiumKey")
     private val tokenKey = stringPreferencesKey("tokenKey")
 
-    override suspend fun getIsPremium(): Flow<Boolean> =
+    override fun getIsPremium(): Flow<Boolean> =
         dataStore.data
             .catch { exception ->
                 if (exception is IOException) {
@@ -35,7 +35,7 @@ class DataStoreRepositoryImpl(
         }
     }
 
-    override suspend fun getToken(): Flow<String?> =
+    override fun getToken(): Flow<String?> =
         dataStore.data
             .catch { exception ->
                 if (exception is IOException) {

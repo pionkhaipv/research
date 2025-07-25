@@ -1,12 +1,10 @@
-package pion.tech.pionbase.app.presentation
+package pion.tech.pionbase.app
 
 import com.piontech.core.base.BaseViewModel
 import com.piontech.core.base.launchIO
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import pion.tech.pionbase.app.presentation.model.RemoteConfigUIModel
-import pion.tech.pionbase.app.presentation.model.toPresentation
 import pion.tech.pionbase.data.model.appCategory.AppCategoryUIModel
 import pion.tech.pionbase.data.model.appCategory.toPresentation
 import pion.tech.pionbase.data.model.template.TemplateUIModel
@@ -24,11 +22,16 @@ class CommonViewModel
         private val remoteConfigRepository: RemoteConfigRepository,
         private val apiRepository: ApiRepository,
     ) : BaseViewModel() {
-        private val _remoteConfigDataStateFlow = MutableStateFlow<RemoteConfigUIModel?>(null)
-        val remoteConfigDataStateFlow = _remoteConfigDataStateFlow.asStateFlow()
+        // Cached remote config data for easy access across the app
+        val cachedRemoteConfig = remoteConfigRepository.getCachedRemoteConfig()
 
         init {
-            fetchRemoteConfigData()
+            // Fetch remote config data to populate the cache
+            launchIO {
+                remoteConfigRepository
+                    .fetchRemoteConfig()
+                    .collect { /* Data is automatically cached in repository */ }
+            }
         }
 
         private val _getCategoryUiState =
@@ -38,14 +41,6 @@ class CommonViewModel
         private val _getTemplateUiState =
             MutableStateFlow<UiState<List<TemplateUIModel>>>(UiState.None)
         val getTemplateUiState = _getTemplateUiState.asStateFlow()
-
-        private fun fetchRemoteConfigData() {
-            launchIO {
-                remoteConfigRepository.fetchRemoteConfig().collect {
-                    _remoteConfigDataStateFlow.value = it.toPresentation()
-                }
-            }
-        }
 
         private fun getAppId() {
             handleApiCall(

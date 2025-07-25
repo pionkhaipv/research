@@ -1,4 +1,4 @@
-package pion.tech.pionbase.app.presentation
+package pion.tech.pionbase.app
 
 import android.os.Bundle
 import android.widget.TextView

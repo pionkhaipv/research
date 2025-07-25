@@ -1,22 +1,22 @@
-package pion.tech.pionbase.app.presentation
+package pion.tech.pionbase.app
 
 import android.app.Application
 import androidx.appcompat.app.AppCompatDelegate
 import com.khaipv.recovery.core.Recovery
-import dagger.hilt.android.HiltAndroidApp
 import com.piontech.core.lifecycleCallback.ActivityLifecycleCallbacksImpl
+import dagger.hilt.android.HiltAndroidApp
 import pion.tech.pionbase.BuildConfig
 import timber.log.Timber
 
 @HiltAndroidApp
 class MyApplication : Application() {
-
     override fun onCreate() {
         super.onCreate()
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
 
         if (BuildConfig.DEBUG) {
-            Recovery.getInstance()
+            Recovery
+                .getInstance()
                 .debug(true)
                 .recoverInBackground(false)
                 .recoverStack(true)
@@ -29,5 +29,4 @@ class MyApplication : Application() {
         }
         registerActivityLifecycleCallbacks(ActivityLifecycleCallbacksImpl())
     }
-
 }

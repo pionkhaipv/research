@@ -1,7 +1,6 @@
 package pion.tech.pionbase.feature.splash
 
 import android.animation.ValueAnimator
-import android.util.Log
 import android.view.View
 import com.piontech.core.base.BaseFragment
 import com.piontech.core.utils.collectFlowOnView
@@ -9,8 +8,8 @@ import dagger.hilt.android.AndroidEntryPoint
 import pion.datlt.libads.AdsController
 import pion.datlt.libads.utils.loadAndShowConsentFormIfRequire
 import pion.datlt.libads.utils.requestConsentInfoUpdate
-import pion.tech.pionbase.app.presentation.CommonViewModel
-import pion.tech.pionbase.app.presentation.MainActivity
+import pion.tech.pionbase.app.CommonViewModel
+import pion.tech.pionbase.app.MainActivity
 import pion.tech.pionbase.databinding.FragmentSplashBinding
 import pion.tech.pionbase.util.Constant
 
@@ -29,12 +28,11 @@ class SplashFragment :
     }
 
     override fun subscribeObserver(view: View) {
-        commonViewModel.remoteConfigDataStateFlow.collectFlowOnView(viewLifecycleOwner) {
-            Log.d("asgawgawgwgawga", "subscribeObserver: ${it?.isRealData}")
+        commonViewModel.cachedRemoteConfig.collectFlowOnView(viewLifecycleOwner) {
             if (it != null) {
                 Constant.isRemoteConfigSuccess = it.isRealData
-                AdsController.setConfigAds(it.configShowAds)
-                AdsController.getInstance().setListAdsData(listJsonData = arrayListOf(it.admobId))
+                AdsController.setConfigAds(it.firebaseRemoteConfig.getString("config_show_ads"))
+                AdsController.getInstance().setListAdsData(listJsonData = arrayListOf(it.firebaseRemoteConfig.getString("admob_id")))
                 (activity as? MainActivity)?.initAppResumeAds()
                 AdsController.getInstance().requestConsentInfoUpdate(
                     onFailed = { error ->

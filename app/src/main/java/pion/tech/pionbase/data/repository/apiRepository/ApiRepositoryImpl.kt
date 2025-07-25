@@ -13,14 +13,14 @@ import pion.tech.pionbase.util.Result
 class ApiRepositoryImpl(
     private val apiInterface: ApiInterface,
 ) : ApiRepository {
-    override suspend fun getAppCategory(): Flow<Result<List<AppCategoryDtoModel>>> =
+    override fun getAppCategory(): Flow<Result<List<AppCategoryDtoModel>>> =
         flow<Result<List<AppCategoryDtoModel>>> {
             emit(Result.Success(apiInterface.getAppCategory().dataResponse))
         }.catch {
             emit(Result.Error(it))
         }.flowOn(Dispatchers.IO)
 
-    override suspend fun getTemplateData(categoryId: String): Flow<Result<List<TemplateDtoModel>>> =
+    override fun getTemplateData(categoryId: String): Flow<Result<List<TemplateDtoModel>>> =
         flow<Result<List<TemplateDtoModel>>> {
             emit(Result.Success(apiInterface.getAllTemplate(categoryId).dataResponse.map { it.customField }))
         }.catch {

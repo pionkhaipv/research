@@ -4,7 +4,7 @@ import android.view.View
 import com.piontech.core.base.BaseFragment
 import com.piontech.core.utils.collectFlowOnView
 import dagger.hilt.android.AndroidEntryPoint
-import pion.tech.pionbase.app.presentation.CommonViewModel
+import pion.tech.pionbase.app.CommonViewModel
 import pion.tech.pionbase.databinding.FragmentHomeBinding
 import pion.tech.pionbase.feature.home.adapter.DemoMultipleAdapter
 import pion.tech.pionbase.feature.home.dialog.DemoDialog
