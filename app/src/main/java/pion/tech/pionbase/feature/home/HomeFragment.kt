@@ -2,6 +2,7 @@ package pion.tech.pionbase.feature.home
 
 import android.view.View
 import com.piontech.core.base.BaseFragment
+import com.piontech.core.base.doActionWhenResume
 import com.piontech.core.utils.collectFlowOnView
 import dagger.hilt.android.AndroidEntryPoint
 import pion.tech.pionbase.app.CommonViewModel
@@ -27,10 +28,16 @@ class HomeFragment :
         initView()
         plusEvent()
         settingEvent()
+        notificationManagerEvent()
         onBackEvent()
 
         // Load installed apps
         viewModel.getInstalledApps()
+
+        // Check permissions when fragment resumes (e.g., returning from settings)
+        doActionWhenResume {
+            checkPermissionsOnResume()
+        }
     }
 
     override fun subscribeObserver(view: View) {

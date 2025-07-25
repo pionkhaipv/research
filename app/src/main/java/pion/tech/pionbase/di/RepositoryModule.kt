@@ -18,6 +18,8 @@ import pion.tech.pionbase.data.repository.installedAppRepository.InstalledAppsRe
 import pion.tech.pionbase.data.repository.installedAppRepository.InstalledAppsRepositoryImpl
 import pion.tech.pionbase.data.repository.languageRepository.LanguageRepository
 import pion.tech.pionbase.data.repository.languageRepository.LanguageRepositoryImpl
+import pion.tech.pionbase.data.repository.notificationRepository.NotificationRepository
+import pion.tech.pionbase.data.repository.notificationRepository.NotificationRepositoryImpl
 import pion.tech.pionbase.data.repository.remoteConfig.RemoteConfigRepository
 import pion.tech.pionbase.data.repository.remoteConfig.RemoteConfigRepositoryImpl
 import javax.inject.Singleton
@@ -46,4 +48,10 @@ class RepositoryModule {
     fun provideInstalledAppsRepository(
         @ApplicationContext context: Context,
     ): InstalledAppsRepository = InstalledAppsRepositoryImpl(context)
+
+    @Provides
+    @Singleton
+    fun provideNotificationRepository(
+        @ApplicationContext context: Context,
+    ): NotificationRepository = NotificationRepositoryImpl(context)
 }

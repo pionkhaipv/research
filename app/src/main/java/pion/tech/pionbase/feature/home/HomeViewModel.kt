@@ -32,6 +32,9 @@ class HomeViewModel
             MutableStateFlow<UiState<List<InstalledAppUIModel>>>(UiState.None)
         val installedAppsUiState = _installedAppsUiState.asStateFlow()
 
+        private val _waitingForNotificationPermissions = MutableStateFlow(false)
+        val waitingForNotificationPermissions = _waitingForNotificationPermissions.asStateFlow()
+
         fun plusValue() {
             _countValue.value += 1
         }
@@ -46,5 +49,13 @@ class HomeViewModel
                     dtoList.map { it.toPresentation() } 
                 }
             )
+        }
+
+        fun setWaitingForNotificationPermissions(waiting: Boolean) {
+            _waitingForNotificationPermissions.value = waiting
+        }
+
+        fun isWaitingForNotificationPermissions(): Boolean {
+            return _waitingForNotificationPermissions.value
         }
     }

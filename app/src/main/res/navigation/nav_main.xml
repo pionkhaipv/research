@@ -22,6 +22,9 @@
         <action
             android:id="@+id/action_homeFragment_to_settingFragment"
             app:destination="@id/settingFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_notificationManagerFragment"
+            app:destination="@id/notificationManagerFragment" />
     </fragment>
     <fragment
         android:id="@+id/languageFragment"
@@ -50,4 +53,9 @@
             android:id="@+id/action_settingFragment_to_languageFragment"
             app:destination="@id/languageFragment" />
     </fragment>
+    <fragment
+        android:id="@+id/notificationManagerFragment"
+        android:name="pion.tech.pionbase.feature.notificationManager.NotificationManagerFragment"
+        android:label="NotificationManagerFragment"
+        tools:layout="@layout/fragment_notification_manager" />
 </navigation>

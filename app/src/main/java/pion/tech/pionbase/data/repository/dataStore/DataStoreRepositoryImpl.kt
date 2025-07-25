@@ -6,6 +6,7 @@ import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.emptyPreferences
 import androidx.datastore.preferences.core.stringPreferencesKey
+import androidx.datastore.preferences.core.stringSetPreferencesKey
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
@@ -17,6 +18,8 @@ class DataStoreRepositoryImpl(
 ) : DataStoreRepository {
     private val isPremiumKey = booleanPreferencesKey("isPremiumKey")
     private val tokenKey = stringPreferencesKey("tokenKey")
+    private val blockedPackagesKey = stringSetPreferencesKey("blockedPackagesKey")
+    private val notificationMonitoringEnabledKey = booleanPreferencesKey("notificationMonitoringEnabledKey")
 
     override fun getIsPremium(): Flow<Result<Boolean>> =
         dataStore.data
@@ -49,6 +52,44 @@ class DataStoreRepositoryImpl(
         return try {
             dataStore.edit {
                 it[tokenKey] = token
+            }
+            Result.Success(Unit)
+        } catch (exception: Exception) {
+            Result.Error(exception)
+        }
+    }
+
+    override fun getBlockedPackages(): Flow<Result<Set<String>>> =
+        dataStore.data
+            .map { prefs ->
+                Result.Success(prefs[blockedPackagesKey] ?: emptySet()) as Result<Set<String>>
+            }.catch { exception ->
+                emit(Result.Error<Set<String>>(exception) as Result<Set<String>>)
+            }
+
+    override suspend fun setBlockedPackages(packages: Set<String>): Result<Unit> {
+        return try {
+            dataStore.edit {
+                it[blockedPackagesKey] = packages
+            }
+            Result.Success(Unit)
+        } catch (exception: Exception) {
+            Result.Error(exception)
+        }
+    }
+
+    override fun getNotificationMonitoringEnabled(): Flow<Result<Boolean>> =
+        dataStore.data
+            .map { prefs ->
+                Result.Success(prefs[notificationMonitoringEnabledKey] ?: true) as Result<Boolean>
+            }.catch { exception ->
+                emit(Result.Error<Boolean>(exception) as Result<Boolean>)
+            }
+
+    override suspend fun setNotificationMonitoringEnabled(enabled: Boolean): Result<Unit> {
+        return try {
+            dataStore.edit {
+                it[notificationMonitoringEnabledKey] = enabled
             }
             Result.Success(Unit)
         } catch (exception: Exception) {

@@ -2,6 +2,12 @@ Project Structure:
 Follow Google’s recommended app architecture, using only the UI Layer and Data Layer, skipping the Domain Layer.
 Always use a Repository with Hilt for data fetching and handling.
 
+No need to write code for testing.
+
+No need to build the project before submitting results.
+
+No need to write code for testing.
+
 Model Separation by Layer:
 
 The Data Layer uses DTO classes (e.g., TemplateDtoModel).
@@ -36,10 +42,6 @@ BaseListAdapter
 BaseViewModel
 
 Additional Notes:
-
-No need to write code for testing.
-
-No need to build the project before submitting results.
 
 Code must be easy to read and easy to maintain.
 

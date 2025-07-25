@@ -11,4 +11,13 @@ interface DataStoreRepository {
     fun getToken(): Flow<Result<String?>>
 
     suspend fun setToken(token: String): Result<Unit>
+
+    // Notification Manager methods
+    fun getBlockedPackages(): Flow<Result<Set<String>>>
+
+    suspend fun setBlockedPackages(packages: Set<String>): Result<Unit>
+
+    fun getNotificationMonitoringEnabled(): Flow<Result<Boolean>>
+
+    suspend fun setNotificationMonitoringEnabled(enabled: Boolean): Result<Unit>
 }
