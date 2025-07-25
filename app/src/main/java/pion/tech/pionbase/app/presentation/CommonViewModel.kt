@@ -5,17 +5,16 @@ import com.piontech.core.base.launchIO
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import pion.tech.pionbase.app.domain.repository.RemoteConfigRepository
 import pion.tech.pionbase.app.presentation.model.RemoteConfigUIModel
 import pion.tech.pionbase.app.presentation.model.toPresentation
-import pion.tech.pionbase.feature.home.domain.repository.ApiRepository
-import pion.tech.pionbase.feature.home.presetation.model.AppCategoryUIModel
-import pion.tech.pionbase.feature.home.presetation.model.TemplateUIModel
-import pion.tech.pionbase.feature.home.presetation.model.toPresentation
+import pion.tech.pionbase.data.model.appCategory.AppCategoryUIModel
+import pion.tech.pionbase.data.model.appCategory.toPresentation
+import pion.tech.pionbase.data.model.template.TemplateUIModel
+import pion.tech.pionbase.data.model.template.toPresentation
+import pion.tech.pionbase.data.repository.apiRepository.ApiRepository
+import pion.tech.pionbase.data.repository.remoteConfig.RemoteConfigRepository
 import pion.tech.pionbase.util.UiState
 import pion.tech.pionbase.util.handleApiCall
-import pion.tech.pionbase.util.onError
-import pion.tech.pionbase.util.onSuccess
 import javax.inject.Inject
 
 @HiltViewModel
@@ -52,7 +51,7 @@ class CommonViewModel
             handleApiCall(
                 stateFlow = _getCategoryUiState,
                 apiCall = { apiRepository.getAppCategory() },
-                transform = { data -> data.map { item -> item.toPresentation() } }
+                transform = { data -> data.map { item -> item.toPresentation() } },
             )
         }
 
@@ -60,7 +59,7 @@ class CommonViewModel
             handleApiCall(
                 stateFlow = _getTemplateUiState,
                 apiCall = { apiRepository.getTemplateData(categoryId) },
-                transform = { data -> data.map { item -> item.toPresentation() } }
+                transform = { data -> data.map { item -> item.toPresentation() } },
             )
         }
 

@@ -9,60 +9,41 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
-import pion.tech.pionbase.feature.home.data.api.ApiInterface
-import pion.tech.pionbase.feature.home.data.repository.ApiRepositoryImpl
-import pion.tech.pionbase.feature.home.data.repository.InstalledAppsRepositoryImpl
-import pion.tech.pionbase.feature.home.domain.repository.ApiRepository
-import pion.tech.pionbase.feature.home.domain.repository.InstalledAppsRepository
-import pion.tech.pionbase.feature.language.data.repository.LanguageRepositoryImpl
-import pion.tech.pionbase.feature.language.domain.repository.LanguageRepository
-import pion.tech.pionbase.app.data.repository.DataStoreRepositoryImpl
-import pion.tech.pionbase.app.data.repository.RemoteConfigRepositoryImpl
-import pion.tech.pionbase.app.domain.repository.DataStoreRepository
-import pion.tech.pionbase.app.domain.repository.RemoteConfigRepository
+import pion.tech.pionbase.data.remote.ApiInterface
+import pion.tech.pionbase.data.repository.apiRepository.ApiRepository
+import pion.tech.pionbase.data.repository.apiRepository.ApiRepositoryImpl
+import pion.tech.pionbase.data.repository.dataStore.DataStoreRepository
+import pion.tech.pionbase.data.repository.dataStore.DataStoreRepositoryImpl
+import pion.tech.pionbase.data.repository.installedAppRepository.InstalledAppsRepository
+import pion.tech.pionbase.data.repository.installedAppRepository.InstalledAppsRepositoryImpl
+import pion.tech.pionbase.data.repository.languageRepository.LanguageRepository
+import pion.tech.pionbase.data.repository.languageRepository.LanguageRepositoryImpl
+import pion.tech.pionbase.data.repository.remoteConfig.RemoteConfigRepository
+import pion.tech.pionbase.data.repository.remoteConfig.RemoteConfigRepositoryImpl
 import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
 class RepositoryModule {
+    @Provides
+    @Singleton
+    fun providePreferencesRepository(dataStore: DataStore<Preferences>): DataStoreRepository = DataStoreRepositoryImpl(dataStore)
 
     @Provides
     @Singleton
-    fun providePreferencesRepository(
-        dataStore: DataStore<Preferences>
-    ): DataStoreRepository {
-        return DataStoreRepositoryImpl(dataStore)
-    }
+    fun provideLanguageRepository(): LanguageRepository = LanguageRepositoryImpl()
 
     @Provides
     @Singleton
-    fun provideLanguageRepository(
-    ): LanguageRepository {
-        return LanguageRepositoryImpl()
-    }
+    fun provideRemoteConfigRepository(remoteConfig: FirebaseRemoteConfig): RemoteConfigRepository = RemoteConfigRepositoryImpl(remoteConfig)
 
     @Provides
     @Singleton
-    fun provideRemoteConfigRepository(
-        remoteConfig: FirebaseRemoteConfig
-    ): RemoteConfigRepository {
-        return RemoteConfigRepositoryImpl(remoteConfig)
-    }
-
-    @Provides
-    @Singleton
-    fun provideApiRepository(
-        apiInterface: ApiInterface
-    ): ApiRepository {
-        return ApiRepositoryImpl(apiInterface)
-    }
+    fun provideApiRepository(apiInterface: ApiInterface): ApiRepository = ApiRepositoryImpl(apiInterface)
 
     @Provides
     @Singleton
     fun provideInstalledAppsRepository(
-        @ApplicationContext context: Context
-    ): InstalledAppsRepository {
-        return InstalledAppsRepositoryImpl(context)
-    }
-
+        @ApplicationContext context: Context,
+    ): InstalledAppsRepository = InstalledAppsRepositoryImpl(context)
 }

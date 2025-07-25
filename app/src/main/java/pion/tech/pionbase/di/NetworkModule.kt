@@ -14,7 +14,7 @@ import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import pion.tech.pionbase.BuildConfig
-import pion.tech.pionbase.feature.home.data.api.ApiInterface
+import pion.tech.pionbase.data.remote.ApiInterface
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.io.File
@@ -29,11 +29,9 @@ import javax.net.ssl.SSLSocketFactory
 import javax.net.ssl.TrustManager
 import javax.net.ssl.X509TrustManager
 
-
 @Module
 @InstallIn(SingletonComponent::class)
 class NetworkModule {
-
     companion object {
         private const val DEFAULT_TIMEOUT = 30
         private const val CACHE_SIZE = 10 * 1024 * 1024L // 10 MB
@@ -42,30 +40,33 @@ class NetworkModule {
 
     @Provides
     @Singleton
-    fun provideGson(): Gson {
-        return GsonBuilder().setLenient().create()
-    }
+    fun provideGson(): Gson = GsonBuilder().setLenient().create()
 
     @Provides
     @Singleton
     fun provideLoggingInterceptor(): HttpLoggingInterceptor {
         val loggingInterceptor = HttpLoggingInterceptor()
-        loggingInterceptor.level = if (BuildConfig.DEBUG)
-            HttpLoggingInterceptor.Level.BODY
-        else
-            HttpLoggingInterceptor.Level.NONE
+        loggingInterceptor.level =
+            if (BuildConfig.DEBUG) {
+                HttpLoggingInterceptor.Level.BODY
+            } else {
+                HttpLoggingInterceptor.Level.NONE
+            }
         return loggingInterceptor
     }
 
     @Provides
     @Singleton
-    fun provideHeaderInterceptor(): Interceptor = Interceptor { chain ->
-        val request = chain.request()
-            .newBuilder()
-            .header("Accept", "application/json")
-            .build()
-        chain.proceed(request)
-    }
+    fun provideHeaderInterceptor(): Interceptor =
+        Interceptor { chain ->
+            val request =
+                chain
+                    .request()
+                    .newBuilder()
+                    .header("Accept", "application/json")
+                    .build()
+            chain.proceed(request)
+        }
 
     @Provides
     @Singleton
@@ -73,14 +74,14 @@ class NetworkModule {
         cache: Cache?,
         loggingInterceptor: HttpLoggingInterceptor,
         headerInterceptor: Interceptor,
-        @ApplicationContext application: Context
-    ): OkHttpClient {
-        return OkHttpClient.Builder()
+        @ApplicationContext application: Context,
+    ): OkHttpClient =
+        OkHttpClient
+            .Builder()
             .sslSocketFactory(
                 provideSSLSocketFactory()!!,
-                provideUnTrustManager()[0] as X509TrustManager
-            )
-            .cache(cache)
+                provideUnTrustManager()[0] as X509TrustManager,
+            ).cache(cache)
             .addInterceptor(headerInterceptor)
             .addInterceptor(loggingInterceptor)
             .addInterceptor(ChuckerInterceptor(application))
@@ -88,7 +89,6 @@ class NetworkModule {
             .readTimeout(DEFAULT_TIMEOUT.toLong(), TimeUnit.SECONDS)
             .writeTimeout(DEFAULT_TIMEOUT.toLong(), TimeUnit.SECONDS)
             .build()
-    }
 
     @Singleton
     @Provides
@@ -110,38 +110,46 @@ class NetworkModule {
 
     @Singleton
     @Provides
-    fun provideUnTrustManager(): Array<TrustManager> {
-        return arrayOf(
+    fun provideUnTrustManager(): Array<TrustManager> =
+        arrayOf(
             object : X509TrustManager {
-                override fun checkClientTrusted(chain: Array<X509Certificate>, authType: String) {}
-                override fun checkServerTrusted(chain: Array<X509Certificate>, authType: String) {}
-                override fun getAcceptedIssuers(): Array<X509Certificate> {
-                    return arrayOf()
-                }
-            }
+                override fun checkClientTrusted(
+                    chain: Array<X509Certificate>,
+                    authType: String,
+                ) {}
+
+                override fun checkServerTrusted(
+                    chain: Array<X509Certificate>,
+                    authType: String,
+                ) {}
+
+                override fun getAcceptedIssuers(): Array<X509Certificate> = arrayOf()
+            },
         )
-    }
 
     @Provides
     @Singleton
-    fun provideCache(@ApplicationContext application: Context): Cache {
+    fun provideCache(
+        @ApplicationContext application: Context,
+    ): Cache {
         val httpCacheDirectory = File(application.cacheDir, CACHE_DIR)
         return Cache(httpCacheDirectory, CACHE_SIZE)
     }
 
     @Provides
     @Singleton
-    fun provideRetrofit(gson: Gson, client: OkHttpClient): Retrofit {
-        return Retrofit.Builder()
+    fun provideRetrofit(
+        gson: Gson,
+        client: OkHttpClient,
+    ): Retrofit =
+        Retrofit
+            .Builder()
             .baseUrl(BuildConfig.BASE_URL)
             .client(client)
             .addConverterFactory(GsonConverterFactory.create(gson))
             .build()
-    }
 
     @Singleton
     @Provides
-    fun provideApiInterface(retrofit: Retrofit): ApiInterface {
-        return retrofit.create(ApiInterface::class.java)
-    }
+    fun provideApiInterface(retrofit: Retrofit): ApiInterface = retrofit.create(ApiInterface::class.java)
 }
