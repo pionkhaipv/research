@@ -8,6 +8,8 @@ No need to build the project before submitting results.
 
 No need to write code for testing.
 
+No need to test and document the solution.
+
 Model Separation by Layer:
 
 The Data Layer uses DTO classes (e.g., TemplateDtoModel).
