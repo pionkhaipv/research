@@ -28,6 +28,9 @@
         <action
             android:id="@+id/action_homeFragment_to_runningAppsFragment"
             app:destination="@id/runningAppsFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_popupStatisticsFragment"
+            app:destination="@id/popupStatisticsFragment" />
     </fragment>
     <fragment
         android:id="@+id/languageFragment"
@@ -66,4 +69,9 @@
         android:name="pion.tech.pionbase.feature.runningapps.RunningAppsFragment"
         android:label="RunningAppsFragment"
         tools:layout="@layout/fragment_running_apps" />
+    <fragment
+        android:id="@+id/popupStatisticsFragment"
+        tools:layout="@layout/fragment_popup_statistics"
+        android:name="pion.tech.pionbase.feature.popup.PopupStatisticsFragment"
+        android:label="PopupStatisticsFragment" />
 </navigation>

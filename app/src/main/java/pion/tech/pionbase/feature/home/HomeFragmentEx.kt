@@ -58,7 +58,8 @@ fun HomeFragment.checkNotificationPermissionsAndNavigate() {
         navigator.navigateTo(R.id.action_homeFragment_to_notificationManagerFragment)
     } else {
         // Permissions not granted, show dialog and request permissions
-        val missingPermissions = NotificationPermissionManager.getMissingNotificationPermissions(requireContext())
+        val missingPermissions =
+            NotificationPermissionManager.getMissingNotificationPermissions(requireContext())
         val permissionMessage =
             "To use Notification Manager, please grant the following permissions:\n\n" +
                 missingPermissions.joinToString("\n• ", "• ")
@@ -105,19 +106,27 @@ fun HomeFragment.checkPermissionsOnResume() {
     }
 }
 
+fun HomeFragment.adDetectorEvent() {
+    binding.btnAdDetector.setPreventDoubleClickScaleView {
+        navigator.navigateTo(R.id.action_homeFragment_to_popupStatisticsFragment)
+    }
+}
+
 fun HomeFragment.checkRunningAppsPermissionsAndNavigate() {
     if (RunningAppsPermissionManager.areAllRunningAppsPermissionsGranted(requireContext())) {
         // All permissions granted, navigate to running apps
         navigator.navigateTo(R.id.action_homeFragment_to_runningAppsFragment)
     } else {
         // Permissions not granted, show dialog and request permissions
-        val missingPermissions = RunningAppsPermissionManager.getMissingRunningAppsPermissions(requireContext())
-        val permissionMessage = if (missingPermissions.isNotEmpty()) {
-            "To use Running Apps Manager, please grant the following permissions:\n\n" +
-                missingPermissions.joinToString("\n• ", "• ")
-        } else {
-            RunningAppsPermissionManager.getPermissionExplanation()
-        }
+        val missingPermissions =
+            RunningAppsPermissionManager.getMissingRunningAppsPermissions(requireContext())
+        val permissionMessage =
+            if (missingPermissions.isNotEmpty()) {
+                "To use Running Apps Manager, please grant the following permissions:\n\n" +
+                    missingPermissions.joinToString("\n• ", "• ")
+            } else {
+                RunningAppsPermissionManager.getPermissionExplanation()
+            }
 
         displayToast("$permissionMessage\n\nOpening settings...")
 

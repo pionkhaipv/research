@@ -1,9 +1,6 @@
 package pion.tech.pionbase.feature.home
 
-import android.app.ActivityManager
-import android.content.Context.ACTIVITY_SERVICE
 import android.view.View
-import androidx.core.content.ContextCompat.getSystemService
 import com.piontech.core.base.BaseFragment
 import com.piontech.core.base.doActionWhenResume
 import com.piontech.core.utils.collectFlowOnView
@@ -26,14 +23,13 @@ class HomeFragment :
     val adapter = DemoMultipleAdapter()
 
     override fun init(view: View) {
-        logger.logScreen("home_show")
-        logger.logEvent("home_view")
         initView()
         plusEvent()
         settingEvent()
         notificationManagerEvent()
         runningAppsEvent()
         onBackEvent()
+        adDetectorEvent()
 
         // Load installed apps
         viewModel.getInstalledApps()

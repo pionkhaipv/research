@@ -10,12 +10,12 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import pion.tech.pionbase.data.database.AppDatabase
 import pion.tech.pionbase.data.local.dao.DummyDAO
+import pion.tech.pionbase.data.local.dao.PopupDetectionDAO
 import javax.inject.Singleton
 
 @InstallIn(SingletonComponent::class)
 @Module
 object RoomModule {
-
     @Provides
     @Singleton
     fun provideDatabase(
@@ -34,4 +34,8 @@ object RoomModule {
     @Provides
     @Singleton
     fun provideDummyDao(db: AppDatabase): DummyDAO = db.dummyDAO()
+
+    @Provides
+    @Singleton
+    fun providePopupDetectionDao(db: AppDatabase): PopupDetectionDAO = db.popupDetectionDAO()
 }

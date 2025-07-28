@@ -60,6 +60,14 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/btn_notification_manager" />
 
+    <Button
+        android:id="@+id/btn_ad_detector"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Go to ad detector"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/btn_running_apps"/>
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_main"
         android:layout_width="match_parent"
