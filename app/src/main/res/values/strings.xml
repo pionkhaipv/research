@@ -34,4 +34,12 @@
     <string name="enable_accessibility_service">Bật dịch vụ phát hiện popup</string>
     <string name="accessibility_service_disabled">Dịch vụ phát hiện popup chưa được bật</string>
     <string name="go_to_accessibility_settings">Đi tới cài đặt</string>
+    <string name="popup_detector">Popup Detector</string>
+    <string name="scan_popup_ad">(Scan Popup AD)</string>
+    <string name="check_hidden_apps">Check Hidden Apps</string>
+    <string name="notification_control">Notification Control</string>
+    <string name="hibernate_app">Hibernate App</string>
+    <string name="show_concerns">Show Concerns</string>
+    <string name="uncover_hidden_threats_our_deep_scan_finds_spyware_and_malicious_apps_that_operate_by_being_invisible_or_disguised">Uncover hidden threats. Our deep scan finds spyware and malicious apps that operate by being invisible or disguised.</string>
+    <string name="start_scan">Start Scan</string>
 </resources>

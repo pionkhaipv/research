@@ -71,38 +71,6 @@ class HomeFragment :
                 },
             )
         }
-
-        commonViewModel.getCategoryUiState.collectFlowOnView(viewLifecycleOwner) {
-            it.handleUiState(
-                onLoading = { showHideLoading(true) },
-                onSuccess = { listAppCategory ->
-                    val templateCategoryId =
-                        listAppCategory.firstOrNull { item -> item.name == "Template" }?.id
-                    if (templateCategoryId != null) {
-                        commonViewModel.getTemplate(templateCategoryId)
-                    }
-                },
-                onError = { exception ->
-                    showHideLoading(false)
-                    logger.logEvent("get_category_error") {
-                        putString("error_message", exception.message ?: "Unknown error")
-                    }
-                },
-            )
-        }
-
-        commonViewModel.getTemplateUiState.collectFlowOnView(viewLifecycleOwner) {
-            it.handleUiState(
-                onLoading = { showHideLoading(true) },
-                onSuccess = { showHideLoading(false) },
-                onError = { exception ->
-                    showHideLoading(false)
-                    logger.logEvent("get_template_error") {
-                        putString("error_message", exception.message ?: "Unknown error")
-                    }
-                },
-            )
-        }
     }
 
     override fun onDialogPositiveClick() {

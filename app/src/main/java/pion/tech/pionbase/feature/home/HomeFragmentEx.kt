@@ -9,7 +9,15 @@ import pion.tech.pionbase.util.setPreventDoubleClick
 import pion.tech.pionbase.util.setPreventDoubleClickScaleView
 
 fun HomeFragment.initView() {
-    commonViewModel.getApiData()
+    binding.btnCheckHiddenApps.tvFeatureName.text = getString(R.string.check_hidden_apps)
+    binding.btnNotificationControl.tvFeatureName.text = getString(R.string.notification_control)
+    binding.btnHibernateApp.tvFeatureName.text = getString(R.string.hibernate_app)
+    binding.btnShowConcern.tvFeatureName.text = getString(R.string.show_concerns)
+
+    binding.btnCheckHiddenApps.ivIconFeature.setImageResource(R.drawable.ic_check_hidden_app_home)
+    binding.btnNotificationControl.ivIconFeature.setImageResource(R.drawable.ic_notification_control_home)
+    binding.btnHibernateApp.ivIconFeature.setImageResource(R.drawable.ic_hibernate_app_home)
+    binding.btnShowConcern.ivIconFeature.setImageResource(R.drawable.ic_show_concern_home)
 }
 
 fun HomeFragment.plusEvent() {
@@ -27,13 +35,13 @@ fun HomeFragment.backEvent() {
 }
 
 fun HomeFragment.checkHiddenAppsEvent() {
-    binding.btnCheckHiddenApps.setPreventDoubleClick {
+    binding.btnCheckHiddenApps.root.setPreventDoubleClick {
         navigator.navigateTo(R.id.action_homeFragment_to_scanHiddenAppFragment)
     }
 }
 
 fun HomeFragment.showConcernEvent() {
-    binding.btnShowConcern.setPreventDoubleClick {
+    binding.btnShowConcern.root.setPreventDoubleClick {
         navigator.navigateTo(R.id.action_homeFragment_to_scanConcernAppFragment)
     }
 }
@@ -45,15 +53,15 @@ fun HomeFragment.settingEvent() {
 }
 
 fun HomeFragment.notificationManagerEvent() {
-    binding.btnNotificationManager.setPreventDoubleClickScaleView {
+    binding.btnNotificationControl.root.setPreventDoubleClickScaleView {
         checkNotificationPermissionsAndNavigate()
     }
 }
 
 fun HomeFragment.runningAppsEvent() {
-    binding.btnRunningApps.setPreventDoubleClickScaleView {
-        checkRunningAppsPermissionsAndNavigate()
-    }
+//    binding.btnRunningApps.setPreventDoubleClickScaleView {
+//        checkRunningAppsPermissionsAndNavigate()
+//    }
 }
 
 fun HomeFragment.checkNotificationPermissionsAndNavigate() {
@@ -111,7 +119,7 @@ fun HomeFragment.checkPermissionsOnResume() {
 }
 
 fun HomeFragment.adDetectorEvent() {
-    binding.btnAdDetector.setPreventDoubleClickScaleView {
+    binding.btnPopupDetector.setPreventDoubleClickScaleView {
         navigator.navigateTo(R.id.action_homeFragment_to_popupStatisticsFragment)
     }
 }
