@@ -24,6 +24,10 @@ import pion.tech.pionbase.data.repository.remoteConfig.RemoteConfigRepository
 import pion.tech.pionbase.data.repository.remoteConfig.RemoteConfigRepositoryImpl
 import pion.tech.pionbase.data.repository.runningAppsRepository.RunningAppsRepository
 import pion.tech.pionbase.data.repository.runningAppsRepository.RunningAppsRepositoryImpl
+import pion.tech.pionbase.data.repository.hiddenAppRepository.HiddenAppsRepository
+import pion.tech.pionbase.data.repository.hiddenAppRepository.HiddenAppsRepositoryImpl
+import pion.tech.pionbase.data.repository.concernAppRepository.ConcernAppsRepository
+import pion.tech.pionbase.data.repository.concernAppRepository.ConcernAppsRepositoryImpl
 import javax.inject.Singleton
 
 @Module
@@ -62,4 +66,16 @@ class RepositoryModule {
     fun provideRunningAppsRepository(
         @ApplicationContext context: Context,
     ): RunningAppsRepository = RunningAppsRepositoryImpl(context)
+
+    @Provides
+    @Singleton
+    fun provideHiddenAppsRepository(
+        @ApplicationContext context: Context,
+    ): HiddenAppsRepository = HiddenAppsRepositoryImpl(context)
+
+    @Provides
+    @Singleton
+    fun provideConcernAppsRepository(
+        @ApplicationContext context: Context,
+    ): ConcernAppsRepository = ConcernAppsRepositoryImpl(context)
 }

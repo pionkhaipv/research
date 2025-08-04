@@ -31,6 +31,12 @@
         <action
             android:id="@+id/action_homeFragment_to_popupStatisticsFragment"
             app:destination="@id/popupStatisticsFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_scanHiddenAppFragment"
+            app:destination="@id/scanHiddenAppFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_scanConcernAppFragment"
+            app:destination="@id/scanConcernAppFragment" />
     </fragment>
     <fragment
         android:id="@+id/languageFragment"
@@ -74,4 +80,32 @@
         tools:layout="@layout/fragment_popup_statistics"
         android:name="pion.tech.pionbase.feature.popup.PopupStatisticsFragment"
         android:label="PopupStatisticsFragment" />
+    <fragment
+        android:id="@+id/scanHiddenAppFragment"
+        android:name="pion.tech.pionbase.feature.scanHiddenApp.ScanHiddenAppFragment"
+        android:label="ScanHiddenAppFragment"
+        tools:layout="@layout/fragment_scan_hidden_app">
+        <action
+            android:id="@+id/action_scanHiddenAppFragment_to_resultHiddenAppFragment"
+            app:destination="@id/resultHiddenAppFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/resultHiddenAppFragment"
+        android:name="pion.tech.pionbase.feature.resultHiddenApp.ResultHiddenAppFragment"
+        android:label="ResultHiddenAppFragment"
+        tools:layout="@layout/fragment_result_hidden_app" />
+    <fragment
+        android:id="@+id/scanConcernAppFragment"
+        android:name="pion.tech.pionbase.feature.scanConcernApp.ScanConcernAppFragment"
+        android:label="ScanConcernAppFragment"
+        tools:layout="@layout/fragment_scan_concern_app">
+        <action
+            android:id="@+id/action_scanConcernAppFragment_to_resultConcernAppFragment"
+            app:destination="@id/resultConcernAppFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/resultConcernAppFragment"
+        android:name="pion.tech.pionbase.feature.resultConcernApp.ResultConcernAppFragment"
+        android:label="ResultConcernAppFragment"
+        tools:layout="@layout/fragment_result_concern_app" />
 </navigation>

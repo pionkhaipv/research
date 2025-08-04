@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+    </data>
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="4dp"
+        app:cardCornerRadius="8dp"
+        app:cardElevation="2dp">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="12dp">
+
+            <ImageView
+                android:id="@+id/iv_app_icon"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:scaleType="centerCrop"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:src="@android:drawable/sym_def_app_icon" />
+
+            <TextView
+                android:id="@+id/tv_app_name"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="12dp"
+                android:layout_marginEnd="8dp"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toStartOf="@id/view_danger_indicator"
+                app:layout_constraintStart_toEndOf="@id/iv_app_icon"
+                app:layout_constraintTop_toTopOf="@id/iv_app_icon"
+                tools:text="App Name" />
+
+            <TextView
+                android:id="@+id/tv_package_name"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="12dp"
+                android:layout_marginTop="4dp"
+                android:layout_marginEnd="8dp"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:textSize="12sp"
+                android:textColor="@android:color/darker_gray"
+                app:layout_constraintEnd_toStartOf="@id/view_danger_indicator"
+                app:layout_constraintStart_toEndOf="@id/iv_app_icon"
+                app:layout_constraintTop_toBottomOf="@id/tv_app_name"
+                tools:text="com.example.app" />
+
+            <TextView
+                android:id="@+id/tv_permissions_count"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="12dp"
+                android:layout_marginTop="4dp"
+                android:layout_marginEnd="8dp"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:textSize="12sp"
+                android:textColor="@android:color/darker_gray"
+                app:layout_constraintEnd_toStartOf="@id/view_danger_indicator"
+                app:layout_constraintStart_toEndOf="@id/iv_app_icon"
+                app:layout_constraintTop_toBottomOf="@id/tv_package_name"
+                tools:text="5 permissions" />
+
+            <View
+                android:id="@+id/view_danger_indicator"
+                android:layout_width="16dp"
+                android:layout_height="16dp"
+                android:layout_marginEnd="8dp"
+                android:background="@drawable/circle_shape"
+                app:layout_constraintBottom_toBottomOf="@id/iv_app_icon"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@id/iv_app_icon" />
+
+            <TextView
+                android:id="@+id/tv_danger_level"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="@id/view_danger_indicator"
+                app:layout_constraintEnd_toStartOf="@id/view_danger_indicator"
+                app:layout_constraintTop_toTopOf="@id/view_danger_indicator"
+                tools:text="SAFE" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.cardview.widget.CardView>
+</layout>

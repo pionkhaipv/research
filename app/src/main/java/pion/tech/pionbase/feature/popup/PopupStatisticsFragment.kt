@@ -98,11 +98,14 @@ class PopupStatisticsFragment :
     private fun setupPopupDetection() {
         val serviceStatus = AccessibilityServiceHelper.getServiceStatus(requireContext())
 
+        Timber.d("Service status check - isServiceEnabled: ${serviceStatus.isServiceEnabled}, isAccessibilityEnabled: ${serviceStatus.isAccessibilityEnabled}, canDetectPopups: ${serviceStatus.canDetectPopups}")
+
         if (!serviceStatus.canDetectPopups) {
             // Hiển thị dialog yêu cầu bật AccessibilityService
+            Timber.w("Popup detection service is not ready - showing enable dialog")
             showEnableAccessibilityDialog()
         } else {
-            Timber.d("Dịch vụ phát hiện popup đã sẵn sàng")
+            Timber.i("Dịch vụ phát hiện popup đã sẵn sàng và đang hoạt động")
         }
     }
 

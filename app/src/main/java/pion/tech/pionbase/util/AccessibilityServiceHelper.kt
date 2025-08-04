@@ -16,7 +16,7 @@ object AccessibilityServiceHelper {
         val enabledServices = accessibilityManager.getEnabledAccessibilityServiceList(AccessibilityServiceInfo.FEEDBACK_ALL_MASK)
 
         return enabledServices.any { service ->
-            service.resolveInfo.serviceInfo.name == "pion.tech.pionbase.service.PopupDetectionService" &&
+            service.resolveInfo.serviceInfo.name == "pion.tech.pionbase.service.popupdetection.PopupDetectionService" &&
                 service.resolveInfo.serviceInfo.packageName == context.packageName
         }
     }

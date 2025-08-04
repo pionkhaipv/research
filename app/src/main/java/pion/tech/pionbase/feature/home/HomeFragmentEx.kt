@@ -5,24 +5,16 @@ import pion.tech.pionbase.feature.home.bottomSheet.DemoBottomSheet
 import pion.tech.pionbase.util.NotificationPermissionManager
 import pion.tech.pionbase.util.RunningAppsPermissionManager
 import pion.tech.pionbase.util.displayToast
+import pion.tech.pionbase.util.setPreventDoubleClick
 import pion.tech.pionbase.util.setPreventDoubleClickScaleView
 
 fun HomeFragment.initView() {
-    binding.rvMain.adapter = adapter
     commonViewModel.getApiData()
 }
 
 fun HomeFragment.plusEvent() {
     val listString = listOf("so1", "so2", "so3", "so4", "so5")
     adapter.submitList(listString)
-    binding.btnPlus.setPreventDoubleClickScaleView {
-        viewModel.plusValue()
-        val bottomSheet = DemoBottomSheet()
-        bottomSheet.show(childFragmentManager)
-//        val dialog = DemoDialog.newInstance(dummyTitle = "Day la param1")
-//        dialog.setListener(this)
-//        dialog.show(childFragmentManager)
-    }
 }
 
 fun HomeFragment.onBackEvent() {
@@ -32,6 +24,18 @@ fun HomeFragment.onBackEvent() {
 }
 
 fun HomeFragment.backEvent() {
+}
+
+fun HomeFragment.checkHiddenAppsEvent() {
+    binding.btnCheckHiddenApps.setPreventDoubleClick {
+        navigator.navigateTo(R.id.action_homeFragment_to_scanHiddenAppFragment)
+    }
+}
+
+fun HomeFragment.showConcernEvent() {
+    binding.btnShowConcern.setPreventDoubleClick {
+        navigator.navigateTo(R.id.action_homeFragment_to_scanConcernAppFragment)
+    }
 }
 
 fun HomeFragment.settingEvent() {

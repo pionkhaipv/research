@@ -12,7 +12,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import pion.tech.pionbase.data.local.dao.PopupDetectionDAO
 import pion.tech.pionbase.data.model.popupDetection.PopupDetectionEntity
-import pion.tech.pionbase.service.PopupNotificationHelper
 
 /**
  * Manager class for handling popup detection logic and reporting
@@ -32,9 +31,9 @@ class PopupDetectionManager(
         const val EXTRA_POPUP_TYPE = "popup_type"
         const val EXTRA_DETECTION_TIME = "detection_time"
 
-        // Throttling constants
-        const val ANALYSIS_THROTTLE_MS = 500L
-        const val MIN_TIME_BETWEEN_SAME_PACKAGE_MS = 1000L
+        // Throttling constants - reduced for better detection
+        const val ANALYSIS_THROTTLE_MS = 300L
+        const val MIN_TIME_BETWEEN_SAME_PACKAGE_MS = 500L
     }
 
     private val handler = Handler(Looper.getMainLooper())

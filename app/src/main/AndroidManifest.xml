@@ -61,7 +61,7 @@
 
         <!-- AccessibilityService để phát hiện popup quảng cáo -->
         <service
-            android:name=".service.PopupDetectionService"
+            android:name=".service.popupdetection.PopupDetectionService"
             android:exported="false"
             android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE">
             <intent-filter>

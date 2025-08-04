@@ -63,6 +63,20 @@ object AdPatternDetector {
             "OfferDialog",
             "RatingDialog",
             "FeedbackDialog",
+            // Additional common patterns
+            "AdView",
+            "AdContainer",
+            "AdFrame",
+            "AdLayout",
+            "PopupView",
+            "OverlayView",
+            "ModalView",
+            "InterstitialView",
+            "BannerView",
+            "VideoView",
+            "WebDialog",
+            "CustomView",
+            "FullScreenView",
         )
 
     private val AD_ACTIVITY_PATTERNS =

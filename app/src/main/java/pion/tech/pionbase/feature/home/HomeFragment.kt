@@ -28,6 +28,8 @@ class HomeFragment :
         settingEvent()
         notificationManagerEvent()
         runningAppsEvent()
+        checkHiddenAppsEvent()
+        showConcernEvent()
         onBackEvent()
         adDetectorEvent()
 

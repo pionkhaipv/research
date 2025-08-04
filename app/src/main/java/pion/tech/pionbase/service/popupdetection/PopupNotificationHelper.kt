@@ -1,4 +1,4 @@
-package pion.tech.pionbase.service
+package pion.tech.pionbase.service.popupdetection
 
 import android.app.Notification
 import android.app.NotificationChannel
@@ -10,6 +10,9 @@ import android.os.Build
 import androidx.core.app.NotificationCompat
 import pion.tech.pionbase.R
 import pion.tech.pionbase.app.MainActivity
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 /**
  * Helper class để tạo và quản lý notification cho popup detection
@@ -57,9 +60,8 @@ object PopupNotificationHelper {
             )
 
         val currentTime =
-            java.text
-                .SimpleDateFormat("HH:mm:ss", java.util.Locale.getDefault())
-                .format(java.util.Date())
+            SimpleDateFormat("HH:mm:ss", Locale.getDefault())
+                .format(Date())
 
         val notification =
             NotificationCompat
@@ -76,7 +78,8 @@ object PopupNotificationHelper {
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT)
                 .build()
 
-        val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        val notificationManager =
+            context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         notificationManager.notify(NOTIFICATION_ID, notification)
     }
 
