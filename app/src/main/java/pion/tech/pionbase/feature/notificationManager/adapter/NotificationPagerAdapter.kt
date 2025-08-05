@@ -3,7 +3,7 @@ package pion.tech.pionbase.feature.notificationManager.adapter
 import androidx.fragment.app.Fragment
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import pion.tech.pionbase.feature.notificationManager.notificationBlock.NotificationBlockFragment
-import pion.tech.pionbase.feature.notificationManager.recentNotifications.RecentNotificationsFragment
+import pion.tech.pionbase.feature.notificationManager.notificationStats.NotificationStatsFragment
 
 class NotificationPagerAdapter(
     fragment: Fragment,
@@ -12,7 +12,7 @@ class NotificationPagerAdapter(
 
     override fun createFragment(position: Int): Fragment =
         when (position) {
-            0 -> RecentNotificationsFragment()
+            0 -> NotificationStatsFragment()
             1 -> NotificationBlockFragment()
             else -> throw IllegalArgumentException("Invalid position: $position")
         }

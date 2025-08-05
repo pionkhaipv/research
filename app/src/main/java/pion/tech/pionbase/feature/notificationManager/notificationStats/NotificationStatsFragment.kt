@@ -1,4 +1,4 @@
-package pion.tech.pionbase.feature.notificationManager.recentNotifications
+package pion.tech.pionbase.feature.notificationManager.notificationStats
 
 import android.view.View
 import com.piontech.core.base.BaseFragment
@@ -10,13 +10,12 @@ import pion.tech.pionbase.util.displayToast
 import pion.tech.pionbase.util.handleUiState
 
 @AndroidEntryPoint
-class RecentNotificationsFragment :
-    BaseFragment<FragmentRecentNotificationsBinding, RecentNotificationsViewModel, CommonViewModel>(
+class NotificationStatsFragment :
+    BaseFragment<FragmentRecentNotificationsBinding, NotificationStatsViewModel, CommonViewModel>(
         FragmentRecentNotificationsBinding::inflate,
-        RecentNotificationsViewModel::class.java,
+        NotificationStatsViewModel::class.java,
         CommonViewModel::class.java,
     ) {
-
     override fun init(view: View) {
         logger.logScreen("recent_notifications_show")
         initView()

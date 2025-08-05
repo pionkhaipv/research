@@ -1,4 +1,4 @@
-package pion.tech.pionbase.feature.notificationManager.recentNotifications
+package pion.tech.pionbase.feature.notificationManager.notificationStats
 
 import com.piontech.core.base.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -12,12 +12,11 @@ import pion.tech.pionbase.util.handleApiCall
 import javax.inject.Inject
 
 @HiltViewModel
-class RecentNotificationsViewModel
+class NotificationStatsViewModel
     @Inject
     constructor(
         private val notificationRepository: NotificationRepository,
     ) : BaseViewModel() {
-
         private val _recentNotificationsUiState =
             MutableStateFlow<UiState<List<NotificationUIModel>>>(UiState.None)
         val recentNotificationsUiState = _recentNotificationsUiState.asStateFlow()
@@ -26,7 +25,7 @@ class RecentNotificationsViewModel
             handleApiCall(
                 stateFlow = _recentNotificationsUiState,
                 apiCall = { notificationRepository.getRecentNotifications() },
-                transform = { dtoList -> dtoList.map { it.toPresentation() } }
+                transform = { dtoList -> dtoList.map { it.toPresentation() } },
             )
         }
     }

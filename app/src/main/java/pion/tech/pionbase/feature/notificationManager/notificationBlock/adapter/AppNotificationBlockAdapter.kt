@@ -1,5 +1,7 @@
 package pion.tech.pionbase.feature.notificationManager.notificationBlock.adapter
 
+import android.annotation.SuppressLint
+import android.view.MotionEvent
 import com.piontech.core.base.BaseListAdapter
 import com.piontech.core.base.createDiffCallback
 import pion.tech.pionbase.R
@@ -30,6 +32,7 @@ class AppNotificationBlockAdapter :
 
     override fun getLayoutRes(viewType: Int): Int = R.layout.item_app_notification_block
 
+    @SuppressLint("ClickableViewAccessibility")
     override fun bindView(
         binding: ItemAppNotificationBlockBinding,
         item: AppNotificationPermissionUIModel,
@@ -47,6 +50,15 @@ class AppNotificationBlockAdapter :
 
         binding.switchNotification.isClickable = false
 
+        binding.switchNotification.setOnTouchListener { _, event ->
+            if (event.action == MotionEvent.ACTION_MOVE) {
+                // Chặn drag
+                true
+            } else {
+                // Cho phép xử lý bình thường các sự kiện khác (click)
+                false
+            }
+        }
         binding.switchNotification.setPreventDoubleClick {
             listener?.onTogglePermission(item, !binding.switchNotification.isChecked)
             if (binding.switchNotification.isChecked) {
