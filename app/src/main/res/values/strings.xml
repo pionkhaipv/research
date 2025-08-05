@@ -65,4 +65,7 @@
     <string name="tv_sub_title_request_notification_listener">This feature needs \"Notification Access\" permission to work. You will be taken to System Settings to grant it</string>
     <string name="open_setting_amp_grant"><![CDATA[Open setting & Grant]]></string>
     <string name="check_popup_ads">Check Popup ADS</string>
+    <string name="you_need_to_grant_permission_to_use_this_feature">You need to grant permission to use this feature.</string>
+    <string name="grant_permission">Grant Permission</string>
+    <string name="switch_start_manager_to_turn_on_this_function">Switch “Start Manager” to turn on this function.</string>
 </resources>

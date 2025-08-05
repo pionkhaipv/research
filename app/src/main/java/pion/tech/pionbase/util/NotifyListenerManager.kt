@@ -7,7 +7,7 @@ import android.provider.Settings
 import androidx.fragment.app.Fragment
 import pion.tech.pionbase.service.PionNotificationListenerService
 
-object NotifyListenerPermissionManager {
+object NotifyListenerManager {
     /**
      * Request notification access permission by opening system settings
      */
@@ -27,7 +27,7 @@ object NotifyListenerPermissionManager {
     /**
      * Check all required permissions for notification functionality
      */
-    fun areAllNotificationPermissionsGranted(context: Context): Boolean {
+    fun isGrandNotifyListenerPermission(context: Context): Boolean {
         val enabledListeners =
             Settings.Secure.getString(
                 context.contentResolver,

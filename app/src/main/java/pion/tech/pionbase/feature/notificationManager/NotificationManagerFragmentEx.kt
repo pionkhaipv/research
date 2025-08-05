@@ -2,10 +2,12 @@ package pion.tech.pionbase.feature.notificationManager
 
 import android.annotation.SuppressLint
 import android.view.MotionEvent
+import androidx.core.view.isInvisible
+import androidx.core.view.isVisible
 import pion.tech.pionbase.feature.notificationManager.adapter.NotificationPagerAdapter
 import pion.tech.pionbase.feature.notificationManager.dialog.RequestNotificationListenerPermissionDialog
 import pion.tech.pionbase.feature.notificationManager.viewpager.notificationBlock.dialog.ToolTipBlockNotificationDialog
-import pion.tech.pionbase.util.NotifyListenerPermissionManager
+import pion.tech.pionbase.util.NotifyListenerManager
 import pion.tech.pionbase.util.setPreventDoubleClick
 
 fun NotificationManagerFragment.initView() {
@@ -13,6 +15,8 @@ fun NotificationManagerFragment.initView() {
     binding.vpMain.adapter = adapter
 
     binding.vpMain.isUserInputEnabled = false
+
+    viewModel.checkNotificationListenerStatus()
 }
 
 fun NotificationManagerFragment.toolTipEvent() {
@@ -21,13 +25,36 @@ fun NotificationManagerFragment.toolTipEvent() {
     }
 }
 
-fun NotificationManagerFragment.changeModeNotificationManager() {
+fun NotificationManagerFragment.changeModeNotificationManagerEvent() {
     binding.btnNotificationStats.setPreventDoubleClick {
         viewModel.setModeNotificationManager(ModeNotificationManager.Stats)
     }
 
     binding.btnNotificationBlock.setPreventDoubleClick {
         viewModel.setModeNotificationManager(ModeNotificationManager.Block)
+    }
+}
+
+fun NotificationManagerFragment.grandPermissionEvent() {
+    binding.btnGrantPermission.setPreventDoubleClick {
+        NotifyListenerManager.requestNotificationAccess(this)
+    }
+}
+
+fun NotificationManagerFragment.setupUiForGrandPermission() {
+    if (viewModel.isNotificationListenerEnabled.value) {
+        binding.grLayoutContent.isVisible = true
+        binding.svGrandPermission.isVisible = false
+    } else {
+        binding.grLayoutContent.isVisible = false
+        binding.svGrandPermission.isVisible = true
+        if (NotifyListenerManager.isGrandNotifyListenerPermission(requireContext())) {
+            binding.clGrantPermission.isInvisible = true
+            binding.clSwitchOnManager.isInvisible = false
+        } else {
+            binding.clGrantPermission.isInvisible = false
+            binding.clSwitchOnManager.isInvisible = true
+        }
     }
 }
 
@@ -45,7 +72,7 @@ fun NotificationManagerFragment.setupSwitchListener() {
     binding.switchNotificationListener.setPreventDoubleClick {
         val isChecked = binding.switchNotificationListener.isChecked
         if (isChecked) {
-            if (NotifyListenerPermissionManager.areAllNotificationPermissionsGranted(requireContext())) {
+            if (NotifyListenerManager.isGrandNotifyListenerPermission(requireContext())) {
                 binding.switchNotificationListener.isChecked = true
                 viewModel.toggleNotificationListener(true)
             } else {
@@ -54,7 +81,7 @@ fun NotificationManagerFragment.setupSwitchListener() {
                 dialog.setListener(
                     object : RequestNotificationListenerPermissionDialog.Listener {
                         override fun onOpenSetting() {
-                            NotifyListenerPermissionManager.requestNotificationAccess(this@setupSwitchListener)
+                            NotifyListenerManager.requestNotificationAccess(this@setupSwitchListener)
                         }
                     },
                 )

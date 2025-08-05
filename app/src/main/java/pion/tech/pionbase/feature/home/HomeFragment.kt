@@ -24,24 +24,15 @@ class HomeFragment :
 
     override fun init(view: View) {
         initView()
-        plusEvent()
         settingEvent()
         notificationManagerEvent()
-        runningAppsEvent()
         checkHiddenAppsEvent()
         showConcernEvent()
         onBackEvent()
         adDetectorEvent()
-        doActionWhenResume {
-            checkPermissionsOnResume()
-        }
     }
 
     override fun subscribeObserver(view: View) {
-        viewModel.countValue.collectFlowOnView(viewLifecycleOwner) {
-//            binding.tvCount.text = "$it"
-        }
-
         // Observe installed apps state
         viewModel.installedAppsUiState.collectFlowOnView(viewLifecycleOwner) {
             it.handleUiState(

@@ -21,7 +21,7 @@ import pion.tech.pionbase.data.model.notification.AppNotificationPermissionDtoMo
 import pion.tech.pionbase.data.model.notification.NotificationDtoModel
 import pion.tech.pionbase.data.repository.dataStore.DataStoreRepository
 import pion.tech.pionbase.service.PionNotificationListenerService
-import pion.tech.pionbase.util.NotifyListenerPermissionManager
+import pion.tech.pionbase.util.NotifyListenerManager
 import pion.tech.pionbase.util.Result
 import timber.log.Timber
 import javax.inject.Inject
@@ -260,7 +260,7 @@ class NotificationRepositoryImpl
         override fun isNotificationListenerEnabled(): Flow<Result<Boolean>> =
             flow {
                 try {
-                    val hasSystemPermission = NotifyListenerPermissionManager.areAllNotificationPermissionsGranted(context)
+                    val hasSystemPermission = NotifyListenerManager.isGrandNotifyListenerPermission(context)
                     // Check internal monitoring state from data store
                     val monitoringEnabledResult = dataStoreRepository.getNotificationMonitoringEnabled().first()
                     val isInternallyEnabled =
