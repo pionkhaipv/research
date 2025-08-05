@@ -7,11 +7,12 @@ import com.piontech.core.base.createDiffCallback
 import pion.tech.pionbase.R
 import pion.tech.pionbase.data.model.notification.AppNotificationPermissionUIModel
 import pion.tech.pionbase.databinding.ItemAppNotificationBlockBinding
+import pion.tech.pionbase.databinding.ItemAppNotificationStatsBinding
 import pion.tech.pionbase.util.AppUtils
 import pion.tech.pionbase.util.setPreventDoubleClick
 
 class NotificationStatsAdapter :
-    BaseListAdapter<AppNotificationPermissionUIModel, ItemAppNotificationBlockBinding>(
+    BaseListAdapter<AppNotificationPermissionUIModel, ItemAppNotificationStatsBinding>(
         createDiffCallback(
             areItemsTheSame = { oldItem, newItem -> oldItem.packageName == newItem.packageName },
             areContentsTheSame = { oldItem, newItem -> oldItem == newItem },
@@ -30,10 +31,10 @@ class NotificationStatsAdapter :
         this.listener = listener
     }
 
-    override fun getLayoutRes(viewType: Int): Int = R.layout.item_app_notification_block
+    override fun getLayoutRes(viewType: Int): Int = R.layout.item_app_notification_stats
 
     override fun bindView(
-        binding: ItemAppNotificationBlockBinding,
+        binding: ItemAppNotificationStatsBinding,
         item: AppNotificationPermissionUIModel,
         position: Int,
     ) {
@@ -44,25 +45,5 @@ class NotificationStatsAdapter :
         }
 
         binding.tvAppName.text = item.appName
-
-        binding.switchNotification.isChecked = !item.isNotificationEnabled
-
-        binding.switchNotification.isClickable = false
-
-        binding.switchNotification.setOnTouchListener { _, event ->
-            if (event.action == MotionEvent.ACTION_MOVE) {
-                // Chặn drag
-                true
-            } else {
-                // Cho phép xử lý bình thường các sự kiện khác (click)
-                false
-            }
-        }
-        binding.switchNotification.setPreventDoubleClick {
-            listener?.onTogglePermission(item, !binding.switchNotification.isChecked)
-            if (binding.switchNotification.isChecked) {
-                binding.switchNotification.isChecked = false
-            }
-        }
     }
 }
