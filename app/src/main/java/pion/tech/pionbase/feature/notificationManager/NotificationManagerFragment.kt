@@ -28,6 +28,8 @@ class NotificationManagerFragment :
 
     override fun onResume() {
         super.onResume()
+        // Re-check notification listener status when returning from settings
+        viewModel.checkNotificationListenerStatus()
         setupUiForGrandPermission()
     }
 

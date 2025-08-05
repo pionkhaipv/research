@@ -29,8 +29,8 @@ class DataStoreRepositoryImpl(
                 emit(Result.Error<Boolean>(exception) as Result<Boolean>)
             }
 
-    override suspend fun setIsPremium(isPremium: Boolean): Result<Unit> {
-        return try {
+    override suspend fun setIsPremium(isPremium: Boolean): Result<Unit> =
+        try {
             dataStore.edit {
                 it[isPremiumKey] = isPremium
             }
@@ -38,7 +38,6 @@ class DataStoreRepositoryImpl(
         } catch (exception: Exception) {
             Result.Error(exception)
         }
-    }
 
     override fun getToken(): Flow<Result<String?>> =
         dataStore.data
@@ -48,8 +47,8 @@ class DataStoreRepositoryImpl(
                 emit(Result.Error<String?>(exception) as Result<String?>)
             }
 
-    override suspend fun setToken(token: String): Result<Unit> {
-        return try {
+    override suspend fun setToken(token: String): Result<Unit> =
+        try {
             dataStore.edit {
                 it[tokenKey] = token
             }
@@ -57,7 +56,6 @@ class DataStoreRepositoryImpl(
         } catch (exception: Exception) {
             Result.Error(exception)
         }
-    }
 
     override fun getBlockedPackages(): Flow<Result<Set<String>>> =
         dataStore.data
@@ -67,8 +65,8 @@ class DataStoreRepositoryImpl(
                 emit(Result.Error<Set<String>>(exception) as Result<Set<String>>)
             }
 
-    override suspend fun setBlockedPackages(packages: Set<String>): Result<Unit> {
-        return try {
+    override suspend fun setBlockedPackages(packages: Set<String>): Result<Unit> =
+        try {
             dataStore.edit {
                 it[blockedPackagesKey] = packages
             }
@@ -76,18 +74,17 @@ class DataStoreRepositoryImpl(
         } catch (exception: Exception) {
             Result.Error(exception)
         }
-    }
 
     override fun getNotificationMonitoringEnabled(): Flow<Result<Boolean>> =
         dataStore.data
             .map { prefs ->
-                Result.Success(prefs[notificationMonitoringEnabledKey] ?: true) as Result<Boolean>
+                Result.Success(prefs[notificationMonitoringEnabledKey] ?: false) as Result<Boolean>
             }.catch { exception ->
                 emit(Result.Error<Boolean>(exception) as Result<Boolean>)
             }
 
-    override suspend fun setNotificationMonitoringEnabled(enabled: Boolean): Result<Unit> {
-        return try {
+    override suspend fun setNotificationMonitoringEnabled(enabled: Boolean): Result<Unit> =
+        try {
             dataStore.edit {
                 it[notificationMonitoringEnabledKey] = enabled
             }
@@ -95,5 +92,4 @@ class DataStoreRepositoryImpl(
         } catch (exception: Exception) {
             Result.Error(exception)
         }
-    }
 }
