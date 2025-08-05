@@ -8,6 +8,7 @@ import pion.tech.pionbase.feature.notificationManager.adapter.NotificationPagerA
 import pion.tech.pionbase.feature.notificationManager.dialog.RequestNotificationListenerPermissionDialog
 import pion.tech.pionbase.feature.notificationManager.viewpager.notificationBlock.dialog.ToolTipBlockNotificationDialog
 import pion.tech.pionbase.util.NotifyListenerManager
+import pion.tech.pionbase.util.preventDrag
 import pion.tech.pionbase.util.setPreventDoubleClick
 
 fun NotificationManagerFragment.initView() {
@@ -60,15 +61,7 @@ fun NotificationManagerFragment.setupUiForGrandPermission() {
 
 @SuppressLint("ClickableViewAccessibility")
 fun NotificationManagerFragment.setupSwitchListener() {
-    binding.switchNotificationListener.setOnTouchListener { _, event ->
-        if (event.action == MotionEvent.ACTION_MOVE) {
-            // Chặn drag
-            true
-        } else {
-            // Cho phép xử lý bình thường các sự kiện khác (click)
-            false
-        }
-    }
+    binding.switchNotificationListener.preventDrag()
     binding.switchNotificationListener.setPreventDoubleClick {
         val isChecked = binding.switchNotificationListener.isChecked
         if (isChecked) {

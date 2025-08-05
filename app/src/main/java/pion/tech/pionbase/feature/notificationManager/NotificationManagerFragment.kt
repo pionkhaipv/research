@@ -1,6 +1,5 @@
 package pion.tech.pionbase.feature.notificationManager
 
-import android.util.Log
 import android.view.View
 import androidx.core.graphics.toColorInt
 import androidx.core.view.isInvisible
@@ -28,7 +27,6 @@ class NotificationManagerFragment :
 
     override fun onResume() {
         super.onResume()
-        // Re-check notification listener status when returning from settings
         viewModel.checkNotificationListenerStatus()
         setupUiForGrandPermission()
     }

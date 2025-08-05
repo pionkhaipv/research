@@ -22,6 +22,7 @@ import pion.tech.pionbase.data.repository.installedAppRepository.InstalledAppsRe
 import pion.tech.pionbase.data.repository.installedAppRepository.InstalledAppsRepositoryImpl
 import pion.tech.pionbase.data.repository.languageRepository.LanguageRepository
 import pion.tech.pionbase.data.repository.languageRepository.LanguageRepositoryImpl
+import pion.tech.pionbase.data.local.dao.NotificationDAO
 import pion.tech.pionbase.data.repository.notificationRepository.NotificationRepository
 import pion.tech.pionbase.data.repository.notificationRepository.NotificationRepositoryImpl
 import pion.tech.pionbase.data.repository.remoteConfig.RemoteConfigRepository
@@ -60,7 +61,8 @@ class RepositoryModule {
     fun provideNotificationRepository(
         @ApplicationContext context: Context,
         dataStoreRepository: DataStoreRepository,
-    ): NotificationRepository = NotificationRepositoryImpl(context, dataStoreRepository)
+        notificationDAO: NotificationDAO,
+    ): NotificationRepository = NotificationRepositoryImpl(context, dataStoreRepository, notificationDAO)
 
     @Provides
     @Singleton

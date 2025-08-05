@@ -6,6 +6,7 @@ import com.piontech.core.utils.collectFlowOnView
 import dagger.hilt.android.AndroidEntryPoint
 import pion.tech.pionbase.app.CommonViewModel
 import pion.tech.pionbase.databinding.FragmentRecentNotificationsBinding
+import pion.tech.pionbase.feature.notificationManager.viewpager.notificationStats.adapter.NotificationStatsAdapter
 import pion.tech.pionbase.util.displayToast
 import pion.tech.pionbase.util.handleUiState
 
@@ -16,6 +17,8 @@ class NotificationStatsFragment :
         NotificationStatsViewModel::class.java,
         CommonViewModel::class.java,
     ) {
+    val adapter = NotificationStatsAdapter()
+
     override fun init(view: View) {
         initView()
         loadData()

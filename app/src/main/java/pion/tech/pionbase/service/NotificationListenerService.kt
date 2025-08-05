@@ -9,13 +9,12 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.SharedFlow
-import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import pion.tech.pionbase.data.model.notification.NotificationDtoModel
 import pion.tech.pionbase.data.repository.dataStore.DataStoreRepository
+import pion.tech.pionbase.data.repository.notificationRepository.NotificationRepository
+import pion.tech.pionbase.util.Result
 import pion.tech.pionbase.util.onSuccess
 import timber.log.Timber
 import javax.inject.Inject
@@ -25,14 +24,13 @@ class PionNotificationListenerService : NotificationListenerService() {
     @Inject
     lateinit var dataStoreRepository: DataStoreRepository
 
+    @Inject
+    lateinit var notificationRepository: NotificationRepository
+
     companion object {
         private var instance: PionNotificationListenerService? = null
         private var dataStoreRepository: DataStoreRepository? = null
         private val serviceScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
-
-        private val _recentNotifications = MutableSharedFlow<NotificationDtoModel>(replay = 50)
-        val recentNotifications: SharedFlow<NotificationDtoModel> =
-            _recentNotifications.asSharedFlow()
 
         private val _blockedPackages = mutableSetOf<String>()
 
@@ -46,7 +44,7 @@ class PionNotificationListenerService : NotificationListenerService() {
             dataStoreRepository = dataStore
             loadDataFromStorage()
         }
-        
+
         /**
          * Reloads blocked packages from DataStore
          * This should be called whenever blocked packages are updated through the repository
@@ -176,7 +174,23 @@ class PionNotificationListenerService : NotificationListenerService() {
                     timestamp = notification.postTime,
                 )
 
-            _recentNotifications.tryEmit(notificationModel)
+            // Save notification to Room database
+            serviceScope.launch {
+                try {
+                    notificationRepository.saveNotification(notificationModel).collect { result ->
+                        when (result) {
+                            is Result.Success -> {
+                                Timber.d("Notification saved to database from: $packageName")
+                            }
+                            is Result.Error -> {
+                                Timber.e("Error saving notification to database: ${result.error}")
+                            }
+                        }
+                    }
+                } catch (e: Exception) {
+                    Timber.e("Error saving notification to database: $e")
+                }
+            }
             Timber.d("Notification posted from: $packageName")
         }
     }

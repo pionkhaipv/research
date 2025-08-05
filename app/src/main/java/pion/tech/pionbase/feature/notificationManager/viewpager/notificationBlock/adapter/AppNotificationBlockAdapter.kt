@@ -8,6 +8,7 @@ import pion.tech.pionbase.R
 import pion.tech.pionbase.data.model.notification.AppNotificationPermissionUIModel
 import pion.tech.pionbase.databinding.ItemAppNotificationBlockBinding
 import pion.tech.pionbase.util.AppUtils
+import pion.tech.pionbase.util.preventDrag
 import pion.tech.pionbase.util.setPreventDoubleClick
 
 class AppNotificationBlockAdapter :
@@ -50,15 +51,8 @@ class AppNotificationBlockAdapter :
 
         binding.switchNotification.isClickable = false
 
-        binding.switchNotification.setOnTouchListener { _, event ->
-            if (event.action == MotionEvent.ACTION_MOVE) {
-                // Chặn drag
-                true
-            } else {
-                // Cho phép xử lý bình thường các sự kiện khác (click)
-                false
-            }
-        }
+        binding.switchNotification.preventDrag()
+
         binding.switchNotification.setPreventDoubleClick {
             listener?.onTogglePermission(item, !binding.switchNotification.isChecked)
             if (binding.switchNotification.isChecked) {

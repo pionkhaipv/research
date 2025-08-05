@@ -11,4 +11,5 @@ interface NotificationRepository {
     fun toggleNotificationPermission(packageName: String, enabled: Boolean): Flow<Result<Boolean>>
     fun isNotificationListenerEnabled(): Flow<Result<Boolean>>
     fun setNotificationListenerEnabled(enabled: Boolean): Flow<Result<Boolean>>
+    fun saveNotification(notification: NotificationDtoModel): Flow<Result<NotificationDtoModel>>
 }

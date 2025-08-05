@@ -17,8 +17,11 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.take
 import kotlinx.coroutines.flow.toList
+import pion.tech.pionbase.data.local.dao.NotificationDAO
 import pion.tech.pionbase.data.model.notification.AppNotificationPermissionDtoModel
 import pion.tech.pionbase.data.model.notification.NotificationDtoModel
+import pion.tech.pionbase.data.model.notification.toEntity
+import pion.tech.pionbase.data.model.notification.toPresentation
 import pion.tech.pionbase.data.repository.dataStore.DataStoreRepository
 import pion.tech.pionbase.service.PionNotificationListenerService
 import pion.tech.pionbase.util.NotifyListenerManager
@@ -31,27 +34,29 @@ class NotificationRepositoryImpl
     constructor(
         @ApplicationContext private val context: Context,
         private val dataStoreRepository: DataStoreRepository,
+        private val notificationDAO: NotificationDAO,
     ) : NotificationRepository {
         override fun getRecentNotifications(): Flow<Result<List<NotificationDtoModel>>> =
             flow {
                 try {
-                    // Try to get recent notifications from the notification listener service
-                    try {
-                        // Check if we can access the recentNotifications flow
-                        val recentNotifications =
-                            PionNotificationListenerService.recentNotifications
-                                .take(50) // Take last 50 notifications
-                                .toList()
-                                .reversed() // Show most recent first
-
-                        emit(Result.Success(recentNotifications))
-                    } catch (serviceException: Exception) {
-                        // If we can't access the service, return an empty list
-                        Timber.d("Could not access notification service, returning empty list: ${serviceException.message}")
-                        emit(Result.Success(emptyList()))
+                    // Get recent notifications from Room database
+                    notificationDAO.getRecentNotifications(50).collect { entities ->
+                        val notifications = entities.map { entity ->
+                            // Convert entity to DTO and load icon if needed
+                            val dto = entity.toPresentation()
+                            try {
+                                // Try to load the app icon
+                                val icon = context.packageManager.getApplicationIcon(entity.packageName)
+                                dto.copy(icon = icon)
+                            } catch (e: Exception) {
+                                // If icon loading fails, keep the DTO without icon
+                                dto
+                            }
+                        }
+                        emit(Result.Success(notifications))
                     }
                 } catch (exception: Exception) {
-                    Timber.e("Error getting recent notifications: $exception")
+                    Timber.e("Error getting recent notifications from database: $exception")
                     emit(Result.Error(exception))
                 }
             }.flowOn(Dispatchers.IO)
@@ -331,6 +336,31 @@ class NotificationRepositoryImpl
                     }
                 } catch (exception: Exception) {
                     Timber.e("Error setting notification listener enabled: $exception")
+                    emit(Result.Error(exception))
+                }
+            }.flowOn(Dispatchers.IO)
+
+        override fun saveNotification(notification: NotificationDtoModel): Flow<Result<NotificationDtoModel>> =
+            flow {
+                try {
+                    val entity = notification.toEntity()
+                    val savedEntity = notificationDAO.insertOrUpdateNotification(entity)
+                    
+                    // Convert saved entity back to DTO and load icon
+                    val savedDto = savedEntity.toPresentation()
+                    val dtoWithIcon = try {
+                        // Try to load the app icon
+                        val icon = context.packageManager.getApplicationIcon(savedEntity.packageName)
+                        savedDto.copy(icon = icon)
+                    } catch (e: Exception) {
+                        // If icon loading fails, keep the DTO without icon
+                        savedDto
+                    }
+                    
+                    Timber.d("Saved notification from ${notification.packageName} to database")
+                    emit(Result.Success(dtoWithIcon))
+                } catch (exception: Exception) {
+                    Timber.e("Error saving notification to database: $exception")
                     emit(Result.Error(exception))
                 }
             }.flowOn(Dispatchers.IO)
