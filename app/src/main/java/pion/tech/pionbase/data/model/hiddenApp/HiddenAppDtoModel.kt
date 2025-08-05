@@ -8,4 +8,5 @@ data class HiddenAppDtoModel(
     val icon: Drawable?,
     val versionName: String?,
     val isSystemApp: Boolean,
+    val appSize: Long = 0L,
 )

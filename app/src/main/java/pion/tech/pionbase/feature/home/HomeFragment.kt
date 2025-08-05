@@ -34,7 +34,7 @@ class HomeFragment :
         adDetectorEvent()
 
         // Load installed apps
-        viewModel.getInstalledApps()
+//        viewModel.getInstalledApps()
 
         // Check permissions when fragment resumes (e.g., returning from settings)
         doActionWhenResume {

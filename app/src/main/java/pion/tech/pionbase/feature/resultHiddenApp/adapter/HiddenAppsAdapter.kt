@@ -1,59 +1,93 @@
 package pion.tech.pionbase.feature.resultHiddenApp.adapter
 
-import androidx.core.content.ContextCompat
-import androidx.recyclerview.widget.DiffUtil
+import androidx.databinding.ViewDataBinding
 import com.piontech.core.base.BaseListAdapter
 import com.piontech.core.base.createDiffCallback
 import pion.tech.pionbase.R
+import pion.tech.pionbase.data.model.hiddenApp.HiddenAppListItem
 import pion.tech.pionbase.data.model.hiddenApp.HiddenAppUIModel
+import pion.tech.pionbase.data.model.hiddenApp.formatAppSize
 import pion.tech.pionbase.databinding.ItemHiddenAppBinding
+import pion.tech.pionbase.databinding.ItemHiddenAppHeaderBinding
+import pion.tech.pionbase.util.AppUtils
+import pion.tech.pionbase.util.setPreventDoubleClick
 
 class HiddenAppsAdapter :
-    BaseListAdapter<HiddenAppUIModel, ItemHiddenAppBinding>(
+    BaseListAdapter<HiddenAppListItem, ViewDataBinding>(
         createDiffCallback(
-            areItemsTheSame = { oldItem: HiddenAppUIModel, newItem: HiddenAppUIModel -> oldItem.packageName == newItem.packageName },
-            areContentsTheSame = { oldItem: HiddenAppUIModel, newItem: HiddenAppUIModel -> oldItem == newItem },
+            areItemsTheSame = { oldItem, newItem ->
+                when {
+                    oldItem is HiddenAppListItem.Header && newItem is HiddenAppListItem.Header ->
+                        oldItem.type == newItem.type
+
+                    oldItem is HiddenAppListItem.AppItem && newItem is HiddenAppListItem.AppItem ->
+                        oldItem.app.packageName == newItem.app.packageName
+
+                    else -> false
+                }
+            },
+            areContentsTheSame = { oldItem, newItem -> oldItem == newItem },
         ),
     ) {
-    var onAppClick: ((HiddenAppUIModel) -> Unit)? = null
-    var onAppLongClick: ((HiddenAppUIModel) -> Unit)? = null
+    companion object {
+        private const val VIEW_TYPE_HEADER = 0
+        private const val VIEW_TYPE_APP_ITEM = 1
+    }
 
-    override fun getLayoutRes(viewType: Int): Int = R.layout.item_hidden_app
+    interface Listener {
+        fun onAppClick(item: HiddenAppUIModel)
+    }
+
+    private var listener: Listener? = null
+
+    fun setListener(listener: Listener) {
+        this.listener = listener
+    }
+
+    override fun getItemViewType(position: Int): Int =
+        when (getItem(position)) {
+            is HiddenAppListItem.Header -> VIEW_TYPE_HEADER
+            is HiddenAppListItem.AppItem -> VIEW_TYPE_APP_ITEM
+        }
+
+    override fun getLayoutRes(viewType: Int): Int =
+        when (viewType) {
+            VIEW_TYPE_HEADER -> R.layout.item_hidden_app_header
+            VIEW_TYPE_APP_ITEM -> R.layout.item_hidden_app
+            else -> throw IllegalArgumentException("Unknown view type: $viewType")
+        }
 
     override fun bindView(
-        binding: ItemHiddenAppBinding,
-        item: HiddenAppUIModel,
+        binding: ViewDataBinding,
+        item: HiddenAppListItem,
         position: Int,
     ) {
-        binding.apply {
-            // Basic app info
-            tvAppName.text = item.appName
-            tvPackageName.text = item.packageName
-            ivAppIcon.setImageDrawable(item.loadIcon(root.context))
-
-            // Version info
-            tvVersion.text =
-                if (item.versionName != null) {
-                    "Version ${item.versionName}"
-                } else {
-                    "Version unknown"
+        when (item) {
+            is HiddenAppListItem.Header -> {
+                if (binding is ItemHiddenAppHeaderBinding) {
+                    binding.tvHeaderTitle.text = item.title
                 }
+            }
 
-            // App type with color distinction
-            tvAppType.text = if (item.isSystemApp) "System" else "User"
-            tvAppType.setTextColor(
-                if (item.isSystemApp) {
-                    ContextCompat.getColor(root.context, android.R.color.holo_orange_dark)
-                } else {
-                    ContextCompat.getColor(root.context, android.R.color.holo_blue_dark)
-                },
-            )
+            is HiddenAppListItem.AppItem -> {
+                if (binding is ItemHiddenAppBinding) {
+                    val app = item.app
+                    binding.apply {
+                        // Basic app info
+                        tvAppName.text = app.appName
+                        ivAppIcon.setImageDrawable(
+                            AppUtils.loadAppIcon(
+                                root.context,
+                                app.packageName,
+                            ),
+                        )
+                        tvAppSize.text = app.formatAppSize()
 
-            // Click listeners
-            root.setOnClickListener { onAppClick?.invoke(item) }
-            root.setOnLongClickListener {
-                onAppLongClick?.invoke(item)
-                true
+                        root.setPreventDoubleClick {
+                            listener?.onAppClick(app)
+                        }
+                    }
+                }
             }
         }
     }
