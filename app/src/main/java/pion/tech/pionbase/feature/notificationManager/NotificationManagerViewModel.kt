@@ -16,9 +16,9 @@ class NotificationManagerViewModel
     constructor(
         private val notificationRepository: NotificationRepository,
     ) : BaseViewModel() {
-
         private val _isNotificationListenerEnabled = MutableStateFlow(false)
-        val isNotificationListenerEnabled: StateFlow<Boolean> = _isNotificationListenerEnabled.asStateFlow()
+        val isNotificationListenerEnabled: StateFlow<Boolean> =
+            _isNotificationListenerEnabled.asStateFlow()
 
         fun checkNotificationListenerStatus() {
             launchIO {
@@ -39,4 +39,17 @@ class NotificationManagerViewModel
                 }
             }
         }
+
+        private val _modeNotificationManager =
+            MutableStateFlow<ModeNotificationManager>(ModeNotificationManager.Stats)
+        val modeNotificationManager = _modeNotificationManager.asStateFlow()
+
+        fun setModeNotificationManager(mode: ModeNotificationManager) {
+            _modeNotificationManager.value = mode
+        }
     }
+
+enum class ModeNotificationManager {
+    Stats,
+    Block,
+}

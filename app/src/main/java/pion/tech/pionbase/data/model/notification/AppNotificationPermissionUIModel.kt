@@ -5,14 +5,14 @@ import android.graphics.drawable.Drawable
 data class AppNotificationPermissionUIModel(
     val packageName: String,
     val appName: String,
-    val icon: Drawable?,
     val isNotificationEnabled: Boolean,
+    val appIcon: Drawable? = null,
 )
 
 fun AppNotificationPermissionDtoModel.toPresentation(): AppNotificationPermissionUIModel =
     AppNotificationPermissionUIModel(
         packageName = this.packageName,
         appName = this.appName,
-        icon = this.icon,
         isNotificationEnabled = this.isNotificationEnabled,
+        appIcon = this.appIcon,
     )

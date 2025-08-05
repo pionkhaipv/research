@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+    </data>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/_8dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingVertical="@dimen/_4dp">
+
+        <ImageView
+            android:id="@+id/iv_app_icon"
+            android:layout_width="@dimen/_40dp"
+            android:layout_marginStart="@dimen/_8dp"
+            android:layout_height="@dimen/_40dp"
+            android:scaleType="centerCrop"
+            tools:src="@android:drawable/sym_def_app_icon" />
+
+
+        <TextView
+            android:id="@+id/tv_app_name"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/_8dp"
+            android:layout_weight="1"
+            android:ellipsize="end"
+            android:fontFamily="@font/font_500"
+            android:maxLines="1"
+            android:textColor="#3A3A3F"
+            android:textSize="@dimen/_16sp"
+            android:textStyle="bold"
+            tools:text="WhatsApp" />
+
+        <androidx.appcompat.widget.SwitchCompat
+            android:id="@+id/switch_notification"
+            android:layout_marginEnd="@dimen/_8dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:thumb="@drawable/thumb_selector"
+            app:track="@drawable/track_selector" />
+
+    </LinearLayout>
+</layout>

@@ -54,7 +54,8 @@ fun HomeFragment.settingEvent() {
 
 fun HomeFragment.notificationManagerEvent() {
     binding.btnNotificationControl.root.setPreventDoubleClickScaleView {
-        checkNotificationPermissionsAndNavigate()
+//        checkNotificationPermissionsAndNavigate()
+        navigator.navigateTo(R.id.action_homeFragment_to_notificationManagerFragment)
     }
 }
 

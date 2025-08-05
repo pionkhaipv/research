@@ -12,8 +12,12 @@ import dagger.hilt.components.SingletonComponent
 import pion.tech.pionbase.data.remote.ApiInterface
 import pion.tech.pionbase.data.repository.apiRepository.ApiRepository
 import pion.tech.pionbase.data.repository.apiRepository.ApiRepositoryImpl
+import pion.tech.pionbase.data.repository.concernAppRepository.ConcernAppsRepository
+import pion.tech.pionbase.data.repository.concernAppRepository.ConcernAppsRepositoryImpl
 import pion.tech.pionbase.data.repository.dataStore.DataStoreRepository
 import pion.tech.pionbase.data.repository.dataStore.DataStoreRepositoryImpl
+import pion.tech.pionbase.data.repository.hiddenAppRepository.HiddenAppsRepository
+import pion.tech.pionbase.data.repository.hiddenAppRepository.HiddenAppsRepositoryImpl
 import pion.tech.pionbase.data.repository.installedAppRepository.InstalledAppsRepository
 import pion.tech.pionbase.data.repository.installedAppRepository.InstalledAppsRepositoryImpl
 import pion.tech.pionbase.data.repository.languageRepository.LanguageRepository
@@ -24,10 +28,6 @@ import pion.tech.pionbase.data.repository.remoteConfig.RemoteConfigRepository
 import pion.tech.pionbase.data.repository.remoteConfig.RemoteConfigRepositoryImpl
 import pion.tech.pionbase.data.repository.runningAppsRepository.RunningAppsRepository
 import pion.tech.pionbase.data.repository.runningAppsRepository.RunningAppsRepositoryImpl
-import pion.tech.pionbase.data.repository.hiddenAppRepository.HiddenAppsRepository
-import pion.tech.pionbase.data.repository.hiddenAppRepository.HiddenAppsRepositoryImpl
-import pion.tech.pionbase.data.repository.concernAppRepository.ConcernAppsRepository
-import pion.tech.pionbase.data.repository.concernAppRepository.ConcernAppsRepositoryImpl
 import javax.inject.Singleton
 
 @Module
@@ -59,7 +59,8 @@ class RepositoryModule {
     @Singleton
     fun provideNotificationRepository(
         @ApplicationContext context: Context,
-    ): NotificationRepository = NotificationRepositoryImpl(context)
+        dataStoreRepository: DataStoreRepository,
+    ): NotificationRepository = NotificationRepositoryImpl(context, dataStoreRepository)
 
     @Provides
     @Singleton

@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:background="#4D000000">
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/white"
+            android:orientation="vertical"
+            android:padding="@dimen/_16dp"
+            android:theme="@style/RoundedCorner.16"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintWidth_percent="0.9">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical">
+
+                <ImageView
+                    android:layout_width="@dimen/_40dp"
+                    android:layout_height="@dimen/_40dp"
+                    android:src="@drawable/ic_note_on_system_limitations" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/_8dp"
+                    android:fontFamily="@font/font_600"
+                    android:text="Note on System Limitations"
+                    android:textColor="#3A3A3F"
+                    android:textSize="@dimen/_18sp" />
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_16dp"
+                android:fontFamily="@font/font_500"
+                android:text="@string/this_app_cannot_block_certain_critical_notifications_including"
+                android:textColor="#4B4C53"
+                android:textSize="@dimen/_14sp" />
+
+            <include
+                android:id="@+id/layout_on_going_calls"
+                layout="@layout/item_warning_block_notification_tool_tip"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_16dp" />
+
+            <include
+                android:id="@+id/layout_active"
+                layout="@layout/item_warning_block_notification_tool_tip"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_8dp" />
+
+            <include
+                android:id="@+id/layout_system_warning"
+                layout="@layout/item_warning_block_notification_tool_tip"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_8dp" />
+
+            <TextView
+                android:id="@+id/btn_close"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_16dp"
+                android:backgroundTint="#43BDFF"
+                android:fontFamily="@font/font_500"
+                android:gravity="center"
+                android:paddingVertical="@dimen/_6dp"
+                android:text="@string/got_it"
+                android:textColor="@color/white"
+                android:textSize="@dimen/_14sp"
+                android:theme="@style/RoundedCorner.8" />
+
+
+        </LinearLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>
