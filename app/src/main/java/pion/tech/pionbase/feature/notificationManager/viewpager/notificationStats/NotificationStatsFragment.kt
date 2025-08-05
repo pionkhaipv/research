@@ -1,4 +1,4 @@
-package pion.tech.pionbase.feature.notificationManager.notificationStats
+package pion.tech.pionbase.feature.notificationManager.viewpager.notificationStats
 
 import android.view.View
 import com.piontech.core.base.BaseFragment
@@ -17,7 +17,6 @@ class NotificationStatsFragment :
         CommonViewModel::class.java,
     ) {
     override fun init(view: View) {
-        logger.logScreen("recent_notifications_show")
         initView()
         loadData()
     }
@@ -33,10 +32,6 @@ class NotificationStatsFragment :
                     // Update RecyclerView adapter here
                 },
                 onError = { exception ->
-                    displayToast("Failed to load recent notifications: ${exception.message}")
-                    logger.logEvent("recent_notifications_error") {
-                        putString("error_message", exception.message ?: "Unknown error")
-                    }
                 },
             )
         }

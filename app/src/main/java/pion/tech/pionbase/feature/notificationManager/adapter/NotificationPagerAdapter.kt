@@ -2,8 +2,8 @@ package pion.tech.pionbase.feature.notificationManager.adapter
 
 import androidx.fragment.app.Fragment
 import androidx.viewpager2.adapter.FragmentStateAdapter
-import pion.tech.pionbase.feature.notificationManager.notificationBlock.NotificationBlockFragment
-import pion.tech.pionbase.feature.notificationManager.notificationStats.NotificationStatsFragment
+import pion.tech.pionbase.feature.notificationManager.viewpager.notificationBlock.NotificationBlockFragment
+import pion.tech.pionbase.feature.notificationManager.viewpager.notificationStats.NotificationStatsFragment
 
 class NotificationPagerAdapter(
     fragment: Fragment,

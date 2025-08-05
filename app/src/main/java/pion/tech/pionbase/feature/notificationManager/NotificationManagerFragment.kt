@@ -31,6 +31,7 @@ class NotificationManagerFragment :
         viewModel.isNotificationListenerEnabled.collectFlowOnView(viewLifecycleOwner) { isEnabled ->
             binding.switchNotificationListener.isChecked = isEnabled
         }
+
         viewModel.modeNotificationManager.collectFlowOnView(viewLifecycleOwner) {
             binding.tvNotificationStats.setTextColor("#4B4C53".toColorInt())
             binding.tvBlock.setTextColor("#4B4C53".toColorInt())

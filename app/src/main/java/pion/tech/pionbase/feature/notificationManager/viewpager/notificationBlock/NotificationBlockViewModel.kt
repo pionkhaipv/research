@@ -1,4 +1,4 @@
-package pion.tech.pionbase.feature.notificationManager.notificationBlock
+package pion.tech.pionbase.feature.notificationManager.viewpager.notificationBlock
 
 import com.piontech.core.base.BaseViewModel
 import com.piontech.core.base.launchIO

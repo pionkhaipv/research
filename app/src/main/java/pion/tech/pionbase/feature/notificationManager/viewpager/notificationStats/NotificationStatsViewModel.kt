@@ -1,4 +1,4 @@
-package pion.tech.pionbase.feature.notificationManager.notificationStats
+package pion.tech.pionbase.feature.notificationManager.viewpager.notificationStats
 
 import com.piontech.core.base.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel

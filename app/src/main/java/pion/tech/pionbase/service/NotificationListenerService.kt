@@ -22,7 +22,6 @@ import javax.inject.Inject
 
 @AndroidEntryPoint
 class PionNotificationListenerService : NotificationListenerService() {
-
     @Inject
     lateinit var dataStoreRepository: DataStoreRepository
 
@@ -32,7 +31,8 @@ class PionNotificationListenerService : NotificationListenerService() {
         private val serviceScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
 
         private val _recentNotifications = MutableSharedFlow<NotificationDtoModel>(replay = 50)
-        val recentNotifications: SharedFlow<NotificationDtoModel> = _recentNotifications.asSharedFlow()
+        val recentNotifications: SharedFlow<NotificationDtoModel> =
+            _recentNotifications.asSharedFlow()
 
         private val _blockedPackages = mutableSetOf<String>()
 
@@ -42,9 +42,22 @@ class PionNotificationListenerService : NotificationListenerService() {
         fun getInstance(): PionNotificationListenerService? = instance
 
         fun initializeStorage(dataStore: DataStoreRepository) {
-            if (dataStoreRepository == null) {
-                dataStoreRepository = dataStore
-                loadDataFromStorage()
+            // Always store the reference and load data, even if already initialized
+            dataStoreRepository = dataStore
+            loadDataFromStorage()
+        }
+        
+        /**
+         * Reloads blocked packages from DataStore
+         * This should be called whenever blocked packages are updated through the repository
+         */
+        fun reloadBlockedPackages() {
+            serviceScope.launch {
+                dataStoreRepository?.getBlockedPackages()?.first()?.onSuccess { packages ->
+                    _blockedPackages.clear()
+                    _blockedPackages.addAll(packages)
+                    Timber.d("Reloaded ${packages.size} blocked packages from DataStore")
+                }
             }
         }
 
@@ -58,10 +71,13 @@ class PionNotificationListenerService : NotificationListenerService() {
                 }
 
                 // Load monitoring state
-                dataStoreRepository?.getNotificationMonitoringEnabled()?.first()?.onSuccess { enabled ->
-                    _isMonitoringEnabled = enabled
-                    Timber.d("Loaded monitoring state: $enabled from DataStore")
-                }
+                dataStoreRepository
+                    ?.getNotificationMonitoringEnabled()
+                    ?.first()
+                    ?.onSuccess { enabled ->
+                        _isMonitoringEnabled = enabled
+                        Timber.d("Loaded monitoring state: $enabled from DataStore")
+                    }
             }
         }
 
@@ -75,9 +91,11 @@ class PionNotificationListenerService : NotificationListenerService() {
 
         private fun saveMonitoringState() {
             serviceScope.launch {
-                dataStoreRepository?.setNotificationMonitoringEnabled(_isMonitoringEnabled)?.onSuccess {
-                    Timber.d("Saved monitoring state: $_isMonitoringEnabled to DataStore")
-                }
+                dataStoreRepository
+                    ?.setNotificationMonitoringEnabled(_isMonitoringEnabled)
+                    ?.onSuccess {
+                        Timber.d("Saved monitoring state: $_isMonitoringEnabled to DataStore")
+                    }
             }
         }
 
@@ -91,22 +109,16 @@ class PionNotificationListenerService : NotificationListenerService() {
             saveBlockedPackages()
         }
 
-        fun isPackageBlocked(packageName: String): Boolean {
-            return _blockedPackages.contains(packageName)
-        }
+        fun isPackageBlocked(packageName: String): Boolean = _blockedPackages.contains(packageName)
 
-        fun getBlockedPackages(): Set<String> {
-            return _blockedPackages.toSet()
-        }
+        fun getBlockedPackages(): Set<String> = _blockedPackages.toSet()
 
         fun setMonitoringEnabled(enabled: Boolean) {
             _isMonitoringEnabled = enabled
             saveMonitoringState()
         }
 
-        fun isMonitoringEnabled(): Boolean {
-            return _isMonitoringEnabled
-        }
+        fun isMonitoringEnabled(): Boolean = _isMonitoringEnabled
     }
 
     override fun onCreate() {
@@ -149,18 +161,20 @@ class PionNotificationListenerService : NotificationListenerService() {
             }
 
             // Create notification model and emit to flow
-            val notificationModel = NotificationDtoModel(
-                packageName = packageName,
-                appName = getAppName(packageName),
-                icon = try {
-                    packageManager.getApplicationIcon(packageName)
-                } catch (e: Exception) {
-                    null
-                },
-                title = notification.notification.extras.getString("android.title"),
-                content = notification.notification.extras.getString("android.text"),
-                timestamp = notification.postTime
-            )
+            val notificationModel =
+                NotificationDtoModel(
+                    packageName = packageName,
+                    appName = getAppName(packageName),
+                    icon =
+                        try {
+                            packageManager.getApplicationIcon(packageName)
+                        } catch (e: Exception) {
+                            null
+                        },
+                    title = notification.notification.extras.getString("android.title"),
+                    content = notification.notification.extras.getString("android.text"),
+                    timestamp = notification.postTime,
+                )
 
             _recentNotifications.tryEmit(notificationModel)
             Timber.d("Notification posted from: $packageName")
@@ -174,14 +188,13 @@ class PionNotificationListenerService : NotificationListenerService() {
         }
     }
 
-    private fun getAppName(packageName: String): String {
-        return try {
+    private fun getAppName(packageName: String): String =
+        try {
             val appInfo = packageManager.getApplicationInfo(packageName, 0)
             packageManager.getApplicationLabel(appInfo).toString()
         } catch (e: Exception) {
             packageName
         }
-    }
 
     fun blockNotificationsFromPackage(packageName: String) {
         addBlockedPackage(packageName)

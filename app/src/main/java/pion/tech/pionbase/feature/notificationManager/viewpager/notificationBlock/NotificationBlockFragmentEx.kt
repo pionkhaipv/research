@@ -1,4 +1,4 @@
-package pion.tech.pionbase.feature.notificationManager.notificationBlock
+package pion.tech.pionbase.feature.notificationManager.viewpager.notificationBlock
 
 import android.view.inputmethod.EditorInfo
 import androidx.core.widget.doOnTextChanged

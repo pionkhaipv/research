@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+    </data>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/_8dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingVertical="@dimen/_4dp">
+
+        <ImageView
+            android:id="@+id/iv_app_icon"
+            android:layout_width="@dimen/_40dp"
+            android:layout_height="@dimen/_40dp"
+            android:layout_marginStart="@dimen/_8dp"
+            android:scaleType="centerCrop"
+            tools:src="@android:drawable/sym_def_app_icon" />
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/_8dp"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/tv_app_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/font_500"
+                android:maxLines="1"
+                android:textColor="#3A3A3F"
+                android:textSize="@dimen/_16sp"
+                android:textStyle="bold"
+                tools:text="WhatsApp" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/font_400"
+                android:textColor="#82858E"
+                android:textSize="@dimen/_12sp"
+                tools:text="Last notification" />
+        </LinearLayout>
+
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/_8dp">
+
+            <ImageView
+                android:id="@+id/iv_ring"
+                android:layout_marginTop="@dimen/_2dp"
+                android:layout_width="@dimen/_24dp"
+                android:layout_height="@dimen/_24dp"
+                android:adjustViewBounds="true"
+                android:src="@drawable/ic_ring_notification"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <View
+                android:id="@+id/view_end_ring"
+                android:layout_width="@dimen/_1dp"
+                android:layout_height="@dimen/_1dp"
+                android:layout_marginStart="@dimen/_2dp"
+                app:layout_constraintStart_toEndOf="@id/iv_ring"
+                app:layout_constraintTop_toTopOf="@id/iv_ring" />
+
+            <TextView
+                android:id="@+id/tv_notification_count"
+                android:layout_width="@dimen/_15dp"
+                android:layout_height="@dimen/_15dp"
+                android:background="@drawable/bg_count_notification_stats"
+                android:fontFamily="@font/font_400"
+                android:gravity="center"
+                android:text="7"
+                android:maxLines="1"
+                android:ellipsize="end"
+                android:textColor="@color/white"
+                android:textSize="@dimen/_8sp"
+                app:layout_constraintDimensionRatio="1:1"
+                app:layout_constraintEnd_toEndOf="@id/view_end_ring"
+                app:layout_constraintTop_toTopOf="parent"/>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </LinearLayout>
+</layout>

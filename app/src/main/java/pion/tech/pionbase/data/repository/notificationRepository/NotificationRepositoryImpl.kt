@@ -21,6 +21,7 @@ import pion.tech.pionbase.data.model.notification.AppNotificationPermissionDtoMo
 import pion.tech.pionbase.data.model.notification.NotificationDtoModel
 import pion.tech.pionbase.data.repository.dataStore.DataStoreRepository
 import pion.tech.pionbase.service.PionNotificationListenerService
+import pion.tech.pionbase.util.NotifyListenerPermissionManager
 import pion.tech.pionbase.util.Result
 import timber.log.Timber
 import javax.inject.Inject
@@ -61,13 +62,15 @@ class NotificationRepositoryImpl
                     val packageManager = context.packageManager
                     val installedPackages = packageManager.getInstalledApplications(PackageManager.GET_META_DATA)
 
-                    val filteredApps = installedPackages
-                        .filter { appInfo -> shouldIncludeApp(appInfo, packageManager) }
-                
+                    val filteredApps =
+                        installedPackages
+                            .filter { appInfo -> shouldIncludeApp(appInfo, packageManager) }
+
                     // Process each app and create the model
-                    val apps = filteredApps
-                        .map { appInfo -> createAppPermissionModel(appInfo, packageManager) }
-                        .sortedBy { it.appName.lowercase() }
+                    val apps =
+                        filteredApps
+                            .map { appInfo -> createAppPermissionModel(appInfo, packageManager) }
+                            .sortedBy { it.appName.lowercase() }
 
                     emit(Result.Success(apps))
                 } catch (exception: Exception) {
@@ -167,21 +170,23 @@ class NotificationRepositoryImpl
         ): AppNotificationPermissionDtoModel {
             // Get blocked packages from data store
             val blockedPackagesResult = dataStoreRepository.getBlockedPackages().first()
-            val isBlocked = if (blockedPackagesResult is Result.Success) {
-                blockedPackagesResult.data.contains(appInfo.packageName)
-            } else {
-                false // Default to not blocked if we can't get the data
-            }
-        
+            val isBlocked =
+                if (blockedPackagesResult is Result.Success) {
+                    blockedPackagesResult.data.contains(appInfo.packageName)
+                } else {
+                    false // Default to not blocked if we can't get the data
+                }
+
             val hasNotificationPermission = hasSystemNotificationPermission()
-            
+
             // Load app icon
-            val appIcon = try {
-                packageManager.getApplicationIcon(appInfo.packageName)
-            } catch (e: Exception) {
-                Timber.e("Error loading app icon for ${appInfo.packageName}: ${e.message}")
-                null
-            }
+            val appIcon =
+                try {
+                    packageManager.getApplicationIcon(appInfo.packageName)
+                } catch (e: Exception) {
+                    Timber.e("Error loading app icon for ${appInfo.packageName}: ${e.message}")
+                    null
+                }
 
             return AppNotificationPermissionDtoModel(
                 packageName = appInfo.packageName,
@@ -219,7 +224,12 @@ class NotificationRepositoryImpl
                         dataStoreRepository.setBlockedPackages(blockedPackages)
                         Timber.d("Saved ${blockedPackages.size} blocked packages to data store")
 
-                        // Also update the service if it's available (but don't fail if it's not)
+                        // Always reload blocked packages in the service's companion object
+                        // This ensures the service has the latest data even if it wasn't available during the update
+                        PionNotificationListenerService.reloadBlockedPackages()
+                        Timber.d("Triggered reload of blocked packages in service")
+
+                        // Also update the service instance if it's available (but don't fail if it's not)
                         val service = PionNotificationListenerService.getInstance()
                         if (service != null) {
                             if (enabled) {
@@ -231,7 +241,7 @@ class NotificationRepositoryImpl
                             }
                             Timber.d("Updated notification service for package: $packageName, enabled: $enabled")
                         } else {
-                            Timber.d("Notification service not available, but data store was updated")
+                            Timber.d("Notification service instance not available, but data was reloaded in companion object")
                         }
 
                         // Return success regardless of service availability
@@ -250,23 +260,17 @@ class NotificationRepositoryImpl
         override fun isNotificationListenerEnabled(): Flow<Result<Boolean>> =
             flow {
                 try {
-                    // Check system permission
-                    val enabledListeners =
-                        Settings.Secure.getString(
-                            context.contentResolver,
-                            "enabled_notification_listeners",
-                        )
-                    val hasSystemPermission = enabledListeners?.contains(context.packageName) == true
-
+                    val hasSystemPermission = NotifyListenerPermissionManager.areAllNotificationPermissionsGranted(context)
                     // Check internal monitoring state from data store
                     val monitoringEnabledResult = dataStoreRepository.getNotificationMonitoringEnabled().first()
-                    val isInternallyEnabled = if (monitoringEnabledResult is Result.Success) {
-                        monitoringEnabledResult.data
-                    } else {
-                        // Default to false if we can't get the data
-                        Timber.e("Error getting monitoring state: ${(monitoringEnabledResult as? Result.Error)?.error}")
-                        false
-                    }
+                    val isInternallyEnabled =
+                        if (monitoringEnabledResult is Result.Success) {
+                            monitoringEnabledResult.data
+                        } else {
+                            // Default to false if we can't get the data
+                            Timber.e("Error getting monitoring state: ${(monitoringEnabledResult as? Result.Error)?.error}")
+                            false
+                        }
 
                     // Return true only if both system permission and internal monitoring are enabled
                     val isEnabled = hasSystemPermission && isInternallyEnabled
@@ -297,10 +301,10 @@ class NotificationRepositoryImpl
                     } else {
                         // Save the monitoring state to data store
                         val result = dataStoreRepository.setNotificationMonitoringEnabled(enabled)
-                    
+
                         if (result is Result.Success) {
                             Timber.d("Saved notification monitoring state to data store: $enabled")
-                        
+
                             // Also try to update the service if it's available (but don't fail if it's not)
                             try {
                                 val service = PionNotificationListenerService.getInstance()
@@ -315,7 +319,7 @@ class NotificationRepositoryImpl
                                 Timber.e("Error updating service monitoring state: $serviceException")
                                 // Don't fail if we can't update the service
                             }
-                        
+
                             // Return the actual state: enabled only if both system permission and internal state are true
                             val actualState = hasSystemPermission && enabled
                             emit(Result.Success(actualState))

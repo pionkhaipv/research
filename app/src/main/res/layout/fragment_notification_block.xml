@@ -17,8 +17,8 @@
         android:fontFamily="@font/font_400"
         android:hint="@string/search"
         android:imeOptions="actionSearch"
-        android:maxLines="1"
         android:inputType="textNoSuggestions"
+        android:maxLines="1"
         android:paddingHorizontal="@dimen/_8dp"
         android:paddingVertical="@dimen/_12dp"
         android:textColor="#4B4C53"
@@ -37,5 +37,20 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toBottomOf="@id/edt_search"
         tools:listitem="@layout/item_app_notification_block" />
+
+    <com.airbnb.lottie.LottieAnimationView
+        android:id="@+id/lottie_loading"
+        android:layout_width="0dp"
+        android:visibility="gone"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/edt_search"
+        app:layout_constraintWidth_percent="0.3"
+        app:lottie_autoPlay="true"
+        app:lottie_loop="true"
+        app:lottie_rawRes="@raw/lottie_loading_block_notificatino" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

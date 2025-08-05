@@ -140,6 +140,22 @@ fun Fragment.doActionWhenResume(action: () -> Unit) {
     )
 }
 
+fun Fragment.doActionWhenStop(action: () -> Unit) {
+    lifecycle.addObserver(
+        object : LifecycleEventObserver {
+            override fun onStateChanged(
+                source: LifecycleOwner,
+                event: Lifecycle.Event,
+            ) {
+                if (event == Lifecycle.Event.ON_STOP) {
+                    action.invoke()
+                    lifecycle.removeObserver(this)
+                }
+            }
+        },
+    )
+}
+
 fun Fragment.launchIO(
     onError: (Throwable) -> Unit = { },
     block: suspend CoroutineScope.() -> Unit,

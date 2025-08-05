@@ -61,4 +61,8 @@
     <string name="tv_sub_title_confirm_block_notification">Are you sure you want to block all notifications from Facebook? \n You will no longer receive any messages, comments, or reminders. You can always unblock this later.</string>
     <string name="cancel">Cancel</string>
     <string name="search">Search...</string>
+    <string name="special_access_required">Special Access Required</string>
+    <string name="tv_sub_title_request_notification_listener">This feature needs \"Notification Access\" permission to work. You will be taken to System Settings to grant it</string>
+    <string name="open_setting_amp_grant"><![CDATA[Open setting & Grant]]></string>
+    <string name="check_popup_ads">Check Popup ADS</string>
 </resources>

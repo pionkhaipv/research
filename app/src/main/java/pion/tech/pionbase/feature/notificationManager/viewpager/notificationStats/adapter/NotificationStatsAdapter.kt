@@ -1,4 +1,4 @@
-package pion.tech.pionbase.feature.notificationManager.notificationBlock.adapter
+package pion.tech.pionbase.feature.notificationManager.viewpager.notificationStats.adapter
 
 import android.annotation.SuppressLint
 import android.view.MotionEvent
@@ -10,7 +10,7 @@ import pion.tech.pionbase.databinding.ItemAppNotificationBlockBinding
 import pion.tech.pionbase.util.AppUtils
 import pion.tech.pionbase.util.setPreventDoubleClick
 
-class AppNotificationBlockAdapter :
+class NotificationStatsAdapter :
     BaseListAdapter<AppNotificationPermissionUIModel, ItemAppNotificationBlockBinding>(
         createDiffCallback(
             areItemsTheSame = { oldItem, newItem -> oldItem.packageName == newItem.packageName },
@@ -32,7 +32,6 @@ class AppNotificationBlockAdapter :
 
     override fun getLayoutRes(viewType: Int): Int = R.layout.item_app_notification_block
 
-    @SuppressLint("ClickableViewAccessibility")
     override fun bindView(
         binding: ItemAppNotificationBlockBinding,
         item: AppNotificationPermissionUIModel,

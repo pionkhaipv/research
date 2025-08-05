@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:background="#4D000000">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/white"
+            android:orientation="vertical"
+            android:paddingBottom="@dimen/_16dp"
+            android:theme="@style/RoundedCorner.16"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintWidth_percent="0.8">
+
+            <ImageView
+                android:id="@+id/btn_close"
+                android:layout_width="@dimen/_32dp"
+                android:layout_height="@dimen/_32dp"
+                android:layout_margin="@dimen/_4dp"
+                android:src="@drawable/ic_close_dialog"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/tv_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/_36dp"
+                android:layout_marginTop="@dimen/_16dp"
+                android:fontFamily="@font/font_600"
+                android:gravity="center"
+                android:text="@string/special_access_required"
+                android:textColor="#3A3A3F"
+                android:textSize="@dimen/_18sp"
+                app:layout_constraintBottom_toBottomOf="@id/btn_close"
+                app:layout_constraintTop_toTopOf="@id/btn_close" />
+
+            <TextView
+                android:id="@+id/tv_sub_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/_16dp"
+                android:layout_marginTop="@dimen/_16dp"
+                android:fontFamily="@font/font_400"
+                android:gravity="center"
+                android:text="@string/tv_sub_title_request_notification_listener"
+                android:textColor="#82858E"
+                android:textSize="@dimen/_12sp"
+                app:layout_constraintTop_toBottomOf="@id/tv_title" />
+
+            <TextView
+                android:id="@+id/btn_open_setting"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_marginTop="@dimen/_16dp"
+                android:layout_weight="1"
+                android:background="@drawable/bg_confirm_block_notification_btn"
+                android:fontFamily="@font/font_500"
+                android:gravity="center"
+                android:paddingVertical="@dimen/_6dp"
+                android:text="@string/open_setting_amp_grant"
+                android:textColor="@color/white"
+                android:textSize="@dimen/_14sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tv_sub_title"
+                app:layout_constraintWidth_percent="0.6" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

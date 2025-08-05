@@ -1,6 +1,7 @@
-package pion.tech.pionbase.feature.notificationManager.notificationBlock
+package pion.tech.pionbase.feature.notificationManager.viewpager.notificationBlock
 
 import android.view.View
+import androidx.core.view.isVisible
 import com.piontech.core.base.BaseFragment
 import com.piontech.core.utils.collectFlowOnView
 import dagger.hilt.android.AndroidEntryPoint
@@ -8,8 +9,8 @@ import pion.tech.pionbase.R
 import pion.tech.pionbase.app.CommonViewModel
 import pion.tech.pionbase.data.model.notification.AppNotificationPermissionUIModel
 import pion.tech.pionbase.databinding.FragmentNotificationBlockBinding
-import pion.tech.pionbase.feature.notificationManager.notificationBlock.adapter.AppNotificationBlockAdapter
-import pion.tech.pionbase.feature.notificationManager.notificationBlock.dialog.ConfirmBlockNotificationDialog
+import pion.tech.pionbase.feature.notificationManager.viewpager.notificationBlock.adapter.AppNotificationBlockAdapter
+import pion.tech.pionbase.feature.notificationManager.viewpager.notificationBlock.dialog.ConfirmBlockNotificationDialog
 import pion.tech.pionbase.util.displayToast
 import pion.tech.pionbase.util.handleUiState
 import timber.log.Timber
@@ -32,8 +33,14 @@ class NotificationBlockFragment :
     override fun subscribeObserver(view: View) {
         viewModel.appFilteredList.collectFlowOnView(viewLifecycleOwner) {
             val tag = "appFilteredList"
+            binding.lottieLoading.pauseAnimation()
+            binding.lottieLoading.isVisible = false
             Timber.tag(tag).d(it.toString())
             it.handleUiState(
+                onLoading = {
+                    binding.lottieLoading.playAnimation()
+                    binding.lottieLoading.isVisible = true
+                },
                 onSuccess = { apps ->
                     adapter.submitList(apps)
                 },

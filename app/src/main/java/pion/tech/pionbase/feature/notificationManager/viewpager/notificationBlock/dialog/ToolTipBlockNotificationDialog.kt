@@ -1,4 +1,4 @@
-package pion.tech.pionbase.feature.notificationManager.dialog
+package pion.tech.pionbase.feature.notificationManager.viewpager.notificationBlock.dialog
 
 import android.os.Bundle
 import com.piontech.core.base.BaseDialogFragment

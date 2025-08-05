@@ -1,8 +1,7 @@
 package pion.tech.pionbase.feature.home
 
 import pion.tech.pionbase.R
-import pion.tech.pionbase.feature.home.bottomSheet.DemoBottomSheet
-import pion.tech.pionbase.util.NotificationPermissionManager
+import pion.tech.pionbase.util.NotifyListenerPermissionManager
 import pion.tech.pionbase.util.RunningAppsPermissionManager
 import pion.tech.pionbase.util.displayToast
 import pion.tech.pionbase.util.setPreventDoubleClick
@@ -65,28 +64,6 @@ fun HomeFragment.runningAppsEvent() {
 //    }
 }
 
-fun HomeFragment.checkNotificationPermissionsAndNavigate() {
-    if (NotificationPermissionManager.areAllNotificationPermissionsGranted(requireContext())) {
-        // All permissions granted, navigate to notification manager
-        navigator.navigateTo(R.id.action_homeFragment_to_notificationManagerFragment)
-    } else {
-        // Permissions not granted, show dialog and request permissions
-        val missingPermissions =
-            NotificationPermissionManager.getMissingNotificationPermissions(requireContext())
-        val permissionMessage =
-            "To use Notification Manager, please grant the following permissions:\n\n" +
-                missingPermissions.joinToString("\n• ", "• ")
-
-        displayToast("$permissionMessage\n\nOpening settings...")
-
-        // Request notification access permission
-        NotificationPermissionManager.requestNotificationAccess(this)
-
-        // Set flag to check permissions when user returns
-        setWaitingForPermissions(true)
-    }
-}
-
 fun HomeFragment.setWaitingForPermissions(waiting: Boolean) {
     // Store the waiting state in a simple way
     // We'll check this when the fragment resumes
@@ -98,7 +75,7 @@ fun HomeFragment.checkPermissionsOnResume() {
         viewModel.setWaitingForNotificationPermissions(false)
 
         // Check if permissions are now granted
-        if (NotificationPermissionManager.areAllNotificationPermissionsGranted(requireContext())) {
+        if (NotifyListenerPermissionManager.areAllNotificationPermissionsGranted(requireContext())) {
             displayToast("Permissions granted! Opening Notification Manager...")
             navigator.navigateTo(R.id.action_homeFragment_to_notificationManagerFragment)
         } else {

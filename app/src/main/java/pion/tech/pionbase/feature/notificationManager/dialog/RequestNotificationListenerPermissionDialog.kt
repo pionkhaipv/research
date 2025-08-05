@@ -1,15 +1,17 @@
-package pion.tech.pionbase.feature.notificationManager.notificationBlock.dialog
+package pion.tech.pionbase.feature.notificationManager.dialog
 
 import android.os.Bundle
 import com.piontech.core.base.BaseDialogFragment
 import pion.tech.pionbase.R
-import pion.tech.pionbase.databinding.DialogConfirmBlockNotificationBinding
+import pion.tech.pionbase.databinding.DialogRequestNotificationListenerPermissinoBinding
 import pion.tech.pionbase.util.setPreventDoubleClick
 
-class ConfirmBlockNotificationDialog :
-    BaseDialogFragment<DialogConfirmBlockNotificationBinding>(R.layout.dialog_confirm_block_notification) {
+class RequestNotificationListenerPermissionDialog :
+    BaseDialogFragment<DialogRequestNotificationListenerPermissinoBinding>(
+        R.layout.dialog_request_notification_listener_permissino,
+    ) {
     interface Listener {
-        fun onConfirmBlock()
+        fun onOpenSetting()
     }
 
     private var listener: Listener? = null
@@ -23,12 +25,9 @@ class ConfirmBlockNotificationDialog :
         binding.btnClose.setPreventDoubleClick {
             dismiss()
         }
-        binding.btnCancel.setPreventDoubleClick {
-            dismiss()
-        }
 
-        binding.btnBlock.setPreventDoubleClick {
-            listener?.onConfirmBlock()
+        binding.btnOpenSetting.setPreventDoubleClick {
+            listener?.onOpenSetting()
             dismiss()
         }
     }
