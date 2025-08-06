@@ -1,9 +1,11 @@
 package pion.tech.pionbase.feature.notificationManager.viewpager.notificationStats
 
 import android.view.View
+import androidx.core.view.isVisible
 import com.piontech.core.base.BaseFragment
 import com.piontech.core.utils.collectFlowOnView
 import dagger.hilt.android.AndroidEntryPoint
+import pion.tech.pionbase.R
 import pion.tech.pionbase.app.CommonViewModel
 import pion.tech.pionbase.databinding.FragmentRecentNotificationsBinding
 import pion.tech.pionbase.feature.notificationManager.viewpager.notificationStats.adapter.NotificationStatsAdapter
@@ -21,26 +23,36 @@ class NotificationStatsFragment :
 
     override fun init(view: View) {
         initView()
-        loadData()
     }
 
     override fun subscribeObserver(view: View) {
         viewModel.recentNotificationsUiState.collectFlowOnView(viewLifecycleOwner) {
             it.handleUiState(
                 onLoading = {
-                    // Show loading state
+                    binding.rvMain.isVisible = false
+                    binding.llEmptyLoading.isVisible = true
                 },
                 onSuccess = { notifications ->
-                    // Handle the list of recent notifications
-                    // Update RecyclerView adapter here
+                    if (notifications.isEmpty()) {
+                        binding.rvMain.isVisible = false
+                        binding.llEmptyLoading.isVisible = true
+                    } else {
+                        adapter.submitList(notifications)
+                        binding.rvMain.isVisible = true
+                        binding.llEmptyLoading.isVisible = false
+                    }
                 },
                 onError = { exception ->
+                    binding.rvMain.isVisible = false
+                    binding.llEmptyLoading.isVisible = true
+                    displayToast(
+                        getString(
+                            R.string.failed_to_load_recent_notifications,
+                            exception.message,
+                        ),
+                    )
                 },
             )
         }
-    }
-
-    private fun loadData() {
-        viewModel.getRecentNotifications()
     }
 }

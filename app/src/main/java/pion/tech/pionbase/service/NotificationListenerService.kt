@@ -11,7 +11,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
-import pion.tech.pionbase.data.model.notification.NotificationDtoModel
+import pion.tech.pionbase.data.model.notification.NotificationEntity
 import pion.tech.pionbase.data.repository.dataStore.DataStoreRepository
 import pion.tech.pionbase.data.repository.notificationRepository.NotificationRepository
 import pion.tech.pionbase.util.Result
@@ -160,18 +160,13 @@ class PionNotificationListenerService : NotificationListenerService() {
 
             // Create notification model and emit to flow
             val notificationModel =
-                NotificationDtoModel(
+                NotificationEntity(
                     packageName = packageName,
                     appName = getAppName(packageName),
-                    icon =
-                        try {
-                            packageManager.getApplicationIcon(packageName)
-                        } catch (e: Exception) {
-                            null
-                        },
                     title = notification.notification.extras.getString("android.title"),
                     content = notification.notification.extras.getString("android.text"),
                     timestamp = notification.postTime,
+                    notificationCount = 1
                 )
 
             // Save notification to Room database

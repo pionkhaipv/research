@@ -12,6 +12,7 @@ import androidx.core.app.NotificationManagerCompat
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
@@ -19,9 +20,7 @@ import kotlinx.coroutines.flow.take
 import kotlinx.coroutines.flow.toList
 import pion.tech.pionbase.data.local.dao.NotificationDAO
 import pion.tech.pionbase.data.model.notification.AppNotificationPermissionDtoModel
-import pion.tech.pionbase.data.model.notification.NotificationDtoModel
-import pion.tech.pionbase.data.model.notification.toEntity
-import pion.tech.pionbase.data.model.notification.toPresentation
+import pion.tech.pionbase.data.model.notification.NotificationEntity
 import pion.tech.pionbase.data.repository.dataStore.DataStoreRepository
 import pion.tech.pionbase.service.PionNotificationListenerService
 import pion.tech.pionbase.util.NotifyListenerManager
@@ -36,52 +35,38 @@ class NotificationRepositoryImpl
         private val dataStoreRepository: DataStoreRepository,
         private val notificationDAO: NotificationDAO,
     ) : NotificationRepository {
-        override fun getRecentNotifications(): Flow<Result<List<NotificationDtoModel>>> =
-            flow {
-                try {
-                    // Get recent notifications from Room database
-                    notificationDAO.getRecentNotifications(50).collect { entities ->
-                        val notifications = entities.map { entity ->
-                            // Convert entity to DTO and load icon if needed
-                            val dto = entity.toPresentation()
-                            try {
-                                // Try to load the app icon
-                                val icon = context.packageManager.getApplicationIcon(entity.packageName)
-                                dto.copy(icon = icon)
-                            } catch (e: Exception) {
-                                // If icon loading fails, keep the DTO without icon
-                                dto
-                            }
-                        }
-                        emit(Result.Success(notifications))
-                    }
-                } catch (exception: Exception) {
-                    Timber.e("Error getting recent notifications from database: $exception")
-                    emit(Result.Error(exception))
+        override fun getRecentNotifications(): Flow<Result<List<NotificationEntity>>> =
+            flow<Result<List<NotificationEntity>>> {
+                // Get recent notifications from Room database
+                notificationDAO.getRecentNotifications(50).collect { entities ->
+                    // Return entities directly without conversion
+                    emit(Result.Success(entities))
                 }
+            }.catch { exception ->
+                Timber.e("Error getting recent notifications from database: $exception")
+                emit(Result.Error(exception))
             }.flowOn(Dispatchers.IO)
 
         override fun getAppsWithNotificationPermissions(): Flow<Result<List<AppNotificationPermissionDtoModel>>> =
-            flow {
-                try {
-                    val packageManager = context.packageManager
-                    val installedPackages = packageManager.getInstalledApplications(PackageManager.GET_META_DATA)
+            flow<Result<List<AppNotificationPermissionDtoModel>>> {
+                val packageManager = context.packageManager
+                val installedPackages =
+                    packageManager.getInstalledApplications(PackageManager.GET_META_DATA)
 
-                    val filteredApps =
-                        installedPackages
-                            .filter { appInfo -> shouldIncludeApp(appInfo, packageManager) }
+                val filteredApps =
+                    installedPackages
+                        .filter { appInfo -> shouldIncludeApp(appInfo, packageManager) }
 
-                    // Process each app and create the model
-                    val apps =
-                        filteredApps
-                            .map { appInfo -> createAppPermissionModel(appInfo, packageManager) }
-                            .sortedBy { it.appName.lowercase() }
+                // Process each app and create the model
+                val apps =
+                    filteredApps
+                        .map { appInfo -> createAppPermissionModel(appInfo, packageManager) }
+                        .sortedBy { it.appName.lowercase() }
 
-                    emit(Result.Success(apps))
-                } catch (exception: Exception) {
-                    Timber.e("Error getting apps with notification permissions: $exception")
-                    emit(Result.Error(exception))
-                }
+                emit(Result.Success(apps))
+            }.catch { exception ->
+                Timber.e("Error getting apps with notification permissions: $exception")
+                emit(Result.Error(exception))
             }.flowOn(Dispatchers.IO)
 
         /**
@@ -98,7 +83,11 @@ class NotificationRepositoryImpl
                 }
                 // For Android >= 13: Show apps that have POST_NOTIFICATION permission declared
                 Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU -> {
-                    isUserApp(appInfo) && hasPostNotificationPermissionDeclared(appInfo.packageName, packageManager)
+                    isUserApp(appInfo) &&
+                        hasPostNotificationPermissionDeclared(
+                            appInfo.packageName,
+                            packageManager,
+                        )
                 }
                 // For Android 11-12: Show all user apps (fallback)
                 else -> {
@@ -120,7 +109,8 @@ class NotificationRepositoryImpl
             packageManager: PackageManager,
         ): Boolean =
             try {
-                val packageInfo = packageManager.getPackageInfo(packageName, PackageManager.GET_PERMISSIONS)
+                val packageInfo =
+                    packageManager.getPackageInfo(packageName, PackageManager.GET_PERMISSIONS)
                 val permissions = packageInfo.requestedPermissions
                 permissions?.contains(Manifest.permission.POST_NOTIFICATIONS) == true
             } catch (e: Exception) {
@@ -148,12 +138,11 @@ class NotificationRepositoryImpl
                 }
             } catch (e: Exception) {
                 e.printStackTrace()
-                // Default to enabled if we can't determine the status
-                true
+                false
             }
 
         /**
-         * Safely gets the app name from PackageManager
+         * Gets the app name from the package info
          */
         private fun getAppName(
             appInfo: ApplicationInfo,
@@ -162,42 +151,40 @@ class NotificationRepositoryImpl
             try {
                 packageManager.getApplicationLabel(appInfo).toString()
             } catch (e: Exception) {
-                e.printStackTrace()
+                // If we can't get the app name, use the package name as fallback
                 appInfo.packageName
             }
 
         /**
          * Creates an AppNotificationPermissionDtoModel from ApplicationInfo
          */
-        private suspend fun createAppPermissionModel(
+        private fun createAppPermissionModel(
             appInfo: ApplicationInfo,
             packageManager: PackageManager,
         ): AppNotificationPermissionDtoModel {
-            // Get blocked packages from data store
-            val blockedPackagesResult = dataStoreRepository.getBlockedPackages().first()
-            val isBlocked =
-                if (blockedPackagesResult is Result.Success) {
-                    blockedPackagesResult.data.contains(appInfo.packageName)
-                } else {
-                    false // Default to not blocked if we can't get the data
-                }
+            val packageName = appInfo.packageName
+            val appName = getAppName(appInfo, packageManager)
 
-            val hasNotificationPermission = hasSystemNotificationPermission()
+            // Check if this package is in the blocked list
+            val isBlocked = PionNotificationListenerService.isPackageBlocked(packageName)
 
-            // Load app icon
-            val appIcon =
+            // Get app icon
+            val icon =
                 try {
-                    packageManager.getApplicationIcon(appInfo.packageName)
+                    packageManager.getApplicationIcon(packageName)
                 } catch (e: Exception) {
-                    Timber.e("Error loading app icon for ${appInfo.packageName}: ${e.message}")
                     null
                 }
 
+            // For Android 13+, we should check if the app has notification permission granted
+            // For simplicity, we'll just check if it's in our blocked list
+            val hasPermission = !isBlocked
+
             return AppNotificationPermissionDtoModel(
-                packageName = appInfo.packageName,
-                appName = getAppName(appInfo, packageManager),
-                isNotificationEnabled = !isBlocked && hasNotificationPermission,
-                appIcon = appIcon,
+                packageName = packageName,
+                appName = appName,
+                hasNotificationPermission = hasPermission,
+                icon = icon,
             )
         }
 
@@ -205,163 +192,205 @@ class NotificationRepositoryImpl
             packageName: String,
             enabled: Boolean,
         ): Flow<Result<Boolean>> =
-            flow {
-                try {
-                    // Get current blocked packages from data store
-                    val blockedPackagesResult = dataStoreRepository.getBlockedPackages().first()
+            flow<Result<Boolean>> {
+                // Get current blocked packages
+                val blockedPackagesResult = dataStoreRepository.getBlockedPackages().first()
 
-                    if (blockedPackagesResult is Result.Success) {
-                        // Create a mutable copy of the blocked packages set
-                        val blockedPackages = blockedPackagesResult.data.toMutableSet()
+                if (blockedPackagesResult is Result.Success) {
+                    val currentBlockedPackages = blockedPackagesResult.data.toMutableSet()
 
-                        // Update the set based on the enabled parameter
-                        if (enabled) {
-                            // Enable notifications (remove from blocked packages)
-                            blockedPackages.remove(packageName)
-                            Timber.d("Removing $packageName from blocked packages")
-                        } else {
-                            // Disable notifications (add to blocked packages)
-                            blockedPackages.add(packageName)
-                            Timber.d("Adding $packageName to blocked packages")
-                        }
-
-                        // Save the updated set to the data store
-                        dataStoreRepository.setBlockedPackages(blockedPackages)
-                        Timber.d("Saved ${blockedPackages.size} blocked packages to data store")
-
-                        // Always reload blocked packages in the service's companion object
-                        // This ensures the service has the latest data even if it wasn't available during the update
-                        PionNotificationListenerService.reloadBlockedPackages()
-                        Timber.d("Triggered reload of blocked packages in service")
-
-                        // Also update the service instance if it's available (but don't fail if it's not)
-                        val service = PionNotificationListenerService.getInstance()
-                        if (service != null) {
-                            if (enabled) {
-                                // Enable notifications (unblock the package)
-                                service.unblockNotificationsFromPackage(packageName)
-                            } else {
-                                // Disable notifications (block the package)
-                                service.blockNotificationsFromPackage(packageName)
-                            }
-                            Timber.d("Updated notification service for package: $packageName, enabled: $enabled")
-                        } else {
-                            Timber.d("Notification service instance not available, but data was reloaded in companion object")
-                        }
-
-                        // Return success regardless of service availability
-                        emit(Result.Success(enabled))
-                    } else if (blockedPackagesResult is Result.Error) {
-                        // If we couldn't get the blocked packages, propagate the error
-                        Timber.e("Error getting blocked packages: ${blockedPackagesResult.error}")
-                        emit(Result.Error(blockedPackagesResult.error))
+                    if (enabled) {
+                        // Remove from blocked packages if enabling
+                        currentBlockedPackages.remove(packageName)
+                    } else {
+                        // Add to blocked packages if disabling
+                        currentBlockedPackages.add(packageName)
                     }
-                } catch (exception: Exception) {
-                    Timber.e("Error toggling notification permission: $exception")
-                    emit(Result.Error(exception))
+
+                    // Save updated blocked packages
+                    dataStoreRepository.setBlockedPackages(currentBlockedPackages)
+
+                    // Reload blocked packages in the notification service
+                    PionNotificationListenerService.reloadBlockedPackages()
+
+                    // If we have an active service instance, update it directly
+                    val service = PionNotificationListenerService.getInstance()
+                    if (service != null) {
+                        if (enabled) {
+                            service.unblockNotificationsFromPackage(packageName)
+                            Timber.d("Unblocked notifications from $packageName")
+                        } else {
+                            service.blockNotificationsFromPackage(packageName)
+                            Timber.d("Blocked notifications from $packageName")
+                        }
+                    } else {
+                        Timber.d("Notification service instance not available, but data was reloaded in companion object")
+                    }
+
+                    // Return success regardless of service availability
+                    emit(Result.Success(enabled))
+                } else if (blockedPackagesResult is Result.Error) {
+                    // If we couldn't get the blocked packages, propagate the error
+                    Timber.e("Error getting blocked packages: ${blockedPackagesResult.error}")
+                    emit(Result.Error(blockedPackagesResult.error))
                 }
+            }.catch { exception ->
+                Timber.e("Error toggling notification permission: $exception")
+                emit(Result.Error(exception))
             }.flowOn(Dispatchers.IO)
 
         override fun isNotificationListenerEnabled(): Flow<Result<Boolean>> =
-            flow {
-                try {
-                    val hasSystemPermission = NotifyListenerManager.isGrandNotifyListenerPermission(context)
-                    // Check internal monitoring state from data store
-                    val monitoringEnabledResult = dataStoreRepository.getNotificationMonitoringEnabled().first()
-                    val isInternallyEnabled =
-                        if (monitoringEnabledResult is Result.Success) {
-                            monitoringEnabledResult.data
-                        } else {
-                            // Default to false if we can't get the data
-                            Timber.e("Error getting monitoring state: ${(monitoringEnabledResult as? Result.Error)?.error}")
-                            false
-                        }
+            flow<Result<Boolean>> {
+                val hasSystemPermission = NotifyListenerManager.isGrandNotifyListenerPermission(context)
+                // Check internal monitoring state from data store
+                val monitoringEnabledResult =
+                    dataStoreRepository.getNotificationMonitoringEnabled().first()
+                val isInternallyEnabled =
+                    if (monitoringEnabledResult is Result.Success) {
+                        monitoringEnabledResult.data
+                    } else {
+                        // Default to false if we can't get the data
+                        Timber.e("Error getting monitoring state: ${(monitoringEnabledResult as? Result.Error)?.error}")
+                        false
+                    }
 
-                    // Return true only if both system permission and internal monitoring are enabled
-                    val isEnabled = hasSystemPermission && isInternallyEnabled
-                    emit(Result.Success(isEnabled))
-                } catch (exception: Exception) {
-                    Timber.e("Error checking if notification listener is enabled: $exception")
-                    emit(Result.Error(exception))
-                }
+                // Return true only if both system permission and internal monitoring are enabled
+                val isEnabled = hasSystemPermission && isInternallyEnabled
+                emit(Result.Success(isEnabled))
+            }.catch { exception ->
+                Timber.e("Error checking if notification listener is enabled: $exception")
+                emit(Result.Error(exception))
             }.flowOn(Dispatchers.IO)
 
         override fun setNotificationListenerEnabled(enabled: Boolean): Flow<Result<Boolean>> =
-            flow {
-                try {
-                    // Check if notification listener permission is granted
-                    val enabledListeners =
-                        Settings.Secure.getString(
-                            context.contentResolver,
-                            "enabled_notification_listeners",
-                        )
-                    val hasSystemPermission = enabledListeners?.contains(context.packageName) == true
+            flow<Result<Boolean>> {
+                // Check if notification listener permission is granted
+                val enabledListeners =
+                    Settings.Secure.getString(
+                        context.contentResolver,
+                        "enabled_notification_listeners",
+                    )
+                val hasSystemPermission = enabledListeners?.contains(context.packageName) == true
 
-                    if (enabled && !hasSystemPermission) {
-                        // If user wants to enable but system permission is not granted, open settings
-                        val intent = Intent(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS)
-                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                        context.startActivity(intent)
-                        emit(Result.Success(false)) // Return false since permission is not granted yet
-                    } else {
-                        // Save the monitoring state to data store
-                        val result = dataStoreRepository.setNotificationMonitoringEnabled(enabled)
+                if (enabled && !hasSystemPermission) {
+                    // If user wants to enable but system permission is not granted, open settings
+                    val intent = Intent(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS)
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                    context.startActivity(intent)
+                    emit(Result.Success(false)) // Return false since permission is not granted yet
+                } else {
+                    // Save the monitoring state to data store
+                    val result = dataStoreRepository.setNotificationMonitoringEnabled(enabled)
 
-                        if (result is Result.Success) {
-                            Timber.d("Saved notification monitoring state to data store: $enabled")
+                    if (result is Result.Success) {
+                        Timber.d("Saved notification monitoring state to data store: $enabled")
 
-                            // Also try to update the service if it's available (but don't fail if it's not)
-                            try {
-                                val service = PionNotificationListenerService.getInstance()
-                                if (service != null) {
-                                    // Control internal monitoring state in the service
-                                    PionNotificationListenerService.setMonitoringEnabled(enabled)
-                                    Timber.d("Updated notification service monitoring state: $enabled")
-                                } else {
-                                    Timber.d("Notification service not available, but data store was updated")
-                                }
-                            } catch (serviceException: Exception) {
-                                Timber.e("Error updating service monitoring state: $serviceException")
-                                // Don't fail if we can't update the service
+                        // Also try to update the service if it's available (but don't fail if it's not)
+                        try {
+                            val service = PionNotificationListenerService.getInstance()
+                            if (service != null) {
+                                // Control internal monitoring state in the service
+                                PionNotificationListenerService.setMonitoringEnabled(enabled)
+                                Timber.d("Updated notification service monitoring state: $enabled")
+                            } else {
+                                Timber.d("Notification service not available, but data store was updated")
                             }
-
-                            // Return the actual state: enabled only if both system permission and internal state are true
-                            val actualState = hasSystemPermission && enabled
-                            emit(Result.Success(actualState))
-                        } else if (result is Result.Error) {
-                            // If we couldn't save to data store, propagate the error
-                            Timber.e("Error saving notification monitoring state: ${result.error}")
-                            emit(Result.Error(result.error))
+                        } catch (serviceException: Exception) {
+                            Timber.e("Error updating service monitoring state: $serviceException")
+                            // Don't fail if we can't update the service
                         }
+
+                        // Return the actual state: enabled only if both system permission and internal state are true
+                        val actualState = hasSystemPermission && enabled
+                        emit(Result.Success(actualState))
+                    } else if (result is Result.Error) {
+                        // If we couldn't save to data store, propagate the error
+                        Timber.e("Error saving notification monitoring state: ${result.error}")
+                        emit(Result.Error(result.error))
                     }
-                } catch (exception: Exception) {
-                    Timber.e("Error setting notification listener enabled: $exception")
-                    emit(Result.Error(exception))
                 }
+            }.catch { exception ->
+                Timber.e("Error setting notification listener enabled: $exception")
+                emit(Result.Error(exception))
             }.flowOn(Dispatchers.IO)
 
-        override fun saveNotification(notification: NotificationDtoModel): Flow<Result<NotificationDtoModel>> =
-            flow {
-                try {
-                    val entity = notification.toEntity()
-                    val savedEntity = notificationDAO.insertOrUpdateNotification(entity)
-                    
-                    // Convert saved entity back to DTO and load icon
-                    val savedDto = savedEntity.toPresentation()
-                    val dtoWithIcon = try {
-                        // Try to load the app icon
-                        val icon = context.packageManager.getApplicationIcon(savedEntity.packageName)
-                        savedDto.copy(icon = icon)
-                    } catch (e: Exception) {
-                        // If icon loading fails, keep the DTO without icon
-                        savedDto
-                    }
-                    
-                    Timber.d("Saved notification from ${notification.packageName} to database")
-                    emit(Result.Success(dtoWithIcon))
-                } catch (exception: Exception) {
-                    Timber.e("Error saving notification to database: $exception")
-                    emit(Result.Error(exception))
+        override fun saveNotification(notification: NotificationEntity): Flow<Result<NotificationEntity>> =
+            flow<Result<NotificationEntity>> {
+                val savedEntity = notificationDAO.insertOrUpdateNotification(notification)
+                Timber.d("Saved notification from ${notification.packageName} to database")
+                emit(Result.Success(savedEntity))
+            }.catch { exception ->
+                Timber.e("Error saving notification to database: $exception")
+                emit(Result.Error(exception))
+            }.flowOn(Dispatchers.IO)
+
+        override fun sendTestNotification(): Flow<Result<Boolean>> =
+            flow<Result<Boolean>> {
+                // Check if notification listener service is enabled
+                val isEnabledResult = isNotificationListenerEnabled().first()
+
+                if (isEnabledResult is Result.Error) {
+                    emit(Result.Error(Exception("Failed to check if notification listener is enabled: ${isEnabledResult.error.message}")))
+                    return@flow
                 }
+
+                val isEnabled = (isEnabledResult as Result.Success).data
+                if (!isEnabled) {
+                    emit(Result.Error(Exception("Notification listener service is not enabled. Please enable it first.")))
+                    return@flow
+                }
+
+                // List of package names to randomly select from
+                val packageNames =
+                    listOf(
+                        "co.ardrawing",
+                        "co.cameradetector",
+                        "co.piontech.flash.flashlight.flashalert.flashoncall",
+                    )
+
+                // Randomly select a package name
+                val randomPackage = packageNames.random()
+                Timber.d("Selected random package for test notification: $randomPackage")
+
+                // Get app name for the selected package (or use package name if not found)
+                val appName =
+                    try {
+                        val packageManager = context.packageManager
+                        val appInfo = packageManager.getApplicationInfo(randomPackage, 0)
+                        packageManager.getApplicationLabel(appInfo).toString()
+                    } catch (e: Exception) {
+                        // If package not found, just use the package name
+                        Timber.d("Package not found, using package name as app name: $randomPackage")
+                        randomPackage
+                    }
+
+                // Create a test notification
+                val testNotification =
+                    NotificationEntity(
+                        packageName = randomPackage,
+                        appName = appName,
+                        title = "Test Notification from $randomPackage",
+                        content = "This is a test notification to verify the service is working. Random package: $randomPackage. Time: ${System.currentTimeMillis()}",
+                        timestamp = System.currentTimeMillis(),
+                        notificationCount = 1,
+                    )
+
+                // Save the test notification - use first() instead of collect to avoid Flow transparency violation
+                val saveResult = saveNotification(testNotification).first()
+
+                when (saveResult) {
+                    is Result.Success -> {
+                        Timber.d("Test notification saved successfully")
+                        emit(Result.Success(true))
+                    }
+
+                    is Result.Error -> {
+                        Timber.e("Failed to save test notification: ${saveResult.error}")
+                        emit(Result.Error(Exception("Failed to save test notification: ${saveResult.error.message}")))
+                    }
+                }
+            }.catch { exception ->
+                Timber.e("Error sending test notification: $exception")
+                emit(Result.Error(exception))
             }.flowOn(Dispatchers.IO)
     }

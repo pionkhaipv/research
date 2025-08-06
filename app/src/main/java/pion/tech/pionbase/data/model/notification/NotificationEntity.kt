@@ -1,5 +1,6 @@
 package pion.tech.pionbase.data.model.notification
 
+import android.graphics.drawable.Drawable
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
@@ -11,29 +12,17 @@ data class NotificationEntity(
     val title: String?,
     val content: String?,
     val timestamp: Long,
-    val notificationCount: Int = 1
+    val notificationCount: Int = 1,
 )
 
-// Extension function to convert DTO to Entity
-fun NotificationDtoModel.toEntity(): NotificationEntity {
-    return NotificationEntity(
+// Extension function to convert Entity to UIModel (for presentation layer)
+fun NotificationEntity.toPresentation(icon: Drawable? = null): NotificationUIModel =
+    NotificationUIModel(
         packageName = this.packageName,
         appName = this.appName,
+        icon = icon, // Icon will be loaded separately if needed
         title = this.title,
         content = this.content,
         timestamp = this.timestamp,
-        notificationCount = 1
+        notificationCount = this.notificationCount,
     )
-}
-
-// Extension function to convert Entity to DTO (for presentation layer)
-fun NotificationEntity.toPresentation(): NotificationDtoModel {
-    return NotificationDtoModel(
-        packageName = this.packageName,
-        appName = this.appName,
-        icon = null, // Icon will be loaded separately if needed
-        title = this.title,
-        content = this.content,
-        timestamp = this.timestamp
-    )
-}

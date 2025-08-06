@@ -7,6 +7,7 @@ import pion.tech.pionbase.util.hideKeyboard
 fun NotificationBlockFragment.initView() {
     adapter.setListener(this)
     binding.rvMain.adapter = adapter
+    binding.rvMain.itemAnimator = null
 
     viewModel.getAppsWithNotification()
 }

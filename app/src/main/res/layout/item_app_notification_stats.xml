@@ -13,7 +13,7 @@
         android:layout_marginBottom="@dimen/_8dp"
         android:gravity="center_vertical"
         android:orientation="horizontal"
-        android:paddingVertical="@dimen/_4dp">
+        android:paddingVertical="@dimen/_6dp">
 
         <ImageView
             android:id="@+id/iv_app_icon"
@@ -42,6 +42,7 @@
                 tools:text="WhatsApp" />
 
             <TextView
+                android:id="@+id/tv_time"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/font_400"
@@ -58,9 +59,9 @@
 
             <ImageView
                 android:id="@+id/iv_ring"
-                android:layout_marginTop="@dimen/_2dp"
                 android:layout_width="@dimen/_24dp"
                 android:layout_height="@dimen/_24dp"
+                android:layout_marginTop="@dimen/_2dp"
                 android:adjustViewBounds="true"
                 android:src="@drawable/ic_ring_notification"
                 app:layout_constraintStart_toStartOf="parent"
@@ -79,16 +80,16 @@
                 android:layout_width="@dimen/_15dp"
                 android:layout_height="@dimen/_15dp"
                 android:background="@drawable/bg_count_notification_stats"
+                android:ellipsize="end"
                 android:fontFamily="@font/font_400"
                 android:gravity="center"
-                android:text="7"
                 android:maxLines="1"
-                android:ellipsize="end"
+                android:text="7"
                 android:textColor="@color/white"
                 android:textSize="@dimen/_8sp"
                 app:layout_constraintDimensionRatio="1:1"
                 app:layout_constraintEnd_toEndOf="@id/view_end_ring"
-                app:layout_constraintTop_toTopOf="parent"/>
+                app:layout_constraintTop_toTopOf="parent" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

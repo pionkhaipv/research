@@ -1,5 +1,6 @@
 package pion.tech.pionbase.feature.notificationManager.viewpager.notificationStats
 
+import android.app.Application
 import com.piontech.core.base.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -16,6 +17,7 @@ class NotificationStatsViewModel
     @Inject
     constructor(
         private val notificationRepository: NotificationRepository,
+        private val application: Application,
     ) : BaseViewModel() {
         private val _recentNotificationsUiState =
             MutableStateFlow<UiState<List<NotificationUIModel>>>(UiState.None)
@@ -25,7 +27,22 @@ class NotificationStatsViewModel
             handleApiCall(
                 stateFlow = _recentNotificationsUiState,
                 apiCall = { notificationRepository.getRecentNotifications() },
-                transform = { dtoList -> dtoList.map { it.toPresentation() } },
+                transform = { entityList -> 
+                    entityList.map { entity -> 
+                        try {
+                            val icon = application.packageManager.getApplicationIcon(entity.packageName)
+                            entity.toPresentation(icon)
+                        } catch (e: Exception) {
+                            entity.toPresentation()
+                        }
+                    } 
+                },
             )
+        }
+    
+        fun sendTestNotification() = notificationRepository.sendTestNotification()
+
+        init {
+            getRecentNotifications()
         }
     }

@@ -9,14 +9,5 @@ data class NotificationUIModel(
     val title: String?,
     val content: String?,
     val timestamp: Long,
+    val notificationCount: Int,
 )
-
-fun NotificationDtoModel.toPresentation(): NotificationUIModel =
-    NotificationUIModel(
-        packageName = this.packageName,
-        appName = this.appName,
-        icon = this.icon,
-        title = this.title,
-        content = this.content,
-        timestamp = this.timestamp,
-    )

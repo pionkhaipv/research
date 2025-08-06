@@ -13,6 +13,6 @@ fun AppNotificationPermissionDtoModel.toPresentation(): AppNotificationPermissio
     AppNotificationPermissionUIModel(
         packageName = this.packageName,
         appName = this.appName,
-        isNotificationEnabled = this.isNotificationEnabled,
-        appIcon = this.appIcon,
+        isNotificationEnabled = this.hasNotificationPermission,
+        appIcon = this.icon,
     )

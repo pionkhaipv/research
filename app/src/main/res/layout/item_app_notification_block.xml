@@ -13,13 +13,13 @@
         android:layout_marginBottom="@dimen/_8dp"
         android:gravity="center_vertical"
         android:orientation="horizontal"
-        android:paddingVertical="@dimen/_4dp">
+        android:paddingVertical="@dimen/_6dp">
 
         <ImageView
             android:id="@+id/iv_app_icon"
             android:layout_width="@dimen/_40dp"
-            android:layout_marginStart="@dimen/_8dp"
             android:layout_height="@dimen/_40dp"
+            android:layout_marginStart="@dimen/_8dp"
             android:scaleType="centerCrop"
             tools:src="@android:drawable/sym_def_app_icon" />
 
@@ -40,9 +40,9 @@
 
         <androidx.appcompat.widget.SwitchCompat
             android:id="@+id/switch_notification"
-            android:layout_marginEnd="@dimen/_8dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/_8dp"
             android:thumb="@drawable/thumb_selector"
             app:track="@drawable/track_selector" />
 
